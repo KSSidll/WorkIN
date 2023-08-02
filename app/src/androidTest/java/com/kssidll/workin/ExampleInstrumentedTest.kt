@@ -1,4 +1,4 @@
-package com.example.workin
+package com.kssidll.workin
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

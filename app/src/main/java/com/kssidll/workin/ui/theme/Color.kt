@@ -1,4 +1,4 @@
-package com.example.workin.ui.theme
+package com.kssidll.workin.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

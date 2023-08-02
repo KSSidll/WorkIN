@@ -1,4 +1,4 @@
-package com.example.workin
+package com.kssidll.workin
 
 import org.junit.Test
 

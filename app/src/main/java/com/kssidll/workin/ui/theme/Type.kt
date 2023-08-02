@@ -1,4 +1,4 @@
-package com.example.workin.ui.theme
+package com.kssidll.workin.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

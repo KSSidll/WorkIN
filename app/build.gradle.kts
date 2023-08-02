@@ -1,19 +1,21 @@
-@Suppress("DSL_SCOPE_VIOLATION") // TODO: Remove once KTIJ-19369 is fixed
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.kotlinAndroid)
+    alias(libs.plugins.daggerHiltAndroid)
+    kotlin("kapt")
+    alias(libs.plugins.devtoolsKSP)
 }
 
 android {
-    namespace = "com.example.workin"
+    namespace = "com.kssidll.workin"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.workin"
+        applicationId = "com.kssidll.workin"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
-        versionName = "1.0"
+        versionName = "0.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -23,7 +25,8 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -41,7 +44,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.3"
+        kotlinCompilerExtensionVersion = "1.5.1"
     }
     packaging {
         resources {
@@ -51,20 +54,33 @@ android {
 }
 
 dependencies {
-
     implementation(libs.core.ktx)
     implementation(libs.lifecycle.runtime.ktx)
     implementation(libs.activity.compose)
-    implementation(platform(libs.compose.bom))
-    implementation(libs.ui)
-    implementation(libs.ui.graphics)
-    implementation(libs.ui.tooling.preview)
-    implementation(libs.material3)
+    implementation(libs.accompanist.system.ui.controller)
+    implementation(libs.appcompat)
+    implementation(libs.navigation.ui.ktx)
+    implementation(libs.savedstate.ktx)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.espresso.core)
+
+    implementation(platform(libs.compose.bom))
     androidTestImplementation(platform(libs.compose.bom))
-    androidTestImplementation(libs.ui.test.junit4)
-    debugImplementation(libs.ui.tooling)
-    debugImplementation(libs.ui.test.manifest)
+    implementation(libs.compose)
+    implementation(libs.compose.graphics)
+    debugImplementation(libs.compose.tooling)
+    implementation(libs.compose.tooling.preview)
+    debugImplementation(libs.compose.test.manifest)
+    androidTestImplementation(libs.compose.test.junit4)
+    implementation(libs.material3)
+    implementation(libs.navigation.compose)
+
+    implementation(libs.room)
+    ksp(libs.room.compiler)
+
+    implementation(libs.hilt)
+    kapt(libs.hilt.compiler)
+    implementation(libs.hilt.navigation.compose)
 }
