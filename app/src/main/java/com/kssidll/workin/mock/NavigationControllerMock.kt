@@ -22,4 +22,8 @@ class NavigationControllerMock(
     override fun navigateWorkouts() {
         error("how did you call this, this is a mock controller")
     }
+
+    override fun navigateAddWorkout() {
+        error("how did you call this, this is a mock controller")
+    }
 }

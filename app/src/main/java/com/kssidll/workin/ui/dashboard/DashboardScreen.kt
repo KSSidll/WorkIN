@@ -38,12 +38,14 @@ fun DashboardScreen(
     group = "DashboardScreen",
     name = "Dashboard Screen Dark",
     showBackground = true,
+    apiLevel = 29,
     uiMode = Configuration.UI_MODE_NIGHT_YES
 )
 @Preview(
     group = "DashboardScreen",
     name = "Dashboard Screen Light",
     showBackground = true,
+    apiLevel = 29,
     uiMode = Configuration.UI_MODE_NIGHT_NO
 )
 @Composable

@@ -3,14 +3,17 @@ package com.kssidll.workin
 import androidx.compose.runtime.*
 import androidx.navigation.*
 import androidx.navigation.compose.*
+import com.kssidll.workin.NavigationDestinations.ADD_WORKOUT_ROUTE
 import com.kssidll.workin.NavigationDestinations.DASHBOARD_ROUTE
 import com.kssidll.workin.NavigationDestinations.WORKOUTS_ROUTE
+import com.kssidll.workin.ui.addworkout.*
 import com.kssidll.workin.ui.dashboard.*
 import com.kssidll.workin.ui.workouts.*
 
 object NavigationDestinations {
     const val DASHBOARD_ROUTE = "dashboard"
     const val WORKOUTS_ROUTE = "workouts"
+    const val ADD_WORKOUT_ROUTE = "addworkout"
 }
 
 val LocalNavigation = compositionLocalOf<NavigationController> {
@@ -36,6 +39,8 @@ interface INavigationController {
 
     fun navigateDashboard()
     fun navigateWorkouts()
+    fun navigateAddWorkout()
+
 }
 
 class NavigationController(
@@ -54,6 +59,10 @@ class NavigationController(
 
     override fun navigateWorkouts() {
         navController.navigate(WORKOUTS_ROUTE)
+    }
+
+    override fun navigateAddWorkout() {
+        navController.navigate(ADD_WORKOUT_ROUTE)
     }
 }
 
@@ -79,7 +88,17 @@ fun Navigation(
 
             composable(WORKOUTS_ROUTE) {
                 WorkoutsRoute(
+                    onAddWorkout = {
+                        navigationController.navigateAddWorkout()
+                    }
+                )
+            }
 
+            composable(ADD_WORKOUT_ROUTE) {
+                AddWorkoutRoute(
+                    onBack = {
+                        navController.popBackStack()
+                    }
                 )
             }
         }

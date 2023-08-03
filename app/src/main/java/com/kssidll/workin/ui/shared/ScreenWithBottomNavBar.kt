@@ -44,7 +44,13 @@ fun ScreenWithBottomNavBar(
                     .fillMaxHeight(),
                 onClick = {
                     navigationController.popToDashboard()
-                }
+                },
+                colors = IconButtonColors(
+                    containerColor = MaterialTheme.colorScheme.background,
+                    disabledContainerColor = MaterialTheme.colorScheme.background,
+                    contentColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.4F),
+                    disabledContentColor = MaterialTheme.colorScheme.onBackground
+                )
             ) {
                 Icon(
                     imageVector = Icons.Default.Home,
@@ -68,7 +74,13 @@ fun ScreenWithBottomNavBar(
                 onClick = {
                     navigationController.popToDashboard()
                     navigationController.navigateWorkouts()
-                }
+                },
+                colors = IconButtonColors(
+                    containerColor = MaterialTheme.colorScheme.background,
+                    disabledContainerColor = MaterialTheme.colorScheme.background,
+                    contentColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.4F),
+                    disabledContentColor = MaterialTheme.colorScheme.onBackground
+                )
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.exercise),
@@ -91,12 +103,14 @@ fun ScreenWithBottomNavBar(
     group = "ScreenWithBottomNavBar",
     name = "Screen With Bottom NavBar Dark",
     showBackground = true,
+    apiLevel = 29,
     uiMode = Configuration.UI_MODE_NIGHT_YES
 )
 @Preview(
     group = "ScreenWithBottomNavBar",
     name = "Screen With Bottom NavBar Light",
     showBackground = true,
+    apiLevel = 29,
     uiMode = Configuration.UI_MODE_NIGHT_NO
 )
 @Composable
