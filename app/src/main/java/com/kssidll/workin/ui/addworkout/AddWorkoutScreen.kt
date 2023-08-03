@@ -3,13 +3,16 @@ package com.kssidll.workin.ui.addworkout
 import android.content.res.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.*
+import androidx.compose.foundation.text.*
 import androidx.compose.foundation.text.selection.*
 import androidx.compose.material.icons.*
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
+import androidx.compose.ui.focus.*
 import androidx.compose.ui.res.*
+import androidx.compose.ui.text.input.*
 import androidx.compose.ui.tooling.preview.*
 import androidx.compose.ui.unit.*
 import androidx.hilt.navigation.compose.*
@@ -64,12 +67,27 @@ fun AddWorkoutScreen(
 
             Spacer(modifier = Modifier.height(64.dp))
 
+            val nameFocusRequester = remember { FocusRequester() }
+            val descriptionFocusRequester = remember { FocusRequester() }
+
             Box(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 32.dp),
                 contentAlignment = Alignment.Center
             ) {
                 OutlinedTextField(
-                    singleLine = true,
+                    maxLines = 4,
+                    modifier = Modifier.focusRequester(focusRequester = nameFocusRequester),
+                    keyboardOptions = KeyboardOptions(
+                        imeAction = ImeAction.Next
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onNext = {
+                            nameFocusRequester.freeFocus()
+                            descriptionFocusRequester.requestFocus()
+                        }
+                    ),
                     value = nameText,
                     onValueChange = {
                         nameText = it
@@ -88,17 +106,14 @@ fun AddWorkoutScreen(
                             backgroundColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.4F)
                         ),
                         unfocusedLabelColor = MaterialTheme.colorScheme.onBackground.copy(
-                            alpha =
-                            0.7F
+                            alpha = 0.7F
                         ),
                         unfocusedBorderColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.9F),
                         unfocusedTextColor = MaterialTheme.colorScheme.onBackground.copy(
-                            alpha =
-                            0.75F
+                            alpha = 0.75F
                         ),
                         focusedLabelColor = MaterialTheme.colorScheme.onBackground.copy(
-                            alpha =
-                            0.85F
+                            alpha = 0.85F
                         ),
                         focusedBorderColor = MaterialTheme.colorScheme.outline,
                         focusedTextColor = MaterialTheme.colorScheme.onBackground,
@@ -110,10 +125,13 @@ fun AddWorkoutScreen(
             Spacer(modifier = Modifier.height(20.dp))
 
             Box(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 32.dp),
                 contentAlignment = Alignment.TopCenter
             ) {
                 OutlinedTextField(
+                    modifier = Modifier.focusRequester(descriptionFocusRequester),
                     minLines = 3,
                     value = descriptionText,
                     onValueChange = {
