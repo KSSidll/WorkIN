@@ -1,7 +1,7 @@
 package com.kssidll.workin
 
-import android.app.Application
-import dagger.hilt.android.HiltAndroidApp
+import android.app.*
+import dagger.hilt.android.*
 
 @HiltAndroidApp
-class WorkIN : Application()
+class WorkIN: Application()

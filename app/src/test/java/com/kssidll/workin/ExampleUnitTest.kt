@@ -1,7 +1,6 @@
 package com.kssidll.workin
 
-import org.junit.Test
-
+import org.junit.*
 import org.junit.Assert.*
 
 /**

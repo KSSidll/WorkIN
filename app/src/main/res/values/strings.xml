@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">WorkIN</string>
+
+    <string name="navigate_to_dashboard_description">Navigate to the Dashboard</string>
 </resources>
