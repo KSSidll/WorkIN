@@ -158,7 +158,7 @@ fun WorkoutsScreen(
                     )
                 ) {
                     Icon(
-                        imageVector = Icons.Default.Home,
+                        painter = painterResource(id = R.drawable.fitness_center),
                         contentDescription = stringResource(
                             id = R.string
                                 .navigate_to_dashboard_description
@@ -189,7 +189,7 @@ fun WorkoutsScreen(
                     )
                 ) {
                     Icon(
-                        painter = painterResource(id = R.drawable.exercise),
+                        painter = painterResource(id = R.drawable.event_list),
                         contentDescription = stringResource(
                             id = R.string
                                 .navigate_to_dashboard_description

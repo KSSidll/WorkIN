@@ -7,6 +7,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.tooling.preview.*
+import androidx.compose.ui.unit.*
 import com.kssidll.workin.ui.theme.*
 
 @Composable
@@ -18,6 +19,7 @@ fun PrimaryTopHeader(
         modifier = Modifier
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.surfaceContainer)
+            .height(48.dp)
     ) {
         Box(
             modifier = Modifier.fillMaxWidth(),

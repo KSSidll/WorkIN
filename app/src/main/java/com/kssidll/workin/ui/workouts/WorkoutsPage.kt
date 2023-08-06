@@ -7,6 +7,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.res.*
 import androidx.compose.ui.tooling.preview.*
+import androidx.compose.ui.unit.*
 import com.kssidll.workin.R
 import com.kssidll.workin.data.data.*
 import com.kssidll.workin.ui.shared.*
@@ -18,7 +19,10 @@ fun WorkoutsPage(
 ) {
     Column {
         PrimaryTopHeader {
-            Text(text = stringResource(id = R.string.workouts))
+            Text(
+                text = stringResource(id = R.string.workouts),
+                fontSize = 21.sp,
+            )
         }
 
         SelectWorkoutSubpage(

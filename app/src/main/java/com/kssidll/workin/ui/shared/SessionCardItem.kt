@@ -197,7 +197,8 @@ fun SessionCardItem(
                                             .align(Alignment.CenterEnd)
                                     ) {
                                         Text(
-                                            text = RepetitionTypes.getById(workout.sessionWorkout.repetitionType)!!.getTranslation(),
+                                            text = RepetitionTypes.getById(workout.sessionWorkout.repetitionType)!!
+                                                .getTranslation(),
                                             modifier = Modifier
                                                 .padding(
                                                     vertical = 6.dp,
@@ -213,8 +214,9 @@ fun SessionCardItem(
 
                             Spacer(modifier = Modifier.height(8.dp))
 
-                            Box (modifier = Modifier.fillMaxWidth()) {
-                                val weightType = WeightTypes.getById(workout.sessionWorkout.weightType)!!
+                            Box(modifier = Modifier.fillMaxWidth()) {
+                                val weightType =
+                                    WeightTypes.getById(workout.sessionWorkout.weightType)!!
                                 if (weightType.hideWeight) {
                                     Box(
                                         modifier = Modifier
@@ -323,11 +325,7 @@ fun SessionCardItem(
 
                             }
 
-
-
                         }
-
-
 
                         Spacer(modifier = Modifier.height(12.dp))
                         if (workout != session.workouts.last()) {

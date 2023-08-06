@@ -27,6 +27,7 @@ fun SecondaryTopHeader(
         modifier = Modifier
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.surfaceContainer)
+            .height(48.dp)
     ) {
 
         IconButton(
