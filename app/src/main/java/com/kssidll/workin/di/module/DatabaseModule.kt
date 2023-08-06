@@ -34,4 +34,14 @@ class DatabaseModule {
     fun provideWorkoutRepository(workoutDao: WorkoutDao): WorkoutRepository {
         return WorkoutRepository(workoutDao)
     }
+
+    @Provides
+    fun provideSessionDao(appDatabase: AppDatabase): SessionDao {
+        return appDatabase.getSessionDao()
+    }
+
+    @Provides
+    fun provideSessionRepository(sessionDao: SessionDao): SessionRepository {
+        return SessionRepository(sessionDao)
+    }
 }

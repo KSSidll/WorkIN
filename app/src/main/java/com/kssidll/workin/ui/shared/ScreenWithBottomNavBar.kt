@@ -46,10 +46,10 @@ fun ScreenWithBottomNavBar(
                     navigationController.popToDashboard()
                 },
                 colors = IconButtonColors(
-                    containerColor = MaterialTheme.colorScheme.background,
-                    disabledContainerColor = MaterialTheme.colorScheme.background,
-                    contentColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.4F),
-                    disabledContentColor = MaterialTheme.colorScheme.onBackground
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    disabledContainerColor = MaterialTheme.colorScheme.surface,
+                    contentColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4F),
+                    disabledContentColor = MaterialTheme.colorScheme.onSurface
                 )
             ) {
                 Icon(
@@ -76,10 +76,10 @@ fun ScreenWithBottomNavBar(
                     navigationController.navigateWorkouts()
                 },
                 colors = IconButtonColors(
-                    containerColor = MaterialTheme.colorScheme.background,
-                    disabledContainerColor = MaterialTheme.colorScheme.background,
-                    contentColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.4F),
-                    disabledContentColor = MaterialTheme.colorScheme.onBackground
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    disabledContainerColor = MaterialTheme.colorScheme.surface,
+                    contentColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4F),
+                    disabledContentColor = MaterialTheme.colorScheme.onSurface
                 )
             ) {
                 Icon(
@@ -118,7 +118,7 @@ fun ScreenWithBottomNavBarPreview() {
     WorkINTheme {
         Surface(
             modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background,
+            color = MaterialTheme.colorScheme.surface,
         ) {
             ScreenWithBottomNavBar(
                 navigationController = NavigationControllerMock(),

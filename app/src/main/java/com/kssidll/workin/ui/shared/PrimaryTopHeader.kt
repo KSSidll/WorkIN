@@ -3,24 +3,15 @@ package com.kssidll.workin.ui.shared
 import android.content.res.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.*
-import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
-import androidx.compose.ui.graphics.vector.*
-import androidx.compose.ui.res.*
 import androidx.compose.ui.tooling.preview.*
-import androidx.compose.ui.unit.*
-import com.kssidll.workin.R
 import com.kssidll.workin.ui.theme.*
 
 @Composable
-fun SecondaryTopHeader(
-    onIconClick: () -> Unit,
-    icon: ImageVector = Icons.Rounded.ArrowBack,
-    iconDescription: String = stringResource(id = R.string.go_to_previews_screen_description),
-    content: @Composable () -> Unit
+fun PrimaryTopHeader(
+    content: @Composable () -> Unit,
 ) {
     Box(
         contentAlignment = Alignment.CenterStart,
@@ -28,18 +19,6 @@ fun SecondaryTopHeader(
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.surfaceContainer)
     ) {
-
-        IconButton(
-            onClick = onIconClick
-        ) {
-            Icon(
-                icon,
-                iconDescription,
-                modifier = Modifier.size(30.dp),
-                tint = MaterialTheme.colorScheme.onSurface
-            )
-        }
-
         Box(
             modifier = Modifier.fillMaxWidth(),
             contentAlignment = Alignment.Center
@@ -49,30 +28,30 @@ fun SecondaryTopHeader(
     }
 }
 
-/// Screen Preview ///
+/// Header Preview ///
 @Preview(
-    group = "SecondaryTopHeader",
-    name = "Secondary Top Header Dark",
+    group = "PrimaryTopHeader",
+    name = "Primary Top Header Dark",
     showBackground = true,
     apiLevel = 29,
     uiMode = Configuration.UI_MODE_NIGHT_YES
 )
 @Preview(
-    group = "SecondaryTopHeader",
-    name = "Secondary Top Header Light",
+    group = "PrimaryTopHeader",
+    name = "Primary Top Header Light",
     showBackground = true,
     apiLevel = 29,
     uiMode = Configuration.UI_MODE_NIGHT_NO
 )
 @Composable
-fun SecondaryTopHeaderPreview() {
+fun PrimaryTopHeaderPreview() {
     WorkINTheme {
         Surface(
             color = MaterialTheme.colorScheme.surface
         ) {
-            SecondaryTopHeader(
-                onIconClick = {}
-            ) {}
+            PrimaryTopHeader {
+                Text(text = "test")
+            }
         }
     }
 }

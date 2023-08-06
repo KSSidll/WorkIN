@@ -16,6 +16,7 @@ navigation-compose = "2.6.0"
 room = "2.6.0-alpha02"
 hilt = "2.47"
 hilt-navigation-compose = "1.0.0"
+reorderable = "0.9.6"
 
 agp = "8.2.0-alpha15"
 kotlin = "1.9.0"
@@ -50,6 +51,8 @@ room-compiler = { group = "androidx.room", name = "room-compiler", version.ref =
 hilt = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
 hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hilt-navigation-compose" }
+
+reorderable = { group = "org.burnoutcrew.composereorderable", name = "reorderable", version.ref = "reorderable" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

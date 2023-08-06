@@ -1,12 +1,13 @@
-package com.kssidll.workin.ui.addworkout
+package com.kssidll.workin.ui.addsession
 
+import android.annotation.*
 import android.content.res.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.*
 import androidx.compose.foundation.text.*
 import androidx.compose.foundation.text.selection.*
 import androidx.compose.material.icons.*
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
@@ -15,50 +16,17 @@ import androidx.compose.ui.res.*
 import androidx.compose.ui.text.input.*
 import androidx.compose.ui.tooling.preview.*
 import androidx.compose.ui.unit.*
-import androidx.hilt.navigation.compose.*
 import com.kssidll.workin.R
-import com.kssidll.workin.ui.shared.*
 import com.kssidll.workin.ui.theme.*
 
-/// Route ///
 @Composable
-fun AddWorkoutRoute(
-    onBack: () -> Unit
+fun NamePage(
+    onNext: () -> Unit,
+    nameText: MutableState<String>,
+    nameError: MutableState<Boolean>,
+    descriptionText: MutableState<String>,
 ) {
-    val addWorkoutViewModel: AddWorkoutViewModel = hiltViewModel()
-
-    AddWorkoutScreen(
-        onBack = onBack,
-        onWorkoutAdd = {
-            addWorkoutViewModel.addWorkout(it)
-            onBack()
-        },
-    )
-}
-
-
-/// Screen ///
-@Composable
-fun AddWorkoutScreen(
-    onBack: () -> Unit,
-    onWorkoutAdd: (AddWorkoutData) -> Unit
-) {
-    var nameText: String by remember {
-        mutableStateOf(String())
-    }
-    var nameError: Boolean by remember {
-        mutableStateOf(false)
-    }
-
-    var descriptionText: String by remember {
-        mutableStateOf(String())
-    }
-
     Column {
-        SecondaryTopHeader(onIconClick = onBack) {
-
-        }
-
         Column(
             modifier = Modifier
                 .weight(1F)
@@ -88,14 +56,14 @@ fun AddWorkoutScreen(
                             descriptionFocusRequester.requestFocus()
                         }
                     ),
-                    value = nameText,
+                    value = nameText.value,
                     onValueChange = {
-                        nameText = it
-                        nameError = false
+                        nameText.value = it
+                        nameError.value = false
                     },
                     label = {
                         Text(
-                            text = stringResource(id = R.string.workout_name),
+                            text = stringResource(id = R.string.session_name),
                             fontSize = 16.sp,
                         )
                     },
@@ -119,9 +87,9 @@ fun AddWorkoutScreen(
                         focusedBorderColor = MaterialTheme.colorScheme.outline,
                         focusedTextColor = MaterialTheme.colorScheme.onBackground,
                     ),
-                    isError = nameError,
+                    isError = nameError.value,
                     supportingText = {
-                        if (nameError) {
+                        if (nameError.value) {
                             Text(text = stringResource(id = R.string.field_required))
                         }
                     }
@@ -138,10 +106,10 @@ fun AddWorkoutScreen(
             ) {
                 OutlinedTextField(
                     modifier = Modifier.focusRequester(descriptionFocusRequester),
-                    minLines = 5,
-                    value = descriptionText,
+                    minLines = 10,
+                    value = descriptionText.value,
                     onValueChange = {
-                        descriptionText = it
+                        descriptionText.value = it
                     },
                     label = {
                         Text(
@@ -178,24 +146,12 @@ fun AddWorkoutScreen(
 
         Column(
             modifier = Modifier
-                .fillMaxHeight(0.45F)
                 .fillMaxWidth()
                 .padding(top = 12.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Button(
-                onClick = {
-                    nameError = nameText.isBlank()
-
-                    if (!nameError) {
-                        onWorkoutAdd(
-                            AddWorkoutData(
-                                name = nameText,
-                                description = descriptionText,
-                            )
-                        )
-                    }
-                },
+                onClick = onNext,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(70.dp)
@@ -207,53 +163,68 @@ fun AddWorkoutScreen(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
                 ) {
+
                     Icon(
-                        imageVector = Icons.Default.Check,
+                        painter = painterResource(id = R.drawable.swipe_left),
                         contentDescription = stringResource(
-                            R.string
-                                .confirm_add_workout_description
+                            id = R.string.next
                         ),
                         modifier = Modifier.size(30.dp)
                     )
+
                     Spacer(modifier = Modifier.width(8.dp))
+
                     Text(
-                        text = stringResource(R.string.confirm_add_workout_text),
+                        text = stringResource(R.string.next),
                         fontSize = 20.sp
+                    )
+
+                    Icon(
+                        imageVector = Icons.Rounded.KeyboardArrowRight,
+                        contentDescription = stringResource(
+                            R.string
+                                .next
+                        ),
+                        modifier = Modifier.size(30.dp)
                     )
                 }
             }
         }
+
+        Spacer(modifier = Modifier.height(24.dp))
     }
 }
 
 
-/// Screen Preview ///
+/// Page Preview ///
 @Preview(
-    group = "AddWorkoutScreen",
-    name = "Add Workout Screen Dark",
+    group = "NamePage",
+    name = "Name Page Dark",
     showBackground = true,
     apiLevel = 29,
     uiMode = Configuration.UI_MODE_NIGHT_YES
 )
 @Preview(
-    group = "AddWorkoutScreen",
-    name = "Add Workout Screen Light",
+    group = "NamePage",
+    name = "Name Page Light",
     showBackground = true,
     apiLevel = 29,
     uiMode = Configuration.UI_MODE_NIGHT_NO
 )
+@SuppressLint("UnrememberedMutableState")
 @Composable
-fun AddWorkoutScreenPreview() {
+fun NamePagePreview() {
     WorkINTheme {
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.surface,
         ) {
-            AddWorkoutScreen(
-                onBack = {},
-                onWorkoutAdd = {},
+            NamePage(
+                onNext = {},
+                nameText = mutableStateOf(String()),
+                nameError = mutableStateOf(false),
+                descriptionText = mutableStateOf(String()),
             )
         }
     }
 }
-

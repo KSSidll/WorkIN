@@ -1,8 +1,9 @@
 package com.kssidll.workin.ui.workouts
 
 import android.content.res.*
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.*
+import androidx.compose.foundation.pager.*
 import androidx.compose.foundation.shape.*
 import androidx.compose.material.icons.*
 import androidx.compose.material.icons.filled.*
@@ -11,38 +12,49 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.draw.*
 import androidx.compose.ui.graphics.*
+import androidx.compose.ui.res.*
 import androidx.compose.ui.tooling.preview.*
 import androidx.compose.ui.unit.*
 import androidx.hilt.navigation.compose.*
 import com.kssidll.workin.*
+import com.kssidll.workin.R
 import com.kssidll.workin.data.data.*
 import com.kssidll.workin.mock.*
 import com.kssidll.workin.ui.shared.*
 import com.kssidll.workin.ui.theme.*
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 
 /// Route ///
 @Composable
 fun WorkoutsRoute(
-    onAddWorkout: () -> Unit
+    onAddWorkout: () -> Unit,
+    onAddSession: () -> Unit,
 ) {
     val workoutsViewModel: WorkoutsViewModel = hiltViewModel()
 
     ScreenWithBottomNavBar {
         WorkoutsScreen(
-            workouts = workoutsViewModel.getAllDescFlow(),
-            onAddWorkout = onAddWorkout
+            workouts = workoutsViewModel.getAllWorkoutsDescFlow(),
+            sessions = workoutsViewModel.getAllSessionsDescFlow(),
+            onAddWorkout = onAddWorkout,
+            onAddSession = onAddSession,
         )
     }
 }
 
 
 /// Screen ///
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun WorkoutsScreen(
     workouts: Flow<List<Workout>>,
-    onAddWorkout: () -> Unit
+    sessions: Flow<List<SessionWithWorkouts>>,
+    onAddWorkout: () -> Unit,
+    onAddSession: () -> Unit,
 ) {
+    val scope = rememberCoroutineScope()
+
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -50,40 +62,130 @@ fun WorkoutsScreen(
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
-            val workoutItems = workouts.collectAsState(initial = emptyList()).value
-            LazyColumn {
-                items(workoutItems) {
-                    Row {
-                        Text(text = it.name)
+            val pagerState = rememberPagerState(
+                initialPage = 1,
+                initialPageOffsetFraction = 0F,
+                pageCount = { 2 }
+            )
+
+            Box(
+                modifier = Modifier
+                    .weight(1F)
+                    .fillMaxWidth()
+            ) {
+                HorizontalPager(
+                    state = pagerState,
+                    pageSize = PageSize.Fill,
+                ) {
+                    Column(
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        when (it) {
+                            0 -> SessionsPage(sessions = sessions)
+                            1 -> WorkoutsPage(workouts = workouts)
+                        }
+                    }
+                }
+
+                Box(
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .align(Alignment.BottomEnd)
+                ) {
+                    FilledIconButton(
+                        modifier = Modifier
+                            .size(64.dp)
+                            .shadow(6.dp, CircleShape),
+                        onClick = {
+                            when (pagerState.currentPage) {
+                                0 -> onAddSession()
+                                1 -> onAddWorkout()
+                            }
+                        },
+                        colors = IconButtonColors(
+                            disabledContainerColor = Color.Transparent,
+                            disabledContentColor = Color.Transparent,
+                            containerColor = MaterialTheme.colorScheme.primaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = "Add new item",
+                            modifier = Modifier.fillMaxSize()
+                        )
                     }
                 }
             }
-        }
 
-        Box(
-            modifier = Modifier
-                .padding(8.dp)
-                .align(Alignment.BottomEnd)
-        ) {
-            FilledIconButton(
+            Row(
                 modifier = Modifier
-                    .size(64.dp)
-                    .shadow(6.dp, CircleShape),
-                onClick = onAddWorkout,
-                colors = IconButtonColors(
-                    disabledContainerColor = Color.Transparent,
-                    disabledContentColor = Color.Transparent,
-                    containerColor = MaterialTheme.colorScheme.secondary,
-                    contentColor = MaterialTheme.colorScheme.onSecondary
-                )
+                    .fillMaxWidth()
+                    .height(50.dp)
+                    .padding(bottom = 12.dp)
             ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "Add new item",
-                    modifier = Modifier.fillMaxSize()
-                )
-            }
+                val iconBottomPadding = 5.dp
 
+                IconButton(
+                    enabled = pagerState.currentPage != 0,
+                    modifier = Modifier
+                        .weight(1F, true)
+                        .fillMaxHeight(),
+                    onClick = {
+                        scope.launch {
+                            pagerState.animateScrollToPage(0)
+                        }
+                    },
+                    colors = IconButtonColors(
+                        containerColor = MaterialTheme.colorScheme.background,
+                        disabledContainerColor = MaterialTheme.colorScheme.background,
+                        contentColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.4F),
+                        disabledContentColor = MaterialTheme.colorScheme.onBackground
+                    )
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Home,
+                        contentDescription = stringResource(
+                            id = R.string
+                                .navigate_to_dashboard_description
+                        ),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(bottom = iconBottomPadding)
+                    )
+                }
+
+                VerticalDivider()
+
+                IconButton(
+                    enabled = pagerState.currentPage != 1,
+                    modifier = Modifier
+                        .weight(1F, true)
+                        .fillMaxHeight(),
+                    onClick = {
+                        scope.launch {
+                            pagerState.animateScrollToPage(1)
+                        }
+                    },
+                    colors = IconButtonColors(
+                        containerColor = MaterialTheme.colorScheme.background,
+                        disabledContainerColor = MaterialTheme.colorScheme.background,
+                        contentColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.4F),
+                        disabledContentColor = MaterialTheme.colorScheme.onBackground
+                    )
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.exercise),
+                        contentDescription = stringResource(
+                            id = R.string
+                                .navigate_to_dashboard_description
+                        ),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(bottom = iconBottomPadding)
+                    )
+                }
+            }
         }
     }
 }
@@ -116,7 +218,9 @@ fun WorkoutsScreenPreview() {
             ) {
                 WorkoutsScreen(
                     workouts = flowOf(),
-                    onAddWorkout = {}
+                    sessions = flowOf(),
+                    onAddWorkout = {},
+                    onAddSession = {},
                 )
             }
         }

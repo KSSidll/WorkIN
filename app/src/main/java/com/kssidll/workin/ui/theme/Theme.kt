@@ -6,10 +6,13 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.*
 import com.google.accompanist.systemuicontroller.*
+import com.kssidll.workin.ui.theme.theme.*
 
 private val LightColorScheme = lightColorScheme(
     primary = light_primary,
     onPrimary = light_onPrimary,
+    primaryContainer = light_primaryContainer,
+    onPrimaryContainer = light_onPrimaryContainer,
     secondary = light_secondary,
     onSecondary = light_onSecondary,
     error = light_error,
@@ -27,6 +30,8 @@ private val LightColorScheme = lightColorScheme(
 private val DarkColorScheme = darkColorScheme(
     primary = dark_primary,
     onPrimary = dark_onPrimary,
+    primaryContainer = dark_primaryContainer,
+    onPrimaryContainer = dark_onPrimaryContainer,
     secondary = dark_secondary,
     onSecondary = dark_onSecondary,
     error = dark_error,
@@ -68,7 +73,7 @@ fun WorkINTheme(
                     darkIcons = !darkTheme
                 )
                 systemUiController.setStatusBarColor(
-                    color = colorScheme.primary,
+                    color = colorScheme.surfaceContainer,
                     darkIcons = !darkTheme
                 )
             } else {
@@ -79,7 +84,7 @@ fun WorkINTheme(
                     darkIcons = darkTheme
                 )
                 systemUiController.setStatusBarColor(
-                    color = colorScheme.primary,
+                    color = colorScheme.surfaceContainer,
                     darkIcons = darkTheme
                 )
             }
