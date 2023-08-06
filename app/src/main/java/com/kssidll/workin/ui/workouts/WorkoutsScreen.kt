@@ -49,7 +49,7 @@ fun WorkoutsRoute(
 @Composable
 fun WorkoutsScreen(
     workouts: Flow<List<Workout>>,
-    sessions: Flow<List<SessionWithWorkouts>>,
+    sessions: Flow<List<SessionWithFullSessionWorkouts>>,
     onAddWorkout: () -> Unit,
     onAddSession: () -> Unit,
 ) {
@@ -81,7 +81,13 @@ fun WorkoutsScreen(
                         modifier = Modifier.fillMaxSize()
                     ) {
                         when (it) {
-                            0 -> SessionsPage(sessions = sessions)
+                            0 -> {
+                                Box {
+                                    val collectedSessions =
+                                        sessions.collectAsState(initial = emptyList()).value
+                                    SessionsPage(collectedSessions = collectedSessions)
+                                }
+                            }
 
                             1 -> {
                                 Box {

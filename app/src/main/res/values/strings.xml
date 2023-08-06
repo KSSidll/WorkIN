@@ -40,4 +40,7 @@
     <string name="lower_weight_05_description">Lower the weight unit by 0.5</string>
     <string name="remove_item_session_builder">Remove this workout from the session</string>
     <string name="no_workout_session_builder_item">Tap to select a Workout</string>
+    <string name="start_session">Start this session</string>
+    <string name="contract_session_workout_details">Contract the list of workout details</string>
+    <string name="expand_session_workout_details">Expand the list of workout details</string>
 </resources>

@@ -24,7 +24,7 @@ class WorkoutsViewModel @Inject constructor(
         return workoutRepository.getAllDescFlow()
     }
 
-    fun getAllSessionsDescFlow(): Flow<List<SessionWithWorkouts>> {
-        return sessionRepository.getAllDescFlow()
+    fun getAllSessionsDescFlow(): Flow<List<SessionWithFullSessionWorkouts>> {
+        return sessionRepository.getAllMergedSessionsWithWorkouts()
     }
 }

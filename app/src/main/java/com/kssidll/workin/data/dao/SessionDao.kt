@@ -9,7 +9,11 @@ interface SessionDao {
 
     @Transaction
     @Query("SELECT * FROM session ORDER BY id DESC")
-    fun getAllDescFlow(): Flow<List<SessionWithWorkouts>>
+    fun getAllDescFlow(): Flow<List<SessionWithSessionWorkouts>>
+
+    @Transaction
+    @Query("SELECT * FROM sessionworkout WHERE sessionId = :sessionId")
+    suspend fun getFullSessionWorkouts(sessionId: Long): List<FullSessionWorkout>
 
     @Insert
     suspend fun insert(session: Session): Long

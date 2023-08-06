@@ -21,6 +21,14 @@ enum class RepetitionTypes(val id: Int) {
     Repetitions(0),
     Seconds(1),
     RiR(2)
+
+    ;
+    companion object {
+        private val idMap = RepetitionTypes.values()
+            .associateBy { it.id }
+
+        fun getById(id: Int) = idMap[id]
+    }
 }
 
 @Composable
@@ -46,6 +54,14 @@ enum class WeightTypes(
     BodyMass(2, true),
     KGBodyMass(3),
     LBBodyMass(4),
+
+    ;
+    companion object {
+        private val idMap = WeightTypes.values()
+            .associateBy { it.id }
+
+        fun getById(id: Int) = idMap[id]
+    }
 }
 
 @Composable

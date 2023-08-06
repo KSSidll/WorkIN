@@ -62,7 +62,7 @@ fun LazyItemScope.SessionBuilderItem(
                                 else MaterialTheme.colorScheme.outline,
                                 shape = RoundedCornerShape(12.dp)
                             )
-                            .height(OutlinedTextFieldDefaults.MinHeight)
+                            .height(65.dp)
                             .width(223.dp)
                             .clickable(
                                 interactionSource = remember { MutableInteractionSource() },
@@ -93,7 +93,9 @@ fun LazyItemScope.SessionBuilderItem(
 
                     OutlinedTextField(
                         singleLine = true,
-                        modifier = Modifier.width(70.dp),
+                        modifier = Modifier
+                            .width(70.dp)
+                            .height(65.dp),
                         value = thisWorkout.repetitionCount.value.toString(),
                         onValueChange = { newValue ->
                             if (newValue.isBlank()) {
@@ -111,12 +113,9 @@ fun LazyItemScope.SessionBuilderItem(
 
                     Spacer(modifier = Modifier.width(2.dp))
 
-                    Column(
-                        modifier = Modifier.height(
-                            OutlinedTextFieldDefaults.MinHeight
-                        ),
-                    ) {
-                        Spacer(modifier = Modifier.height(5.dp))
+                    Column(modifier = Modifier.height(65.dp)) {
+                        Spacer(modifier = Modifier.height(8.dp))
+
                         FilledIconButton(
                             modifier = Modifier
                                 .weight(1F)
@@ -164,7 +163,7 @@ fun LazyItemScope.SessionBuilderItem(
                                 contentDescription = stringResource(id = R.string.lower_repetition_count_1_description),
                             )
                         }
-                        Spacer(modifier = Modifier.height(5.dp))
+                        Spacer(modifier = Modifier.height(8.dp))
                     }
                     Spacer(modifier = Modifier.width(12.dp))
 
@@ -179,7 +178,7 @@ fun LazyItemScope.SessionBuilderItem(
                                 color = MaterialTheme.colorScheme.outline,
                                 shape = RoundedCornerShape(12.dp)
                             )
-                            .height(OutlinedTextFieldDefaults.MinHeight)
+                            .height(65.dp)
                             .width(120.dp)
                             .clickable(
                                 interactionSource = remember { MutableInteractionSource() },
@@ -228,7 +227,7 @@ fun LazyItemScope.SessionBuilderItem(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    Box (
+                    Box(
                         modifier = Modifier.width(223.dp)
                     ) {
                         var currentlyResizing: Boolean by remember {
@@ -241,7 +240,9 @@ fun LazyItemScope.SessionBuilderItem(
                             ) {
                                 OutlinedTextField(
                                     singleLine = true,
-                                    modifier = Modifier.width(70.dp),
+                                    modifier = Modifier
+                                        .width(70.dp)
+                                        .height(65.dp),
                                     value = thisWorkout.weight.value.toString(),
                                     onValueChange = { newValue ->
                                         if (newValue.isBlank()) {
@@ -259,12 +260,8 @@ fun LazyItemScope.SessionBuilderItem(
 
                                 Spacer(modifier = Modifier.width(2.dp))
 
-                                Column(
-                                    modifier = Modifier.height(
-                                        OutlinedTextFieldDefaults.MinHeight
-                                    ),
-                                ) {
-                                    Spacer(modifier = Modifier.height(5.dp))
+                                Column(modifier = Modifier.height(65.dp)) {
+                                    Spacer(modifier = Modifier.height(8.dp))
                                     FilledIconButton(
                                         modifier = Modifier
                                             .weight(1F)
@@ -312,7 +309,7 @@ fun LazyItemScope.SessionBuilderItem(
                                             contentDescription = stringResource(id = R.string.lower_weight_05_description),
                                         )
                                     }
-                                    Spacer(modifier = Modifier.height(5.dp))
+                                    Spacer(modifier = Modifier.height(8.dp))
                                 }
                                 Spacer(modifier = Modifier.width(12.dp))
                             }
@@ -351,7 +348,7 @@ fun LazyItemScope.SessionBuilderItem(
                                         color = MaterialTheme.colorScheme.outline,
                                         shape = RoundedCornerShape(12.dp)
                                     )
-                                    .height(OutlinedTextFieldDefaults.MinHeight)
+                                    .height(65.dp)
                                     .width(currentWidth)
                                     .clickable(
                                         interactionSource = remember { MutableInteractionSource() },
@@ -364,7 +361,10 @@ fun LazyItemScope.SessionBuilderItem(
                             ) {
                                 Text(
                                     text = thisWorkout.weightType.value.getTranslation(),
-                                    modifier = Modifier.padding(vertical = 6.dp, horizontal = 12.dp),
+                                    modifier = Modifier.padding(
+                                        vertical = 6.dp,
+                                        horizontal = 12.dp
+                                    ),
                                     maxLines = 2
                                 )
 

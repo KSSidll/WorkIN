@@ -74,10 +74,45 @@ data class SessionWorkout(
     )
 }
 
-data class SessionWithWorkouts(
+/**
+ * SessionWorkout with the workout itself instead of just the id
+ */
+data class FullSessionWorkout(
+    @Embedded val sessionWorkout: SessionWorkout,
+    @Relation(
+        parentColumn = "workoutId",
+        entityColumn = "id",
+    ) val workout: Workout
+)
+
+data class SessionWithSessionWorkouts(
     @Embedded val session: Session,
     @Relation(
         parentColumn = "id",
-        entityColumn = "sessionId"
+        entityColumn = "sessionId",
     ) val workouts: List<SessionWorkout>
 )
+
+data class SessionWithFullSessionWorkouts(
+    val session: Session,
+    val workouts: List<FullSessionWorkout>
+)
+
+/**
+ * Assumes that the FullSessionWorkout list contains the same sessionWorkouts as the SessionWithSessionWorkouts
+ */
+// This is very not great, but no idea how to do that normally, and for some reason Room doesn't support complex nested structures AFAIK
+fun SessionWithSessionWorkouts.merge(fullSessionWorkouts: List<FullSessionWorkout>): SessionWithFullSessionWorkouts {
+    return SessionWithFullSessionWorkouts(
+        session = this.session,
+        workouts = this.workouts.map { sessionWorkout ->
+            FullSessionWorkout(
+                sessionWorkout = sessionWorkout,
+                workout = fullSessionWorkouts.find {
+                    sessionWorkout == it.sessionWorkout
+                }!!.workout
+            )
+        }
+            .sortedBy { it.sessionWorkout.order }
+    )
+}

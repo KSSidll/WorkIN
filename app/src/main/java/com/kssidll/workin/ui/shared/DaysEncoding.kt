@@ -4,6 +4,8 @@ import android.content.*
 import com.kssidll.workin.*
 import kotlin.experimental.*
 
+
+// TODO rework based on AddSessionViewModel translation implementation
 object EncodedDays {
     const val MONDAY: Byte = (1 shl 0).toByte()
     const val TUESDAY: Byte = (1 shl 1).toByte()

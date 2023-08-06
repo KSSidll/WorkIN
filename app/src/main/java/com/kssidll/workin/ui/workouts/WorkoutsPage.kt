@@ -24,7 +24,7 @@ fun WorkoutsPage(
         SelectWorkoutSubpage(
             collectedWorkouts = collectedWorkouts,
             onSelect = {
-
+                // TODO implement workout editing
             }
         )
     }
