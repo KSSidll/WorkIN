@@ -2,6 +2,8 @@ package com.kssidll.workin.ui.addsession
 
 import android.annotation.*
 import android.content.res.*
+import androidx.compose.animation.*
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.*
 import androidx.compose.foundation.interaction.*
@@ -23,7 +25,9 @@ import androidx.core.text.*
 import com.kssidll.workin.R
 import com.kssidll.workin.ui.shared.*
 import com.kssidll.workin.ui.theme.*
+import kotlinx.coroutines.*
 import org.burnoutcrew.reorderable.*
+import kotlin.concurrent.*
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -33,6 +37,7 @@ fun LazyItemScope.SessionBuilderItem(
     thisWorkout: AddSessionWorkoutData,
     onWorkoutSearch: (Long) -> Unit
 ) {
+    val scope = rememberCoroutineScope()
     Column {
         Box(
             modifier = Modifier
@@ -54,7 +59,7 @@ fun LazyItemScope.SessionBuilderItem(
                             .border(
                                 width = OutlinedTextFieldDefaults.UnfocusedBorderThickness,
                                 color = if (thisWorkout.isError.value) MaterialTheme.colorScheme.error
-                                    else MaterialTheme.colorScheme.outline,
+                                else MaterialTheme.colorScheme.outline,
                                 shape = RoundedCornerShape(12.dp)
                             )
                             .height(OutlinedTextFieldDefaults.MinHeight)
@@ -72,7 +77,7 @@ fun LazyItemScope.SessionBuilderItem(
                             modifier = Modifier.padding(vertical = 6.dp, horizontal = 12.dp),
                             maxLines = 2,
                             color = if (thisWorkout.isError.value) MaterialTheme.colorScheme.error
-                                else MaterialTheme.colorScheme.onSurface
+                            else MaterialTheme.colorScheme.onSurface
                         )
 
                     }
@@ -223,141 +228,170 @@ fun LazyItemScope.SessionBuilderItem(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center
                 ) {
+                    Box (
+                        modifier = Modifier.width(223.dp)
+                    ) {
+                        var currentlyResizing: Boolean by remember {
+                            mutableStateOf(false)
+                        }
 
-                    if (!thisWorkout.weightType.value.hideWeight) {
-                        Row {
-                            OutlinedTextField(
-                                singleLine = true,
-                                modifier = Modifier.width(70.dp),
-                                value = thisWorkout.weight.value.toString(),
-                                onValueChange = { newValue ->
-                                    if (newValue.isBlank()) {
-                                        thisWorkout.weight.value = 0F
-                                    } else if (newValue.isDigitsOnly()) {
-                                        thisWorkout.weight.value =
-                                            newValue.toFloat()
-                                    }
-                                },
-                                shape = RoundedCornerShape(12.dp),
-                                keyboardOptions = KeyboardOptions(
-                                    keyboardType = KeyboardType.Decimal
-                                ),
-                            )
-
-                            Spacer(modifier = Modifier.width(2.dp))
-
-                            Column(
-                                modifier = Modifier.height(
-                                    OutlinedTextFieldDefaults.MinHeight
-                                ),
+                        if (!thisWorkout.weightType.value.hideWeight && !currentlyResizing) {
+                            Row(
+                                modifier = Modifier.align(Alignment.CenterStart)
                             ) {
-                                Spacer(modifier = Modifier.height(5.dp))
-                                FilledIconButton(
-                                    modifier = Modifier
-                                        .weight(1F)
-                                        .width(18.dp),
-                                    onClick = {
-                                        thisWorkout.weight.value =
-                                            thisWorkout.weight.value.plus(0.5F)
-                                    },
-                                    colors = IconButtonColors(
-                                        contentColor = MaterialTheme.colorScheme.onTertiary,
-                                        containerColor = MaterialTheme.colorScheme.tertiary,
-                                        disabledContentColor = MaterialTheme.colorScheme.onTertiary,
-                                        disabledContainerColor = MaterialTheme.colorScheme.tertiary,
-                                    )
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Sharp.KeyboardArrowUp,
-                                        contentDescription = stringResource(id = R.string.increase_weight_05_description),
-                                    )
-                                }
-
-                                Spacer(modifier = Modifier.height(2.dp))
-
-                                FilledIconButton(
-                                    modifier = Modifier
-                                        .weight(1F)
-                                        .width(18.dp),
-                                    onClick = {
-                                        thisWorkout.weight.apply {
-                                            if (this.value == 0F) return@apply
-
-                                            this.value = this.value.minus(0.5F)
+                                OutlinedTextField(
+                                    singleLine = true,
+                                    modifier = Modifier.width(70.dp),
+                                    value = thisWorkout.weight.value.toString(),
+                                    onValueChange = { newValue ->
+                                        if (newValue.isBlank()) {
+                                            thisWorkout.weight.value = 0F
+                                        } else if (newValue.isDigitsOnly()) {
+                                            thisWorkout.weight.value =
+                                                newValue.toFloat()
                                         }
                                     },
-                                    colors = IconButtonColors(
-                                        contentColor = MaterialTheme.colorScheme.onTertiary,
-                                        containerColor = MaterialTheme.colorScheme.tertiary,
-                                        disabledContentColor = MaterialTheme.colorScheme.onTertiary,
-                                        disabledContainerColor = MaterialTheme.colorScheme.tertiary,
-                                    )
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Sharp
-                                            .KeyboardArrowDown,
-                                        contentDescription = stringResource(id = R.string.lower_weight_05_description),
-                                    )
-                                }
-                                Spacer(modifier = Modifier.height(5.dp))
-                            }
-                            Spacer(modifier = Modifier.width(12.dp))
-                        }
-                    }
-
-
-                    var menuExpanded: Boolean by remember {
-                        mutableStateOf(false)
-                    }
-
-                    Box(
-                        modifier = Modifier
-                            .border(
-                                width = OutlinedTextFieldDefaults.UnfocusedBorderThickness,
-                                color = MaterialTheme.colorScheme.outline,
-                                shape = RoundedCornerShape(12.dp)
-                            )
-                            .height(OutlinedTextFieldDefaults.MinHeight)
-                            .width(
-                                if (thisWorkout.weightType.value.hideWeight) {
-                                    223.dp
-                                } else 120.dp
-                            )
-                            .clickable(
-                                interactionSource = remember { MutableInteractionSource() },
-                                indication = null
-                            ) {
-                                menuExpanded = true
-                            },
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = thisWorkout.weightType.value.getTranslation(),
-                            modifier = Modifier.padding(vertical = 6.dp, horizontal = 12.dp),
-                            maxLines = 2
-                        )
-
-                        DropdownMenu(
-                            expanded = menuExpanded,
-                            onDismissRequest = {
-                                menuExpanded = false
-                            },
-                            modifier = Modifier.background
-                                (MaterialTheme.colorScheme.surfaceContainer)
-
-                        ) {
-                            for (item in WeightTypes.entries) {
-                                if (item == thisWorkout.weightType.value) continue
-
-                                DropdownMenuItem(
-                                    text = {
-                                        Text(text = item.getTranslation())
-                                    },
-                                    onClick = {
-                                        menuExpanded = false
-                                        thisWorkout.weightType.value = item
-                                    },
+                                    shape = RoundedCornerShape(12.dp),
+                                    keyboardOptions = KeyboardOptions(
+                                        keyboardType = KeyboardType.Decimal
+                                    ),
                                 )
+
+                                Spacer(modifier = Modifier.width(2.dp))
+
+                                Column(
+                                    modifier = Modifier.height(
+                                        OutlinedTextFieldDefaults.MinHeight
+                                    ),
+                                ) {
+                                    Spacer(modifier = Modifier.height(5.dp))
+                                    FilledIconButton(
+                                        modifier = Modifier
+                                            .weight(1F)
+                                            .width(18.dp),
+                                        onClick = {
+                                            thisWorkout.weight.value =
+                                                thisWorkout.weight.value.plus(0.5F)
+                                        },
+                                        colors = IconButtonColors(
+                                            contentColor = MaterialTheme.colorScheme.onTertiary,
+                                            containerColor = MaterialTheme.colorScheme.tertiary,
+                                            disabledContentColor = MaterialTheme.colorScheme.onTertiary,
+                                            disabledContainerColor = MaterialTheme.colorScheme.tertiary,
+                                        )
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Sharp.KeyboardArrowUp,
+                                            contentDescription = stringResource(id = R.string.increase_weight_05_description),
+                                        )
+                                    }
+
+                                    Spacer(modifier = Modifier.height(2.dp))
+
+                                    FilledIconButton(
+                                        modifier = Modifier
+                                            .weight(1F)
+                                            .width(18.dp),
+                                        onClick = {
+                                            thisWorkout.weight.apply {
+                                                if (this.value == 0F) return@apply
+
+                                                this.value = this.value.minus(0.5F)
+                                            }
+                                        },
+                                        colors = IconButtonColors(
+                                            contentColor = MaterialTheme.colorScheme.onTertiary,
+                                            containerColor = MaterialTheme.colorScheme.tertiary,
+                                            disabledContentColor = MaterialTheme.colorScheme.onTertiary,
+                                            disabledContainerColor = MaterialTheme.colorScheme.tertiary,
+                                        )
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Sharp
+                                                .KeyboardArrowDown,
+                                            contentDescription = stringResource(id = R.string.lower_weight_05_description),
+                                        )
+                                    }
+                                    Spacer(modifier = Modifier.height(5.dp))
+                                }
+                                Spacer(modifier = Modifier.width(12.dp))
+                            }
+                        }
+
+                        var menuExpanded: Boolean by remember {
+                            mutableStateOf(false)
+                        }
+
+                        Box(
+                            modifier = Modifier.align(Alignment.CenterEnd)
+                        ) {
+                            val targetWidth: Dp = if (thisWorkout.weightType.value.hideWeight) {
+                                223.dp
+                            } else {
+                                120.dp
+                            }
+
+                            val currentWidth: Dp by animateDpAsState(
+                                targetValue = targetWidth,
+                                finishedListener = {
+                                    scope.launch {
+                                        // i like how it's "finished" like 700ms or so before it's finished
+                                        // makes sense
+                                        delay(700)
+                                        currentlyResizing = false
+                                    }
+                                },
+                                label = "Weight type resize animation on hide parameter"
+                            )
+
+                            Box(
+                                modifier = Modifier
+                                    .border(
+                                        width = OutlinedTextFieldDefaults.UnfocusedBorderThickness,
+                                        color = MaterialTheme.colorScheme.outline,
+                                        shape = RoundedCornerShape(12.dp)
+                                    )
+                                    .height(OutlinedTextFieldDefaults.MinHeight)
+                                    .width(currentWidth)
+                                    .clickable(
+                                        interactionSource = remember { MutableInteractionSource() },
+                                        indication = null
+                                    ) {
+                                        menuExpanded = true
+                                    }
+                                    .animateContentSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = thisWorkout.weightType.value.getTranslation(),
+                                    modifier = Modifier.padding(vertical = 6.dp, horizontal = 12.dp),
+                                    maxLines = 2
+                                )
+
+                                DropdownMenu(
+                                    expanded = menuExpanded,
+                                    onDismissRequest = {
+                                        menuExpanded = false
+                                    },
+                                    modifier = Modifier.background
+                                        (MaterialTheme.colorScheme.surfaceContainer)
+
+                                ) {
+                                    for (item in WeightTypes.entries) {
+                                        if (item == thisWorkout.weightType.value) continue
+
+                                        DropdownMenuItem(
+                                            text = {
+                                                Text(text = item.getTranslation())
+                                            },
+                                            onClick = {
+                                                if (item.hideWeight) currentlyResizing = true
+                                                menuExpanded = false
+                                                thisWorkout.weightType.value = item
+                                            },
+                                        )
+                                    }
+                                }
                             }
                         }
                     }
@@ -461,8 +495,8 @@ fun LazyItemScope.SessionBuilderItem(
                         disabledContentColor = MaterialTheme.colorScheme.onErrorContainer,
                     ),
                     modifier = Modifier
-                        .size(40.dp)
-                        .padding(6.dp)
+                        .size(50.dp)
+                        .padding(10.dp)
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.delete_forever),
