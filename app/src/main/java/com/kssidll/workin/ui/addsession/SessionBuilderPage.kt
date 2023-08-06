@@ -65,17 +65,20 @@ fun SessionBuilderPage(
     }
 
     if (isWorkoutSearch) {
-        SelectWorkoutSubpage(
-            workouts = userWorkouts,
-            onSelect = {
-                workouts.find { it.id == searchingForId }
-                    ?.apply {
-                        this.workoutName.value = it.name
-                        this.workoutId = it.id
-                    }
-                isWorkoutSearch = false
-            },
-        )
+        Box {
+            val collectedWorkouts = userWorkouts.collectAsState(initial = emptyList()).value
+            SelectWorkoutSubpage(
+                collectedWorkouts = collectedWorkouts,
+                onSelect = {
+                    workouts.find { it.id == searchingForId }
+                        ?.apply {
+                            this.workoutName.value = it.name
+                            this.workoutId = it.id
+                        }
+                    isWorkoutSearch = false
+                },
+            )
+        }
     } else {
         Column {
             Column(

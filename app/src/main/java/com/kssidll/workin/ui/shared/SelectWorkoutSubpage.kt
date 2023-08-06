@@ -12,25 +12,10 @@ import androidx.compose.ui.tooling.preview.*
 import androidx.compose.ui.unit.*
 import com.kssidll.workin.data.data.*
 import com.kssidll.workin.ui.theme.*
-import kotlinx.coroutines.flow.*
 
 @Composable
 fun SelectWorkoutSubpage(
-    workouts: Flow<List<Workout>>,
-    onSelect: (Workout) -> Unit,
-) {
-    val collectedWorkouts = workouts.collectAsState(initial = emptyList()).value
-
-    SelectWorkoutSubpageContent(
-        workouts = collectedWorkouts,
-        onSelect = onSelect
-    )
-}
-
-
-@Composable
-internal fun SelectWorkoutSubpageContent(
-    workouts: List<Workout>,
+    collectedWorkouts: List<Workout>,
     onSelect: (Workout) -> Unit,
 ) {
     Column {
@@ -43,7 +28,7 @@ internal fun SelectWorkoutSubpageContent(
         LazyColumn(
 
         ) {
-            items(workouts) {
+            items(collectedWorkouts) {
                 Row(
                     modifier = Modifier.fillMaxWidth()
                 ) {
@@ -83,7 +68,6 @@ internal fun SelectWorkoutSubpageContent(
                                 )
                             }
 
-
                             Spacer(modifier = Modifier.height(15.dp))
                         }
                     }
@@ -116,8 +100,8 @@ fun SelectWorkoutSubpagePreview() {
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.surface,
         ) {
-            SelectWorkoutSubpageContent(
-                workouts = listOf(
+            SelectWorkoutSubpage(
+                collectedWorkouts = listOf(
                     Workout(0, "name", "description"),
                     Workout(0, "name", "description"),
                     Workout(0, "name", "description"),
