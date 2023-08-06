@@ -2,29 +2,18 @@ package com.kssidll.workin.ui.workouts
 
 import android.content.res.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.res.*
 import androidx.compose.ui.tooling.preview.*
-import androidx.compose.ui.unit.*
 import com.kssidll.workin.R
 import com.kssidll.workin.data.data.*
 import com.kssidll.workin.ui.shared.*
 import com.kssidll.workin.ui.theme.*
-import kotlinx.coroutines.flow.*
 
 @Composable
 fun WorkoutsPage(
-    workouts: Flow<List<Workout>>
-) {
-    val collectedWorkouts = workouts.collectAsState(initial = emptyList()).value
-    WorkoutsPageContent(collectedWorkouts = collectedWorkouts)
-}
-
-@Composable
-internal fun WorkoutsPageContent(
     collectedWorkouts: List<Workout>
 ) {
     Column {
@@ -32,15 +21,12 @@ internal fun WorkoutsPageContent(
             Text(text = stringResource(id = R.string.workouts))
         }
 
-        LazyColumn {
-            items(collectedWorkouts) {
-                Row {
-                    Text(text = it.name)
-                    Spacer(modifier = Modifier.width(15.dp))
-                    Text(text = it.description)
-                }
+        SelectWorkoutSubpage(
+            collectedWorkouts = collectedWorkouts,
+            onSelect = {
+
             }
-        }
+        )
     }
 }
 
@@ -66,7 +52,7 @@ fun WorkoutsPagePreview() {
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background,
         ) {
-            WorkoutsPageContent(
+            WorkoutsPage(
                 collectedWorkouts = listOf(
                     Workout("test", "A")
                 )

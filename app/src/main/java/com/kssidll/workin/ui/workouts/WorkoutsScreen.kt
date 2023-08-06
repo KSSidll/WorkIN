@@ -82,7 +82,15 @@ fun WorkoutsScreen(
                     ) {
                         when (it) {
                             0 -> SessionsPage(sessions = sessions)
-                            1 -> WorkoutsPage(workouts = workouts)
+
+                            1 -> {
+                                Box {
+                                    val collectedWorkouts =
+                                        workouts.collectAsState(initial = emptyList()).value
+
+                                    WorkoutsPage(collectedWorkouts = collectedWorkouts)
+                                }
+                            }
                         }
                     }
                 }
