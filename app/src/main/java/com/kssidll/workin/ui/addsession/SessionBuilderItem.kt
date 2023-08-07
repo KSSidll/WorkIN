@@ -2,6 +2,7 @@ package com.kssidll.workin.ui.addsession
 
 import android.annotation.*
 import android.content.res.*
+import android.util.*
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.*
 import androidx.compose.foundation.text.*
+import androidx.compose.foundation.text.selection.*
 import androidx.compose.material.icons.*
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.material.icons.sharp.*
@@ -90,24 +92,38 @@ fun LazyItemScope.SessionBuilderItem(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center
                 ) {
+                    var repCountText: String by remember {
+                        mutableStateOf(thisWorkout.repetitionCount.value.toString())
+                    }
 
                     OutlinedTextField(
                         singleLine = true,
                         modifier = Modifier
                             .width(70.dp)
                             .height(65.dp),
-                        value = thisWorkout.repetitionCount.value.toString(),
+                        value = repCountText,
                         onValueChange = { newValue ->
                             if (newValue.isBlank()) {
                                 thisWorkout.repetitionCount.value = 0
+                                repCountText = newValue
                             } else if (newValue.isDigitsOnly()) {
                                 thisWorkout.repetitionCount.value =
                                     newValue.toInt()
+                                repCountText = thisWorkout.repetitionCount.value.toString()
                             }
                         },
                         shape = RoundedCornerShape(12.dp),
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Number
+                        ),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            cursorColor = MaterialTheme.colorScheme.onSurface,
+                            selectionColors = TextSelectionColors(
+                                handleColor = MaterialTheme.colorScheme.tertiary,
+                                backgroundColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.4F)
+                            ),
+                            focusedBorderColor = MaterialTheme.colorScheme.outline,
+                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
                         ),
                     )
 
@@ -123,6 +139,7 @@ fun LazyItemScope.SessionBuilderItem(
                             onClick = {
                                 thisWorkout.repetitionCount.value =
                                     thisWorkout.repetitionCount.value.inc()
+                                repCountText = thisWorkout.repetitionCount.value.toString()
                             },
                             colors = IconButtonColors(
                                 contentColor = MaterialTheme.colorScheme.onTertiary,
@@ -148,6 +165,7 @@ fun LazyItemScope.SessionBuilderItem(
                                     if (this.value == 0) return@apply
 
                                     this.value = this.value.dec()
+                                    repCountText = thisWorkout.repetitionCount.value.toString()
                                 }
                             },
                             colors = IconButtonColors(
@@ -238,23 +256,45 @@ fun LazyItemScope.SessionBuilderItem(
                             Row(
                                 modifier = Modifier.align(Alignment.CenterStart)
                             ) {
+                                var weightText: String by remember {
+                                    mutableStateOf(thisWorkout.weight.value.toString())
+                                }
+
                                 OutlinedTextField(
                                     singleLine = true,
                                     modifier = Modifier
                                         .width(70.dp)
                                         .height(65.dp),
-                                    value = thisWorkout.weight.value.toString(),
+                                    value = weightText,
                                     onValueChange = { newValue ->
                                         if (newValue.isBlank()) {
                                             thisWorkout.weight.value = 0F
-                                        } else if (newValue.isDigitsOnly()) {
+                                            weightText = String()
+                                        } else if (newValue.matches(Regex("""\d+?\.?\d{0,2}"""))) {
                                             thisWorkout.weight.value =
                                                 newValue.toFloat()
+                                            weightText = thisWorkout.weight.value.toString().dropLast(
+                                                if (newValue.last() == '.') 1
+                                                else if (
+                                                    thisWorkout.weight.value.toString().endsWith(".0") &&
+                                                    !newValue.endsWith(".0")
+                                                    ) 2
+                                                else 0
+                                            )
                                         }
                                     },
                                     shape = RoundedCornerShape(12.dp),
                                     keyboardOptions = KeyboardOptions(
                                         keyboardType = KeyboardType.Decimal
+                                    ),
+                                    colors = OutlinedTextFieldDefaults.colors(
+                                        cursorColor = MaterialTheme.colorScheme.onSurface,
+                                        selectionColors = TextSelectionColors(
+                                            handleColor = MaterialTheme.colorScheme.tertiary,
+                                            backgroundColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.4F)
+                                        ),
+                                        focusedBorderColor = MaterialTheme.colorScheme.outline,
+                                        focusedTextColor = MaterialTheme.colorScheme.onSurface,
                                     ),
                                 )
 
@@ -269,6 +309,7 @@ fun LazyItemScope.SessionBuilderItem(
                                         onClick = {
                                             thisWorkout.weight.value =
                                                 thisWorkout.weight.value.plus(0.5F)
+                                                weightText = thisWorkout.weight.value.toString()
                                         },
                                         colors = IconButtonColors(
                                             contentColor = MaterialTheme.colorScheme.onTertiary,
@@ -294,6 +335,7 @@ fun LazyItemScope.SessionBuilderItem(
                                                 if (this.value == 0F) return@apply
 
                                                 this.value = this.value.minus(0.5F)
+                                                weightText = thisWorkout.weight.value.toString()
                                             }
                                         },
                                         colors = IconButtonColors(
