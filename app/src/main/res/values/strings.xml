@@ -45,4 +45,5 @@
     <string name="expand_session_workout_details">Expand the list of workout details</string>
     <string name="sessions_today">Sessions Today</string>
     <string name="sessions_tomorrow">Sessions Tomorrow</string>
+    <string name="timer_end_early_text">End Early</string>
 </resources>

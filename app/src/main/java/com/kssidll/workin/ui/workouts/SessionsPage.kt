@@ -16,7 +16,8 @@ import com.kssidll.workin.ui.theme.*
 
 @Composable
 fun SessionsPage(
-    collectedSessions: List<SessionWithFullSessionWorkouts>
+    collectedSessions: List<SessionWithFullSessionWorkouts>,
+    onSessionStart: (Long) -> Unit,
 ) {
     Column {
         PrimaryTopHeader {
@@ -33,7 +34,7 @@ fun SessionsPage(
             },
             showStartIcon = true,
             onStartIconClick = {
-
+                onSessionStart(it.session.id)
             }
         )
     }
@@ -64,7 +65,8 @@ fun SessionsPagePreview() {
             SessionsPage(
                 collectedSessions = listOf(
 
-                )
+                ),
+                onSessionStart = {}
             )
         }
     }

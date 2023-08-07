@@ -12,6 +12,10 @@ interface SessionDao {
     fun getAllDescFlow(): Flow<List<SessionWithSessionWorkouts>>
 
     @Transaction
+    @Query("SELECT * FROM session WHERE id = :sessionId")
+    suspend fun getById(sessionId: Long): SessionWithSessionWorkouts
+
+    @Transaction
     @Query("SELECT * FROM sessionworkout WHERE sessionId = :sessionId")
     suspend fun getFullSessionWorkouts(sessionId: Long): List<FullSessionWorkout>
 

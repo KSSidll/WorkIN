@@ -6,10 +6,12 @@ import androidx.navigation.compose.*
 import com.kssidll.workin.NavigationDestinations.ADD_SESSION_ROUTE
 import com.kssidll.workin.NavigationDestinations.ADD_WORKOUT_ROUTE
 import com.kssidll.workin.NavigationDestinations.DASHBOARD_ROUTE
+import com.kssidll.workin.NavigationDestinations.SESSION_ROUTE
 import com.kssidll.workin.NavigationDestinations.WORKOUTS_ROUTE
 import com.kssidll.workin.ui.addsession.*
 import com.kssidll.workin.ui.addworkout.*
 import com.kssidll.workin.ui.dashboard.*
+import com.kssidll.workin.ui.session.*
 import com.kssidll.workin.ui.workouts.*
 
 object NavigationDestinations {
@@ -17,6 +19,7 @@ object NavigationDestinations {
     const val WORKOUTS_ROUTE = "workouts"
     const val ADD_WORKOUT_ROUTE = "addworkout"
     const val ADD_SESSION_ROUTE = "addsession"
+    const val SESSION_ROUTE = "session"
 }
 
 val LocalNavigation = compositionLocalOf<NavigationController> {
@@ -44,6 +47,7 @@ interface INavigationController {
     fun navigateWorkouts()
     fun navigateAddWorkout()
     fun navigateAddSession()
+    fun navigateSession(sessionId: Long)
 }
 
 class NavigationController(
@@ -71,6 +75,10 @@ class NavigationController(
     override fun navigateAddSession() {
         navController.navigate(ADD_SESSION_ROUTE)
     }
+
+    override fun navigateSession(sessionId: Long) {
+        navController.navigate("$SESSION_ROUTE/$sessionId")
+    }
 }
 
 @Composable
@@ -89,12 +97,17 @@ fun Navigation(
         ) {
             composable(DASHBOARD_ROUTE) {
                 DashboardRoute(
-
+                    onSessionStart = {
+                        navigationController.navigateSession(it)
+                    },
                 )
             }
 
             composable(WORKOUTS_ROUTE) {
                 WorkoutsRoute(
+                    onSessionStart = {
+                        navigationController.navigateSession(it)
+                    },
                     onAddWorkout = {
                         navigationController.navigateAddWorkout()
                     },
@@ -116,6 +129,20 @@ fun Navigation(
                 AddSessionRoute(
                     onBack = {
                         navController.popBackStack()
+                    }
+                )
+            }
+
+            composable(
+                "$SESSION_ROUTE/{sessionId}",
+                arguments = listOf(
+                    navArgument("sessionId") { type = NavType.LongType }
+                )
+            ) {
+                SessionRoute(
+                    sessionId = it.arguments?.getLong("sessionId")!!,
+                    onBack = {
+                        navigationController.popToDashboard()
                     }
                 )
             }

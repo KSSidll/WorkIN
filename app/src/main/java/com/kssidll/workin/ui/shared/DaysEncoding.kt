@@ -67,6 +67,7 @@ fun decodeDays(
 
     return decodedDays
 }
+
 class EncodedDaysBuilder {
     private var value: Int = 0
 

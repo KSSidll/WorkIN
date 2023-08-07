@@ -30,4 +30,8 @@ class NavigationControllerMock(
     override fun navigateAddSession() {
         error("how did you call this, this is a mock controller")
     }
+
+    override fun navigateSession(sessionId: Long) {
+        error("how did you call this, this is a mock controller")
+    }
 }

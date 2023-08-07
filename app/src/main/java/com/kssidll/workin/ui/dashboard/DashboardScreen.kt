@@ -17,18 +17,20 @@ import com.kssidll.workin.data.data.*
 import com.kssidll.workin.mock.*
 import com.kssidll.workin.ui.shared.*
 import com.kssidll.workin.ui.theme.*
-import java.util.Calendar
+import java.util.*
 
 /// Route ///
 @Composable
 fun DashboardRoute(
-
+    onSessionStart: (Long) -> Unit,
 ) {
     val dashboardViewModel: DashboardViewModel = hiltViewModel()
 
     ScreenWithBottomNavBar {
         DashboardScreen(
-            sessions = dashboardViewModel.getAllSessionsDescFlow().collectAsState(initial = emptyList()).value,
+            onSessionStart = onSessionStart,
+            sessions = dashboardViewModel.getAllSessionsDescFlow()
+                .collectAsState(initial = emptyList()).value,
         )
     }
 }
@@ -37,13 +39,17 @@ fun DashboardRoute(
 /// Screen ///
 @Composable
 fun DashboardScreen(
+    onSessionStart: (Long) -> Unit,
     sessions: List<SessionWithFullSessionWorkouts>,
 ) {
-    val currentDay: Byte = (1).shl(Calendar.getInstance().get(Calendar.DAY_OF_WEEK)-1).toByte()
-    val nextDay: Byte = currentDay.toInt().shl(1).toByte()
-
-    Log.d("day filtering", "current day = $currentDay")
-    Log.d("day filtering", "next day = $nextDay")
+    val currentDay: Byte = (1).shl(
+        Calendar.getInstance()
+            .get(Calendar.DAY_OF_WEEK) - 1
+    )
+        .toByte()
+    val nextDay: Byte = currentDay.toInt()
+        .shl(1)
+        .toByte()
 
     val sessionsToday = mutableListOf<SessionWithFullSessionWorkouts>()
     val sessionsTomorrow = mutableListOf<SessionWithFullSessionWorkouts>()
@@ -84,11 +90,10 @@ fun DashboardScreen(
                     SessionCardItem(
                         session = it,
                         onSelect = {
-
                         },
                         showStartIcon = true,
-                        onStartIconClick = {
-
+                        onStartIconClick = { startedSession ->
+                            onSessionStart(startedSession.session.id)
                         }
                     )
                 }
@@ -122,8 +127,8 @@ fun DashboardScreen(
 
                             },
                             showStartIcon = true,
-                            onStartIconClick = {
-
+                            onStartIconClick = { startedSession ->
+                                onSessionStart(startedSession.session.id)
                             }
                         )
                     }
@@ -164,6 +169,7 @@ fun DashboardScreenPreview() {
                 navigationController = NavigationControllerMock(NavigationDestinations.DASHBOARD_ROUTE)
             ) {
                 DashboardScreen(
+                    onSessionStart = {},
                     sessions = listOf()
                 )
             }

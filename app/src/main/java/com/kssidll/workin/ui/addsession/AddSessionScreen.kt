@@ -122,7 +122,7 @@ fun AddSessionScreen(
                 Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
             ) {
-                repeat(3) { iteration ->
+                repeat(pagerState.pageCount) { iteration ->
                     val color = if (pagerState.currentPage == iteration) MaterialTheme
                         .colorScheme.tertiary else MaterialTheme.colorScheme.onSurface
                     Box(

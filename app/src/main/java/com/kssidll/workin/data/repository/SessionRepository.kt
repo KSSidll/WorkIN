@@ -18,6 +18,13 @@ class SessionRepository(private val sessionDao: SessionDao) {
             }
     }
 
+    suspend fun getMergedSessionWithWorkoutsById(sessionId: Long): SessionWithFullSessionWorkouts {
+        return sessionDao.getById(sessionId)
+            .merge(
+                sessionDao.getFullSessionWorkouts(sessionId)
+            )
+    }
+
     suspend fun insert(session: Session): Long {
         return sessionDao.insert(session)
     }

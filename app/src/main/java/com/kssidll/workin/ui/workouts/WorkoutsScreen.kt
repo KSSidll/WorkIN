@@ -28,6 +28,7 @@ import kotlinx.coroutines.flow.*
 /// Route ///
 @Composable
 fun WorkoutsRoute(
+    onSessionStart: (Long) -> Unit,
     onAddWorkout: () -> Unit,
     onAddSession: () -> Unit,
 ) {
@@ -35,6 +36,7 @@ fun WorkoutsRoute(
 
     ScreenWithBottomNavBar {
         WorkoutsScreen(
+            onSessionStart = onSessionStart,
             workouts = workoutsViewModel.getAllWorkoutsDescFlow(),
             sessions = workoutsViewModel.getAllSessionsDescFlow(),
             onAddWorkout = onAddWorkout,
@@ -48,6 +50,7 @@ fun WorkoutsRoute(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun WorkoutsScreen(
+    onSessionStart: (Long) -> Unit,
     workouts: Flow<List<Workout>>,
     sessions: Flow<List<SessionWithFullSessionWorkouts>>,
     onAddWorkout: () -> Unit,
@@ -85,7 +88,10 @@ fun WorkoutsScreen(
                                 Box {
                                     val collectedSessions =
                                         sessions.collectAsState(initial = emptyList()).value
-                                    SessionsPage(collectedSessions = collectedSessions)
+                                    SessionsPage(
+                                        collectedSessions = collectedSessions,
+                                        onSessionStart = onSessionStart,
+                                    )
                                 }
                             }
 
@@ -231,6 +237,7 @@ fun WorkoutsScreenPreview() {
                 navigationController = NavigationControllerMock(NavigationDestinations.WORKOUTS_ROUTE)
             ) {
                 WorkoutsScreen(
+                    onSessionStart = {},
                     workouts = flowOf(),
                     sessions = flowOf(),
                     onAddWorkout = {},
