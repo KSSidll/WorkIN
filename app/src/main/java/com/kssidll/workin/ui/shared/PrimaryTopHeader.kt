@@ -8,7 +8,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.tooling.preview.*
 import androidx.compose.ui.unit.*
-import com.kssidll.workin.ui.theme.*
 
 @Composable
 fun PrimaryTopHeader(
@@ -33,27 +32,23 @@ fun PrimaryTopHeader(
 /// Header Preview ///
 @Preview(
     group = "PrimaryTopHeader",
-    name = "Primary Top Header Dark",
+    name = "Dark",
     showBackground = true,
     apiLevel = 29,
     uiMode = Configuration.UI_MODE_NIGHT_YES
 )
 @Preview(
     group = "PrimaryTopHeader",
-    name = "Primary Top Header Light",
+    name = "Light",
     showBackground = true,
     apiLevel = 29,
     uiMode = Configuration.UI_MODE_NIGHT_NO
 )
 @Composable
 fun PrimaryTopHeaderPreview() {
-    WorkINTheme {
-        Surface(
-            color = MaterialTheme.colorScheme.surface
-        ) {
-            PrimaryTopHeader {
-                Text(text = "test")
-            }
+    Surface {
+        PrimaryTopHeader {
+            Text(text = "test")
         }
     }
 }

@@ -116,7 +116,7 @@ fun AddSessionScreen(
                 }
             },
             icon = if (pagerState.currentPage == 0) Icons.Rounded.Close else Icons.Rounded.ArrowBack,
-            iconDescription = stringResource(id = R.string.cancel_add_session)
+            iconDescription = stringResource(id = R.string.cancel_add_session),
         ) {
             Row(
                 Modifier.fillMaxWidth(),
@@ -224,14 +224,14 @@ fun AddSessionScreen(
 /// Screen Preview ///
 @Preview(
     group = "AddSessionScreen",
-    name = "Add Session Screen Dark",
+    name = "Dark",
     showBackground = true,
     apiLevel = 29,
     uiMode = Configuration.UI_MODE_NIGHT_YES
 )
 @Preview(
     group = "AddSessionScreen",
-    name = "Add Session Screen Light",
+    name = "Light",
     showBackground = true,
     apiLevel = 29,
     uiMode = Configuration.UI_MODE_NIGHT_NO
@@ -239,10 +239,7 @@ fun AddSessionScreen(
 @Composable
 fun AddSessionScreenPreview() {
     WorkINTheme {
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.surface,
-        ) {
+        Surface(modifier = Modifier.fillMaxSize()) {
             AddSessionScreen(
                 onBack = {},
                 onSessionAdd = {},

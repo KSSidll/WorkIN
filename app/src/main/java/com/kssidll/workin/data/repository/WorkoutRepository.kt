@@ -9,6 +9,10 @@ class WorkoutRepository(private val workoutDao: WorkoutDao) {
         return workoutDao.getAllDescFlow()
     }
 
+    suspend fun getById(workoutId: Long): Workout {
+        return workoutDao.getById(workoutId)
+    }
+
     suspend fun insert(workout: Workout): Long {
         return workoutDao.insert(workout)
     }

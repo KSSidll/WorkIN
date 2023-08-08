@@ -20,7 +20,8 @@ fun SecondaryTopHeader(
     onIconClick: () -> Unit,
     icon: ImageVector = Icons.Rounded.ArrowBack,
     iconDescription: String = stringResource(id = R.string.go_to_previews_screen_description),
-    content: @Composable () -> Unit
+    additionalContent: @Composable BoxScope.() -> Unit = {},
+    text: @Composable () -> Unit,
 ) {
     Box(
         contentAlignment = Alignment.CenterStart,
@@ -45,22 +46,24 @@ fun SecondaryTopHeader(
             modifier = Modifier.fillMaxWidth(),
             contentAlignment = Alignment.Center
         ) {
-            content()
+            text()
         }
+
+        additionalContent()
     }
 }
 
 /// Screen Preview ///
 @Preview(
     group = "SecondaryTopHeader",
-    name = "Secondary Top Header Dark",
+    name = "Dark",
     showBackground = true,
     apiLevel = 29,
     uiMode = Configuration.UI_MODE_NIGHT_YES
 )
 @Preview(
     group = "SecondaryTopHeader",
-    name = "Secondary Top Header Light",
+    name = "Light",
     showBackground = true,
     apiLevel = 29,
     uiMode = Configuration.UI_MODE_NIGHT_NO
@@ -68,11 +71,9 @@ fun SecondaryTopHeader(
 @Composable
 fun SecondaryTopHeaderPreview() {
     WorkINTheme {
-        Surface(
-            color = MaterialTheme.colorScheme.surface
-        ) {
+        Surface(color = MaterialTheme.colorScheme.surface) {
             SecondaryTopHeader(
-                onIconClick = {}
+                onIconClick = {},
             ) {}
         }
     }

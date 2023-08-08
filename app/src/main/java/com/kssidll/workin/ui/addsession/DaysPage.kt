@@ -298,14 +298,14 @@ fun DaysPage(
 /// Page Preview ///
 @Preview(
     group = "DaysPage",
-    name = "Days Page Dark",
+    name = "Dark",
     showBackground = true,
     apiLevel = 29,
     uiMode = Configuration.UI_MODE_NIGHT_YES
 )
 @Preview(
     group = "DaysPage",
-    name = "Days Page Light",
+    name = "Light",
     showBackground = true,
     apiLevel = 29,
     uiMode = Configuration.UI_MODE_NIGHT_NO
@@ -314,10 +314,7 @@ fun DaysPage(
 @Composable
 fun DaysPagePreview() {
     WorkINTheme {
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.surface,
-        ) {
+        Surface(modifier = Modifier.fillMaxSize()) {
             DaysPage(
                 onNext = {},
                 mondayChecked = mutableStateOf(false),

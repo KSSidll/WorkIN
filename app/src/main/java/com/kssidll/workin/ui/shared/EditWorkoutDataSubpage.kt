@@ -1,13 +1,10 @@
-package com.kssidll.workin.ui.addsession
+package com.kssidll.workin.ui.shared
 
-import android.annotation.*
 import android.content.res.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.*
 import androidx.compose.foundation.text.*
 import androidx.compose.foundation.text.selection.*
-import androidx.compose.material.icons.*
-import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
@@ -16,17 +13,45 @@ import androidx.compose.ui.res.*
 import androidx.compose.ui.text.input.*
 import androidx.compose.ui.tooling.preview.*
 import androidx.compose.ui.unit.*
-import com.kssidll.workin.R
 import com.kssidll.workin.ui.theme.*
 
+// Data
+data class EditWorkoutDataSubpageState(
+    var name: String = String(),
+    var description: String = String(),
+)
+
+
+// Component
 @Composable
-fun NamePage(
-    onNext: () -> Unit,
-    nameText: MutableState<String>,
-    nameError: MutableState<Boolean>,
-    descriptionText: MutableState<String>,
+fun EditWorkoutDataSubpage(
+    onBack: () -> Unit,
+    submitButtonContent: @Composable () -> Unit,
+    onSubmit: (EditWorkoutDataSubpageState) -> Unit,
+    onSubmitError: () -> Unit = {},
+    startState: EditWorkoutDataSubpageState = EditWorkoutDataSubpageState(),
+    headerText: @Composable () -> Unit = {},
+    headerAdditionalContent: @Composable BoxScope.() -> Unit = {},
 ) {
+    var nameText: String by remember {
+        mutableStateOf(startState.name)
+    }
+    var nameError: Boolean by remember {
+        mutableStateOf(false)
+    }
+
+    var descriptionText: String by remember {
+        mutableStateOf(startState.description)
+    }
+
     Column {
+        SecondaryTopHeader(
+            onIconClick = onBack,
+            additionalContent = headerAdditionalContent,
+        ) {
+            headerText()
+        }
+
         Column(
             modifier = Modifier
                 .weight(1F)
@@ -56,14 +81,14 @@ fun NamePage(
                             descriptionFocusRequester.requestFocus()
                         }
                     ),
-                    value = nameText.value,
+                    value = nameText,
                     onValueChange = {
-                        nameText.value = it
-                        nameError.value = false
+                        nameText = it
+                        nameError = false
                     },
                     label = {
                         Text(
-                            text = stringResource(id = R.string.session_name),
+                            text = stringResource(id = com.kssidll.workin.R.string.workout_name),
                             fontSize = 16.sp,
                         )
                     },
@@ -87,10 +112,10 @@ fun NamePage(
                         focusedBorderColor = MaterialTheme.colorScheme.outline,
                         focusedTextColor = MaterialTheme.colorScheme.onBackground,
                     ),
-                    isError = nameError.value,
+                    isError = nameError,
                     supportingText = {
-                        if (nameError.value) {
-                            Text(text = stringResource(id = R.string.field_required))
+                        if (nameError) {
+                            Text(text = stringResource(id = com.kssidll.workin.R.string.field_required))
                         }
                     }
                 )
@@ -106,14 +131,14 @@ fun NamePage(
             ) {
                 OutlinedTextField(
                     modifier = Modifier.focusRequester(descriptionFocusRequester),
-                    minLines = 10,
-                    value = descriptionText.value,
+                    minLines = 5,
+                    value = descriptionText,
                     onValueChange = {
-                        descriptionText.value = it
+                        descriptionText = it
                     },
                     label = {
                         Text(
-                            text = stringResource(id = R.string.workout_description),
+                            text = stringResource(id = com.kssidll.workin.R.string.workout_description),
                             fontSize = 16.sp,
                         )
                     },
@@ -146,12 +171,26 @@ fun NamePage(
 
         Column(
             modifier = Modifier
+                .fillMaxHeight(0.45F)
                 .fillMaxWidth()
                 .padding(top = 12.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Button(
-                onClick = onNext,
+                onClick = {
+                    nameError = nameText.isBlank()
+
+                    if (nameError) {
+                        onSubmitError()
+                    } else {
+                        onSubmit(
+                            EditWorkoutDataSubpageState(
+                                name = nameText,
+                                description = descriptionText,
+                            )
+                        )
+                    }
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(70.dp)
@@ -163,64 +202,39 @@ fun NamePage(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
                 ) {
-
-                    Icon(
-                        painter = painterResource(id = R.drawable.swipe_left),
-                        contentDescription = stringResource(
-                            id = R.string.next
-                        ),
-                        modifier = Modifier.size(30.dp)
-                    )
-
-                    Spacer(modifier = Modifier.width(8.dp))
-
-                    Text(
-                        text = stringResource(R.string.next),
-                        fontSize = 20.sp
-                    )
-
-                    Icon(
-                        imageVector = Icons.Rounded.KeyboardArrowRight,
-                        contentDescription = stringResource(
-                            R.string
-                                .next
-                        ),
-                        modifier = Modifier.size(30.dp)
-                    )
+                    submitButtonContent()
                 }
             }
         }
-
-        Spacer(modifier = Modifier.height(24.dp))
     }
 }
 
 
-/// Page Preview ///
+/// Subpage Preview ///
 @Preview(
-    group = "NamePage",
+    group = "EditWorkoutDataSubpage",
     name = "Dark",
     showBackground = true,
     apiLevel = 29,
     uiMode = Configuration.UI_MODE_NIGHT_YES
 )
 @Preview(
-    group = "NamePage",
+    group = "EditWorkoutDataSubpage",
     name = "Light",
     showBackground = true,
     apiLevel = 29,
     uiMode = Configuration.UI_MODE_NIGHT_NO
 )
-@SuppressLint("UnrememberedMutableState")
 @Composable
-fun NamePagePreview() {
+fun EditWorkoutDataComponentPreview() {
     WorkINTheme {
         Surface(modifier = Modifier.fillMaxSize()) {
-            NamePage(
-                onNext = {},
-                nameText = mutableStateOf(String()),
-                nameError = mutableStateOf(false),
-                descriptionText = mutableStateOf(String()),
+            EditWorkoutDataSubpage(
+                submitButtonContent = {
+                    Text(text = "Submit Button", fontSize = 20.sp)
+                },
+                onBack = {},
+                onSubmit = {},
             )
         }
     }

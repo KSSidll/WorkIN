@@ -1,7 +1,6 @@
 package com.kssidll.workin.ui.dashboard
 
 import android.content.res.*
-import android.util.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
 import androidx.compose.material3.*
@@ -146,14 +145,14 @@ fun DashboardScreen(
 /// Screen Preview ///
 @Preview(
     group = "DashboardScreen",
-    name = "Dashboard Screen Dark",
+    name = "Dark",
     showBackground = true,
     apiLevel = 29,
     uiMode = Configuration.UI_MODE_NIGHT_YES
 )
 @Preview(
     group = "DashboardScreen",
-    name = "Dashboard Screen Light",
+    name = "Light",
     showBackground = true,
     apiLevel = 29,
     uiMode = Configuration.UI_MODE_NIGHT_NO
@@ -161,10 +160,7 @@ fun DashboardScreen(
 @Composable
 fun DashboardScreenPreview() {
     WorkINTheme {
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.surface,
-        ) {
+        Surface(modifier = Modifier.fillMaxSize()) {
             ScreenWithBottomNavBar(
                 navigationController = NavigationControllerMock(NavigationDestinations.DASHBOARD_ROUTE)
             ) {

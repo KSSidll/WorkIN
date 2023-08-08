@@ -10,6 +10,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.tooling.preview.*
+import androidx.compose.ui.unit.*
 import androidx.hilt.navigation.compose.*
 import com.kssidll.workin.data.data.*
 import com.kssidll.workin.ui.addsession.*
@@ -78,6 +79,22 @@ fun SessionScreen(
                 // TODO workout page
                 Box(modifier = Modifier.fillMaxSize()) {
                     Text(text = "workout")
+
+                    Column(
+                        modifier = Modifier.align(Alignment.Center),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = session.workouts[page.div(2)].workout.name,
+                            fontSize = 24.sp
+                        )
+
+                        Spacer(modifier = Modifier.height(12.dp))
+
+                        Text(
+                            text = session.workouts[page.div(2)].workout.description
+                        )
+                    }
                 }
             } else {
                 // last workout page isn't a timer, but a session finish screen
@@ -114,14 +131,14 @@ fun SessionScreen(
 /// Screen Preview ///
 @Preview(
     group = "SessionScreen",
-    name = "Session Screen Dark",
+    name = "Dark",
     showBackground = true,
     apiLevel = 29,
     uiMode = Configuration.UI_MODE_NIGHT_YES
 )
 @Preview(
     group = "SessionScreen",
-    name = "Session Screen Light",
+    name = "Light",
     showBackground = true,
     apiLevel = 29,
     uiMode = Configuration.UI_MODE_NIGHT_NO
@@ -129,10 +146,7 @@ fun SessionScreen(
 @Composable
 fun SessionScreenPreview() {
     WorkINTheme {
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.surface,
-        ) {
+        Surface(modifier = Modifier.fillMaxSize()) {
             SessionScreen(
                 session = SessionWithFullSessionWorkouts(
                     session = Session(

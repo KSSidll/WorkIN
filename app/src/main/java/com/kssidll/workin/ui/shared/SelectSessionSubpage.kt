@@ -29,9 +29,7 @@ fun SelectSessionSubpage(
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        LazyColumn(
-
-        ) {
+        LazyColumn {
             items(collectedSessions) {
                 SessionCardItem(
                     session = it,
@@ -48,14 +46,14 @@ fun SelectSessionSubpage(
 /// Subpage Preview ///
 @Preview(
     group = "SelectSessionSubpage",
-    name = "Select Session Subpage Dark",
+    name = "Dark",
     showBackground = true,
     apiLevel = 29,
     uiMode = Configuration.UI_MODE_NIGHT_YES
 )
 @Preview(
     group = "SelectSessionSubpage",
-    name = "Select Session Subpage Light",
+    name = "Light",
     showBackground = true,
     apiLevel = 29,
     uiMode = Configuration.UI_MODE_NIGHT_NO
@@ -63,10 +61,7 @@ fun SelectSessionSubpage(
 @Composable
 fun SelectSessionSubpagePreview() {
     WorkINTheme {
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.surface,
-        ) {
+        Surface(modifier = Modifier.fillMaxSize()) {
             SelectSessionSubpage(
                 collectedSessions = listOf(
                     SessionWithFullSessionWorkouts(

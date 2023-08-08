@@ -6,11 +6,15 @@ import androidx.navigation.compose.*
 import com.kssidll.workin.NavigationDestinations.ADD_SESSION_ROUTE
 import com.kssidll.workin.NavigationDestinations.ADD_WORKOUT_ROUTE
 import com.kssidll.workin.NavigationDestinations.DASHBOARD_ROUTE
+import com.kssidll.workin.NavigationDestinations.EDIT_SESSION_ROUTE
+import com.kssidll.workin.NavigationDestinations.EDIT_WORKOUT_ROUTE
 import com.kssidll.workin.NavigationDestinations.SESSION_ROUTE
 import com.kssidll.workin.NavigationDestinations.WORKOUTS_ROUTE
 import com.kssidll.workin.ui.addsession.*
 import com.kssidll.workin.ui.addworkout.*
 import com.kssidll.workin.ui.dashboard.*
+import com.kssidll.workin.ui.editsession.*
+import com.kssidll.workin.ui.editworkout.*
 import com.kssidll.workin.ui.session.*
 import com.kssidll.workin.ui.workouts.*
 
@@ -18,7 +22,9 @@ object NavigationDestinations {
     const val DASHBOARD_ROUTE = "dashboard"
     const val WORKOUTS_ROUTE = "workouts"
     const val ADD_WORKOUT_ROUTE = "addworkout"
+    const val EDIT_WORKOUT_ROUTE = "editworkout"
     const val ADD_SESSION_ROUTE = "addsession"
+    const val EDIT_SESSION_ROUTE = "editsession"
     const val SESSION_ROUTE = "session"
 }
 
@@ -46,7 +52,9 @@ interface INavigationController {
     fun navigateDashboard()
     fun navigateWorkouts()
     fun navigateAddWorkout()
+    fun navigateEditWorkout(workoutId: Long)
     fun navigateAddSession()
+    fun navigateEditSession(sessionId: Long)
     fun navigateSession(sessionId: Long)
 }
 
@@ -72,8 +80,16 @@ class NavigationController(
         navController.navigate(ADD_WORKOUT_ROUTE)
     }
 
+    override fun navigateEditWorkout(workoutId: Long) {
+        navController.navigate("$EDIT_WORKOUT_ROUTE/$workoutId")
+    }
+
     override fun navigateAddSession() {
         navController.navigate(ADD_SESSION_ROUTE)
+    }
+
+    override fun navigateEditSession(sessionId: Long) {
+        navController.navigate("$EDIT_SESSION_ROUTE/$sessionId")
     }
 
     override fun navigateSession(sessionId: Long) {
@@ -111,9 +127,15 @@ fun Navigation(
                     onAddWorkout = {
                         navigationController.navigateAddWorkout()
                     },
+                    onWorkoutClick = {
+                        navigationController.navigateEditWorkout(it)
+                    },
                     onAddSession = {
                         navigationController.navigateAddSession()
-                    }
+                    },
+                    onSessionClick = {
+                        navigationController.navigateEditSession(it)
+                    },
                 )
             }
 
@@ -146,6 +168,35 @@ fun Navigation(
                     }
                 )
             }
+
+            composable(
+                "$EDIT_WORKOUT_ROUTE/{workoutId}",
+                arguments = listOf(
+                    navArgument("workoutId") { type = NavType.LongType }
+                )
+            ) {
+                EditWorkoutRoute(
+                    workoutId = it.arguments?.getLong("workoutId")!!,
+                    onBack = {
+                        navController.popBackStack()
+                    }
+                )
+            }
+
+            composable(
+                "$EDIT_SESSION_ROUTE/{sessionId}",
+                arguments = listOf(
+                    navArgument("sessionId") { type = NavType.LongType }
+                )
+            ) {
+                EditSessionRoute(
+                    sessionId = it.arguments?.getLong("sessionId")!!,
+                    onBack = {
+                        navController.popBackStack()
+                    }
+                )
+            }
+
         }
     }
 }

@@ -30,7 +30,9 @@ import kotlinx.coroutines.flow.*
 fun WorkoutsRoute(
     onSessionStart: (Long) -> Unit,
     onAddWorkout: () -> Unit,
+    onWorkoutClick: (Long) -> Unit,
     onAddSession: () -> Unit,
+    onSessionClick: (Long) -> Unit
 ) {
     val workoutsViewModel: WorkoutsViewModel = hiltViewModel()
 
@@ -40,7 +42,9 @@ fun WorkoutsRoute(
             workouts = workoutsViewModel.getAllWorkoutsDescFlow(),
             sessions = workoutsViewModel.getAllSessionsDescFlow(),
             onAddWorkout = onAddWorkout,
+            onWorkoutClick = onWorkoutClick,
             onAddSession = onAddSession,
+            onSessionClick = onSessionClick,
         )
     }
 }
@@ -54,7 +58,9 @@ fun WorkoutsScreen(
     workouts: Flow<List<Workout>>,
     sessions: Flow<List<SessionWithFullSessionWorkouts>>,
     onAddWorkout: () -> Unit,
+    onWorkoutClick: (Long) -> Unit,
     onAddSession: () -> Unit,
+    onSessionClick: (Long) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
 
@@ -100,7 +106,12 @@ fun WorkoutsScreen(
                                     val collectedWorkouts =
                                         workouts.collectAsState(initial = emptyList()).value
 
-                                    WorkoutsPage(collectedWorkouts = collectedWorkouts)
+                                    WorkoutsPage(
+                                        collectedWorkouts = collectedWorkouts,
+                                        onWorkoutClick = {
+                                            onWorkoutClick(it.id)
+                                        }
+                                    )
                                 }
                             }
                         }
@@ -241,7 +252,9 @@ fun WorkoutsScreenPreview() {
                     workouts = flowOf(),
                     sessions = flowOf(),
                     onAddWorkout = {},
+                    onWorkoutClick = {},
                     onAddSession = {},
+                    onSessionClick = {},
                 )
             }
         }

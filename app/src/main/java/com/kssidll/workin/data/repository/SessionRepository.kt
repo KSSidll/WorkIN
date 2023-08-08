@@ -5,10 +5,6 @@ import com.kssidll.workin.data.data.*
 import kotlinx.coroutines.flow.*
 
 class SessionRepository(private val sessionDao: SessionDao) {
-    fun getAllDescFlow(): Flow<List<SessionWithSessionWorkouts>> {
-        return sessionDao.getAllDescFlow()
-    }
-
     fun getAllMergedSessionsWithWorkouts(): Flow<List<SessionWithFullSessionWorkouts>> {
         return sessionDao.getAllDescFlow()
             .map { list ->
@@ -35,6 +31,10 @@ class SessionRepository(private val sessionDao: SessionDao) {
 
     suspend fun update(session: Session) {
         sessionDao.update(session)
+    }
+
+    suspend fun updateWorkouts(workouts: List<SessionWorkout>) {
+        sessionDao.updateWorkouts(workouts)
     }
 
     suspend fun delete(session: Session) {

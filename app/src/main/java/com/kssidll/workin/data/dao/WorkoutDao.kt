@@ -9,6 +9,9 @@ interface WorkoutDao {
     @Query("SELECT * FROM workout ORDER BY id DESC")
     fun getAllDescFlow(): Flow<List<Workout>>
 
+    @Query("SELECT * FROM workout WHERE id = :workoutId")
+    suspend fun getById(workoutId: Long): Workout
+
     @Insert
     suspend fun insert(workout: Workout): Long
 

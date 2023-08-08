@@ -101,14 +101,14 @@ fun ScreenWithBottomNavBar(
 /// Screen Preview ///
 @Preview(
     group = "ScreenWithBottomNavBar",
-    name = "Screen With Bottom NavBar Dark",
+    name = "Dark",
     showBackground = true,
     apiLevel = 29,
     uiMode = Configuration.UI_MODE_NIGHT_YES
 )
 @Preview(
     group = "ScreenWithBottomNavBar",
-    name = "Screen With Bottom NavBar Light",
+    name = "Light",
     showBackground = true,
     apiLevel = 29,
     uiMode = Configuration.UI_MODE_NIGHT_NO
@@ -116,10 +116,7 @@ fun ScreenWithBottomNavBar(
 @Composable
 fun ScreenWithBottomNavBarPreview() {
     WorkINTheme {
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.surface,
-        ) {
+        Surface(modifier = Modifier.fillMaxSize()) {
             ScreenWithBottomNavBar(
                 navigationController = NavigationControllerMock(),
                 content = {}

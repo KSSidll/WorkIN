@@ -1,7 +1,6 @@
 package com.kssidll.workin.ui.session
 
 import android.content.res.*
-import android.util.Half.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.*
@@ -15,7 +14,7 @@ import com.kssidll.workin.R
 import com.kssidll.workin.ui.shared.*
 import com.kssidll.workin.ui.theme.*
 import kotlinx.coroutines.*
-import java.util.Calendar
+import java.util.*
 
 @Composable
 fun SessionTimerPage(
@@ -47,7 +46,8 @@ fun SessionTimerPage(
                     val timeStarted = Calendar.getInstance().timeInMillis
 
                     while (remainingMiliseconds >= 0 && !timerFinished) {
-                        remainingMiliseconds = time.times(1000) - (Calendar.getInstance().timeInMillis - timeStarted)
+                        remainingMiliseconds =
+                            time.times(1000) - (Calendar.getInstance().timeInMillis - timeStarted)
                         delay(100)
                     }
                     // consider early timer end event
@@ -72,7 +72,8 @@ fun SessionTimerPage(
                 Box {
 
                     val progress: Float = if (remainingMiliseconds > 0) {
-                        remainingMiliseconds / time.times(1000).toFloat()
+                        remainingMiliseconds / time.times(1000)
+                            .toFloat()
                     } else 1F
 
                     CircularProgressIndicator(
@@ -89,7 +90,10 @@ fun SessionTimerPage(
                     )
 
                     Text(
-                        text = formatTime(remainingMiliseconds.div(1000).toInt()),
+                        text = formatTime(
+                            remainingMiliseconds.div(1000)
+                                .toInt()
+                        ),
                         fontSize = 40.sp,
                         modifier = Modifier.align(Alignment.Center)
                     )
@@ -136,14 +140,14 @@ fun SessionTimerPage(
 /// Page Preview ///
 @Preview(
     group = "SessionTimerPage",
-    name = "SessionTimer Page Dark",
+    name = "Dark",
     showBackground = true,
     apiLevel = 29,
     uiMode = Configuration.UI_MODE_NIGHT_YES
 )
 @Preview(
     group = "SessionTimerPage",
-    name = "SessionTimer Page Light",
+    name = "Light",
     showBackground = true,
     apiLevel = 29,
     uiMode = Configuration.UI_MODE_NIGHT_NO
@@ -151,10 +155,7 @@ fun SessionTimerPage(
 @Composable
 fun SessionTimerPagePreview() {
     WorkINTheme {
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.surface,
-        ) {
+        Surface(modifier = Modifier.fillMaxSize()) {
             SessionTimerPage(
                 time = 137,
                 activateTimer = false,

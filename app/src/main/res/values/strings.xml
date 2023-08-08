@@ -46,4 +46,10 @@
     <string name="sessions_today">Sessions Today</string>
     <string name="sessions_tomorrow">Sessions Tomorrow</string>
     <string name="timer_end_early_text">End Early</string>
+    <string name="confirm_edit_workout_description">Edit the workout</string>
+    <string name="confirm_edit_workout_text">Edit</string>
+    <string name="delete_workout">Delete this workout</string>
+    <string name="workout_no_description_text">This workout has no description</string>
+    <string name="click_to_move_up">Click to move the item up</string>
+    <string name="click_to_move_down">Click to move the item down</string>
 </resources>

@@ -19,10 +19,13 @@ import androidx.compose.material.icons.sharp.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
+import androidx.compose.ui.draw.*
 import androidx.compose.ui.res.*
+import androidx.compose.ui.semantics.*
 import androidx.compose.ui.text.input.*
 import androidx.compose.ui.tooling.preview.*
 import androidx.compose.ui.unit.*
+import androidx.core.graphics.*
 import androidx.core.text.*
 import com.kssidll.workin.R
 import com.kssidll.workin.ui.shared.*
@@ -35,9 +38,12 @@ import kotlin.concurrent.*
 @Composable
 fun LazyItemScope.SessionBuilderItem(
     reorderableState: ReorderableLazyListState,
-    workouts: MutableList<AddSessionWorkoutData>,
     thisWorkout: AddSessionWorkoutData,
-    onWorkoutSearch: (Long) -> Unit
+    showTimer: Boolean,
+    onWorkoutSearch: (Long) -> Unit,
+    onMoveUp: () -> Unit,
+    onMoveDown: () -> Unit,
+    onDelete: () -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     Column {
@@ -273,14 +279,16 @@ fun LazyItemScope.SessionBuilderItem(
                                         } else if (newValue.matches(Regex("""\d+?\.?\d{0,2}"""))) {
                                             thisWorkout.weight.value =
                                                 newValue.toFloat()
-                                            weightText = thisWorkout.weight.value.toString().dropLast(
-                                                if (newValue.last() == '.') 1
-                                                else if (
-                                                    thisWorkout.weight.value.toString().endsWith(".0") &&
-                                                    !newValue.endsWith(".0")
+                                            weightText = thisWorkout.weight.value.toString()
+                                                .dropLast(
+                                                    if (newValue.last() == '.') 1
+                                                    else if (
+                                                        thisWorkout.weight.value.toString()
+                                                            .endsWith(".0") &&
+                                                        !newValue.endsWith(".0")
                                                     ) 2
-                                                else 0
-                                            )
+                                                    else 0
+                                                )
                                         }
                                     },
                                     shape = RoundedCornerShape(12.dp),
@@ -291,7 +299,9 @@ fun LazyItemScope.SessionBuilderItem(
                                         cursorColor = MaterialTheme.colorScheme.onSurface,
                                         selectionColors = TextSelectionColors(
                                             handleColor = MaterialTheme.colorScheme.tertiary,
-                                            backgroundColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.4F)
+                                            backgroundColor = MaterialTheme.colorScheme.tertiary.copy(
+                                                alpha = 0.4F
+                                            )
                                         ),
                                         focusedBorderColor = MaterialTheme.colorScheme.outline,
                                         focusedTextColor = MaterialTheme.colorScheme.onSurface,
@@ -309,7 +319,7 @@ fun LazyItemScope.SessionBuilderItem(
                                         onClick = {
                                             thisWorkout.weight.value =
                                                 thisWorkout.weight.value.plus(0.5F)
-                                                weightText = thisWorkout.weight.value.toString()
+                                            weightText = thisWorkout.weight.value.toString()
                                         },
                                         colors = IconButtonColors(
                                             contentColor = MaterialTheme.colorScheme.onTertiary,
@@ -442,7 +452,7 @@ fun LazyItemScope.SessionBuilderItem(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                if (thisWorkout != workouts.last()) {
+                if (showTimer) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.Center,
@@ -523,13 +533,13 @@ fun LazyItemScope.SessionBuilderItem(
 
             }
 
-            Column(
-                modifier = Modifier.align(Alignment.TopEnd)
+            Box(
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .padding(start = 10.dp)
             ) {
                 FilledIconButton(
-                    onClick = {
-                        workouts.remove(thisWorkout)
-                    },
+                    onClick = onDelete,
                     colors = IconButtonColors(
                         containerColor = MaterialTheme.colorScheme.errorContainer,
                         contentColor = MaterialTheme.colorScheme.onErrorContainer,
@@ -555,29 +565,76 @@ fun LazyItemScope.SessionBuilderItem(
             ) {
                 Column(
                     modifier = Modifier
-                        .padding(start = 10.dp, end = 16.dp)
+                        .padding(start = 10.dp, end = 7.dp)
                 ) {
-                    Icon(
-                        modifier = Modifier.detectReorder(
-                            reorderableState
-                        ),
-                        imageVector = Icons.Rounded.KeyboardArrowUp,
-                        contentDescription = stringResource(id = R.string.change_item_order)
-                    )
-                    Icon(
-                        modifier = Modifier.detectReorder(
-                            reorderableState
-                        ),
-                        imageVector = Icons.Rounded.MoreVert,
-                        contentDescription = stringResource(id = R.string.change_item_order)
-                    )
-                    Icon(
-                        modifier = Modifier.detectReorder(
-                            reorderableState
-                        ),
-                        imageVector = Icons.Rounded.KeyboardArrowDown,
-                        contentDescription = stringResource(id = R.string.change_item_order)
-                    )
+
+                    Box(
+                        modifier = Modifier
+                            .size(48.dp)
+                            .clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = null,
+                                onClickLabel = stringResource(id = R.string.click_to_move_up),
+                            ) {
+                                onMoveUp()
+                            }
+                    ) {
+                        Box(modifier = Modifier.align(Alignment.Center)) {
+                            Icon(
+                                modifier = Modifier.align(Alignment.Center),
+                                imageVector = Icons.Rounded.KeyboardArrowUp,
+                                contentDescription = null,
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(4.dp))
+
+                    Box(
+                        modifier = Modifier
+                            .width(48.dp)
+                            .detectReorder(reorderableState)
+                    ) {
+                        Box(modifier = Modifier.align(Alignment.Center)) {
+                            Column {
+                                Icon(
+                                    modifier = Modifier.rotate(180F),
+                                    imageVector = Icons.Rounded.ArrowDropDown,
+                                    contentDescription = null
+                                )
+                                Icon(
+                                    imageVector = Icons.Rounded.MoreVert,
+                                    contentDescription = stringResource(id = R.string.change_item_order)
+                                )
+                                Icon(
+                                    imageVector = Icons.Rounded.ArrowDropDown,
+                                    contentDescription = null
+                                )
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(4.dp))
+
+                    Box(
+                        modifier = Modifier
+                            .size(48.dp)
+                            .clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = null,
+                                onClickLabel = stringResource(id = R.string.click_to_move_down),
+                            ) {
+                                onMoveDown()
+                            }
+                    ) {
+                        Box(modifier = Modifier.align(Alignment.Center)) {
+                            Icon(
+                                modifier = Modifier.align(Alignment.Center),
+                                imageVector = Icons.Rounded.KeyboardArrowDown,
+                                contentDescription = null,
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -591,14 +648,14 @@ fun LazyItemScope.SessionBuilderItem(
 /// Item Preview ///
 @Preview(
     group = "SessionBuilderItem",
-    name = "Session Builder Hide Weight Item Dark",
+    name = "Dark",
     showBackground = true,
     apiLevel = 29,
     uiMode = Configuration.UI_MODE_NIGHT_YES
 )
 @Preview(
     group = "SessionBuilderItem",
-    name = "Session Builder Item Hide Weight Light",
+    name = "Light",
     showBackground = true,
     apiLevel = 29,
     uiMode = Configuration.UI_MODE_NIGHT_NO
@@ -607,28 +664,24 @@ fun LazyItemScope.SessionBuilderItem(
 @Composable
 fun SessionBuilderItemHideWeightPreview() {
     WorkINTheme {
-        Surface(
-            color = MaterialTheme.colorScheme.surface,
-        ) {
-            val workouts = mutableListOf(
-                AddSessionWorkoutData(
-                    id = 0,
-                    repetitionCount = mutableIntStateOf(3),
-                    repetitionType = mutableStateOf(RepetitionTypes.Repetitions),
-                    weight = mutableFloatStateOf(1.5F),
-                    weightType = mutableStateOf(WeightTypes.BodyMass),
-                    postRestTime = mutableIntStateOf(137),
-                ),
-                // needs more than 1 to show the timer
-                AddSessionWorkoutData(id = 0)
-            )
+        Surface(color = MaterialTheme.colorScheme.surface) {
             LazyColumn {
                 item {
                     SessionBuilderItem(
                         reorderableState = rememberReorderableLazyListState(onMove = { _, _ -> }),
-                        workouts = workouts,
-                        thisWorkout = workouts[0],
+                        thisWorkout = AddSessionWorkoutData(
+                            id = 0,
+                            repetitionCount = mutableIntStateOf(3),
+                            repetitionType = mutableStateOf(RepetitionTypes.Repetitions),
+                            weight = mutableFloatStateOf(1.5F),
+                            weightType = mutableStateOf(WeightTypes.BodyMass),
+                            postRestTime = mutableIntStateOf(137),
+                        ),
+                        showTimer = true,
                         onWorkoutSearch = {},
+                        onMoveUp = {},
+                        onMoveDown = {},
+                        onDelete = {},
                     )
                 }
             }
@@ -657,25 +710,23 @@ fun SessionBuilderItemPreview() {
         Surface(
             color = MaterialTheme.colorScheme.surface,
         ) {
-            val workouts = mutableListOf(
-                AddSessionWorkoutData(
-                    id = 0,
-                    repetitionCount = mutableIntStateOf(3),
-                    repetitionType = mutableStateOf(RepetitionTypes.Repetitions),
-                    weight = mutableFloatStateOf(1.5F),
-                    weightType = mutableStateOf(WeightTypes.KGBodyMass),
-                    postRestTime = mutableIntStateOf(137),
-                ),
-                // needs more than 1 to show the timer
-                AddSessionWorkoutData(id = 0)
-            )
             LazyColumn {
                 item {
                     SessionBuilderItem(
                         reorderableState = rememberReorderableLazyListState(onMove = { _, _ -> }),
-                        workouts = workouts,
-                        thisWorkout = workouts[0],
+                        thisWorkout = AddSessionWorkoutData(
+                            id = 0,
+                            repetitionCount = mutableIntStateOf(3),
+                            repetitionType = mutableStateOf(RepetitionTypes.Repetitions),
+                            weight = mutableFloatStateOf(1.5F),
+                            weightType = mutableStateOf(WeightTypes.KGBodyMass),
+                            postRestTime = mutableIntStateOf(137),
+                        ),
+                        showTimer = true,
                         onWorkoutSearch = {},
+                        onMoveUp = {},
+                        onMoveDown = {},
+                        onDelete = {},
                     )
                 }
             }

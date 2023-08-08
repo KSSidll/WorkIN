@@ -37,6 +37,7 @@ import org.burnoutcrew.reorderable.*
 /**
  * @param active: Whether this page is visible, required to ensure expected BackHandler behaviour
  */
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SessionBuilderPage(
     onCreate: (MutableList<AddSessionWorkoutData>) -> Unit,
@@ -112,19 +113,40 @@ fun SessionBuilderPage(
                                 .reorderable(reorderableState)
                         ) {
                             items(workouts, key = { it.id }) {
-                                ReorderableItem(
-                                    reorderableState = reorderableState,
-                                    key = { it.id },
-                                ) { _ ->
-                                    SessionBuilderItem(
+                                Box(
+                                    modifier = Modifier.animateItemPlacement()
+                                ) {
+                                    ReorderableItem(
                                         reorderableState = reorderableState,
-                                        workouts = workouts,
-                                        thisWorkout = it,
-                                        onWorkoutSearch = {
-                                            isWorkoutSearch = true
-                                            searchingForId = it
-                                        },
-                                    )
+                                        key = { it.id },
+                                    ) { _ ->
+                                        SessionBuilderItem(
+                                            reorderableState = reorderableState,
+                                            thisWorkout = it,
+                                            onWorkoutSearch = {
+                                                isWorkoutSearch = true
+                                                searchingForId = it
+                                            },
+                                            showTimer = it != workouts.last(),
+                                            onMoveUp = {
+                                                workouts.apply {
+                                                    val index = indexOf(it)
+                                                    if (index == 0) return@apply
+                                                    add(index, removeAt(index - 1))
+                                                }
+                                            },
+                                            onMoveDown = {
+                                                workouts.apply {
+                                                    val index = indexOf(it)
+                                                    if (index == lastIndex) return@apply
+                                                    add(index, removeAt(index + 1))
+                                                }
+                                            },
+                                            onDelete = {
+                                                workouts.remove(it)
+                                            }
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -199,14 +221,14 @@ fun SessionBuilderPage(
 /// Page Preview ///
 @Preview(
     group = "SessionBuilderPage",
-    name = "Session Builder Page Dark",
+    name = "Dark",
     showBackground = true,
     apiLevel = 29,
     uiMode = Configuration.UI_MODE_NIGHT_YES
 )
 @Preview(
     group = "SessionBuilderPage",
-    name = "Session Builder Page Light",
+    name = "Light",
     showBackground = true,
     apiLevel = 29,
     uiMode = Configuration.UI_MODE_NIGHT_NO
@@ -215,10 +237,7 @@ fun SessionBuilderPage(
 @Composable
 fun SessionBuilderPagePreview() {
     WorkINTheme {
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.surface,
-        ) {
+        Surface(modifier = Modifier.fillMaxSize()) {
             SessionBuilderPage(
                 onCreate = {},
                 active = true,

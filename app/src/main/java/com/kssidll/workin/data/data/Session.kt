@@ -13,9 +13,9 @@ import androidx.room.*
 )
 data class Session(
     @PrimaryKey(autoGenerate = true) val id: Long,
-    val name: String,
-    val description: String,
-    val days: Byte,
+    var name: String,
+    var description: String,
+    var days: Byte,
 ) {
     constructor(
         name: String,
@@ -45,13 +45,13 @@ data class Session(
 data class SessionWorkout(
     @PrimaryKey(autoGenerate = true) val id: Long,
     @ColumnInfo(index = true) val sessionId: Long,
-    @ColumnInfo(index = true) val workoutId: Long,
-    val repetitionCount: Int,
-    val repetitionType: Int,
-    val weight: Float,
-    val weightType: Int,
-    val order: Int,
-    val restTime: Int,
+    @ColumnInfo(index = true) var workoutId: Long,
+    var repetitionCount: Int,
+    var repetitionType: Int,
+    var weight: Float,
+    var weightType: Int,
+    var order: Int,
+    var restTime: Int,
 ) {
     constructor(
         sessionId: Long,

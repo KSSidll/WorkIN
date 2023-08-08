@@ -15,7 +15,8 @@ import com.kssidll.workin.ui.theme.*
 
 @Composable
 fun WorkoutsPage(
-    collectedWorkouts: List<Workout>
+    collectedWorkouts: List<Workout>,
+    onWorkoutClick: (Workout) -> Unit,
 ) {
     Column {
         PrimaryTopHeader {
@@ -27,9 +28,7 @@ fun WorkoutsPage(
 
         SelectWorkoutSubpage(
             collectedWorkouts = collectedWorkouts,
-            onSelect = {
-                // TODO implement workout editing
-            }
+            onSelect = onWorkoutClick,
         )
     }
 }
@@ -59,7 +58,8 @@ fun WorkoutsPagePreview() {
             WorkoutsPage(
                 collectedWorkouts = listOf(
                     Workout("test", "A")
-                )
+                ),
+                onWorkoutClick = {},
             )
         }
     }

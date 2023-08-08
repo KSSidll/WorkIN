@@ -4,6 +4,7 @@ import com.kssidll.workin.*
 
 /**
  * Please don't look, leave me some dignity
+ * Only use for previews
  */
 class NavigationControllerMock(
     private val mockCurrentlyAt: String = NavigationDestinations.DASHBOARD_ROUTE
@@ -27,7 +28,15 @@ class NavigationControllerMock(
         error("how did you call this, this is a mock controller")
     }
 
+    override fun navigateEditWorkout(workoutId: Long) {
+        error("how did you call this, this is a mock controller")
+    }
+
     override fun navigateAddSession() {
+        error("how did you call this, this is a mock controller")
+    }
+
+    override fun navigateEditSession(sessionId: Long) {
         error("how did you call this, this is a mock controller")
     }
 

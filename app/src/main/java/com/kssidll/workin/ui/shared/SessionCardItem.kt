@@ -11,6 +11,7 @@ import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
+import androidx.compose.ui.draw.*
 import androidx.compose.ui.platform.*
 import androidx.compose.ui.res.*
 import androidx.compose.ui.tooling.preview.*
@@ -66,7 +67,8 @@ fun SessionCardItem(
                 ) {
                     Text(
                         text = session.session.description,
-                        fontSize = 16.sp
+                        fontSize = 16.sp,
+                        modifier = Modifier.alpha(0.8F),
                     )
                 }
 
@@ -81,7 +83,8 @@ fun SessionCardItem(
                         ) {
                             Text(
                                 text = it,
-                                fontSize = 16.sp
+                                fontSize = 16.sp,
+                                modifier = Modifier.alpha(0.8F),
                             )
                         }
                     }
@@ -372,14 +375,14 @@ fun SessionCardItem(
 /// Card Preview ///
 @Preview(
     group = "SessionCardItem",
-    name = "Session Card Item Dark",
+    name = "Dark",
     showBackground = true,
     apiLevel = 29,
     uiMode = Configuration.UI_MODE_NIGHT_YES
 )
 @Preview(
     group = "SessionCardItem",
-    name = "Session Card Item Light",
+    name = "Light",
     showBackground = true,
     apiLevel = 29,
     uiMode = Configuration.UI_MODE_NIGHT_NO
@@ -387,10 +390,7 @@ fun SessionCardItem(
 @Composable
 fun SessionCardItemPrieview() {
     WorkINTheme {
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.surface,
-        ) {
+        Surface(modifier = Modifier.fillMaxSize()) {
             SessionCardItem(
                 session = SessionWithFullSessionWorkouts(
                     session = Session(
