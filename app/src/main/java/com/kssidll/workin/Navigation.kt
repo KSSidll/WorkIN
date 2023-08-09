@@ -116,6 +116,9 @@ fun Navigation(
                     onSessionStart = {
                         navigationController.navigateSession(it)
                     },
+                    onSessionClick = {
+                        navigationController.navigateEditSession(it)
+                    }
                 )
             }
 

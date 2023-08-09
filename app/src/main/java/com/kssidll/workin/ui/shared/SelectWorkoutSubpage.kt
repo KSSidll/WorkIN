@@ -18,7 +18,7 @@ import com.kssidll.workin.ui.theme.*
 
 @Composable
 fun SelectWorkoutSubpage(
-    collectedWorkouts: List<Workout>,
+    workouts: List<Workout>,
     onSelect: (Workout) -> Unit,
 ) {
     Column {
@@ -29,7 +29,7 @@ fun SelectWorkoutSubpage(
         Spacer(modifier = Modifier.height(12.dp))
 
         LazyColumn {
-            items(collectedWorkouts) {
+            items(workouts) {
                 Row(modifier = Modifier.fillMaxWidth()) {
                     Box(
                         modifier = Modifier
@@ -107,7 +107,7 @@ fun SelectWorkoutSubpagePreview() {
     WorkINTheme {
         Surface(modifier = Modifier.fillMaxSize()) {
             SelectWorkoutSubpage(
-                collectedWorkouts = listOf(
+                workouts = listOf(
                     Workout(0, "name", "description"),
                     Workout(0, "name", "description"),
                     Workout(0, "name", ""),

@@ -28,9 +28,9 @@ interface SessionDao {
     @Update
     suspend fun update(session: Session)
 
-    @Update
-    suspend fun updateWorkouts(workouts: List<SessionWorkout>)
-
     @Delete
     suspend fun delete(session: Session)
+
+    @Delete
+    suspend fun deleteWorkouts(workouts: List<SessionWorkout>)
 }

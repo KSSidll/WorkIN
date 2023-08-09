@@ -1,15 +1,23 @@
 package com.kssidll.workin.ui.editsession
 
 import android.content.res.*
+import androidx.compose.foundation.*
+import androidx.compose.foundation.interaction.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.*
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
+import androidx.compose.ui.geometry.*
+import androidx.compose.ui.res.*
 import androidx.compose.ui.tooling.preview.*
+import androidx.compose.ui.unit.*
 import androidx.hilt.navigation.compose.*
+import com.kssidll.workin.R
 import com.kssidll.workin.data.data.*
-import com.kssidll.workin.ui.addsession.*
 import com.kssidll.workin.ui.shared.*
+import com.kssidll.workin.ui.shared.session.*
 import com.kssidll.workin.ui.theme.*
 
 /// Route ///
@@ -32,6 +40,8 @@ fun EditSessionRoute(
     if (!isLoading) {
         EditSessionScreen(
             session = editSessionViewModel.session,
+            userWorkouts = editSessionViewModel.getWorkouts()
+                .collectAsState(initial = emptyList()).value,
             onBack = onBack,
             onEdit = {
                 editSessionViewModel.updateSession(it)
@@ -40,7 +50,7 @@ fun EditSessionRoute(
             onDelete = {
                 editSessionViewModel.deleteSession()
                 onBack()
-            }
+            },
         )
     }
 }
@@ -50,11 +60,131 @@ fun EditSessionRoute(
 @Composable
 fun EditSessionScreen(
     session: SessionWithFullSessionWorkouts,
+    userWorkouts: List<Workout>,
     onBack: () -> Unit,
     onEdit: (SessionWithFullSessionWorkouts) -> Unit,
     onDelete: () -> Unit,
 ) {
+    EditSessionDataSubpage(
+        onBack = onBack,
+        workouts = userWorkouts,
+        submitButtonContent = {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Create,
+                    contentDescription = stringResource(
+                        R.string
+                            .confirm_edit_session_description
+                    ),
+                    modifier = Modifier.size(30.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = stringResource(R.string.confirm_edit_session_text),
+                    fontSize = 20.sp
+                )
+            }
+        },
+        onSubmit = {
+            onEdit(
+                session.apply {
+                    this.session.name = it.name
+                    this.session.description = it.description
+                    this.session.days = it.days
+                    this.workouts = it.workouts.mapIndexed { index, it ->
+                        FullSessionWorkout(
+                            sessionWorkout = SessionWorkout(
+                                sessionId = this.session.id,
+                                workoutId = it.workoutId,
+                                repetitionCount = it.repetitionCount.value,
+                                repetitionType = it.repetitionType.value.id,
+                                weight = it.weight.value,
+                                weightType = it.weightType.value.id,
+                                order = index,
+                                restTime = it.postRestTime.value,
+                            ),
+                            workout = Workout(
+                                id = it.workoutId,
+                                name = it.workoutName.value,
+                                description = String()
+                            )
+                        )
+                    }
+                }
+            )
+        },
+        startState = EditSessionDataSubpageState(
+            name = session.session.name,
+            description = session.session.description,
+            days = session.session.days,
+            workouts = session.workouts.map {
+                SessionBuilderWorkout(
+                    workoutName = mutableStateOf(it.workout.name),
+                    workoutId = it.workout.id,
+                    repetitionCount = mutableIntStateOf(it.sessionWorkout.repetitionCount),
+                    repetitionType = mutableStateOf(RepetitionTypes.getById(it.sessionWorkout.repetitionType)!!),
+                    weight = mutableFloatStateOf(it.sessionWorkout.weight),
+                    weightType = mutableStateOf(WeightTypes.getById(it.sessionWorkout.weightType)!!),
+                    postRestTime = mutableIntStateOf(it.sessionWorkout.restTime)
+                )
+            },
+        ),
+        headerAdditionalContent = {
+            Box(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .aspectRatio(1.5F)
+                    .align(Alignment.CenterEnd)
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null,
+                    ) {
+                        onDelete()
+                    }
+            ) {
+                val color = MaterialTheme.colorScheme.errorContainer
+                Canvas(modifier = Modifier.fillMaxSize()) {
+                    val curvatureOffset = size.width.times(0.69F)
 
+                    drawCircle(
+                        color = color,
+                        center = Offset(
+                            x = curvatureOffset,
+                            y = 0F
+                        ),
+                        radius = size.height
+                    )
+                    drawRect(
+                        color = color,
+                        size = Size(
+                            width = size.width - curvatureOffset,
+                            height = size.height
+                        ),
+                        topLeft = Offset(
+                            x = curvatureOffset,
+                            y = 0F
+                        )
+                    )
+
+                }
+
+                Icon(
+                    painter = painterResource(id = R.drawable.delete_forever),
+                    contentDescription = stringResource(id = R.string.delete_session),
+                    tint = MaterialTheme.colorScheme.onErrorContainer,
+                    modifier = Modifier
+                        .align(Alignment.TopCenter)
+                        .size(36.dp)
+                        .offset(
+                            x = 7.dp,
+                            y = 4.dp,
+                        )
+                )
+            }
+        }
+    )
 }
 
 
@@ -123,6 +253,7 @@ fun EditWorkoutScreenPreview() {
                 ),
 
                 onBack = {},
+                userWorkouts = listOf(),
                 onEdit = {},
                 onDelete = {},
             )

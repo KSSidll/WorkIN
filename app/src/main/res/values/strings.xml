@@ -52,4 +52,8 @@
     <string name="workout_no_description_text">This workout has no description</string>
     <string name="click_to_move_up">Click to move the item up</string>
     <string name="click_to_move_down">Click to move the item down</string>
+    <string name="previous_page_session_builder">Go to the previous page of the session builder</string>
+    <string name="confirm_edit_session_description">Edit the session</string>
+    <string name="confirm_edit_session_text">Edit</string>
+    <string name="delete_session">Delete this session</string>
 </resources>

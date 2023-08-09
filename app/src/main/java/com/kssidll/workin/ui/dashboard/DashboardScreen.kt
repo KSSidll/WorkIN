@@ -22,12 +22,14 @@ import java.util.*
 @Composable
 fun DashboardRoute(
     onSessionStart: (Long) -> Unit,
+    onSessionClick: (Long) -> Unit,
 ) {
     val dashboardViewModel: DashboardViewModel = hiltViewModel()
 
     ScreenWithBottomNavBar {
         DashboardScreen(
             onSessionStart = onSessionStart,
+            onSessionClick = onSessionClick,
             sessions = dashboardViewModel.getAllSessionsDescFlow()
                 .collectAsState(initial = emptyList()).value,
         )
@@ -39,23 +41,27 @@ fun DashboardRoute(
 @Composable
 fun DashboardScreen(
     onSessionStart: (Long) -> Unit,
+    onSessionClick: (Long) -> Unit,
     sessions: List<SessionWithFullSessionWorkouts>,
 ) {
-    val currentDay: Byte = (1).shl(
+    val currentDayEncoding = (1).shl(
         Calendar.getInstance()
             .get(Calendar.DAY_OF_WEEK) - 1
     )
-        .toByte()
-    val nextDay: Byte = currentDay.toInt()
-        .shl(1)
-        .toByte()
+
+    val currentDay = DaysEncoding.getByEncoding(currentDayEncoding.toByte())
+    val nextDay = DaysEncoding.getByEncoding(
+        currentDayEncoding.shl(1)
+            .toByte()
+    )
 
     val sessionsToday = mutableListOf<SessionWithFullSessionWorkouts>()
     val sessionsTomorrow = mutableListOf<SessionWithFullSessionWorkouts>()
 
     sessions.forEach {
-        // requires decodeDays.reversed() to provide incremental order of days
-        val decodedDays = decodeDays(it.session.days).reversed()
+        // requires incremental order of days to avoid duplicates
+        val decodedDays = DaysEncoding.decode(it.session.days)
+            .reversed()
 
         for (dayByte in decodedDays) {
             if (dayByte == currentDay) {
@@ -72,32 +78,34 @@ fun DashboardScreen(
     // TODO change to something scrollable that works better than this here
     LazyColumn {
         item {
-            Column {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(12.dp),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.sessions_today),
-                        fontSize = 20.sp
-                    )
-                }
+            if (sessionsToday.isNotEmpty()) {
+                Column {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(12.dp),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.sessions_today),
+                            fontSize = 20.sp
+                        )
+                    }
 
-                sessionsToday.forEach {
-                    SessionCardItem(
-                        session = it,
-                        onSelect = {
-                        },
-                        showStartIcon = true,
-                        onStartIconClick = { startedSession ->
-                            onSessionStart(startedSession.session.id)
-                        }
-                    )
+                    sessionsToday.forEach {
+                        SessionCardItem(
+                            session = it,
+                            onSelect = { clickedSession ->
+                                onSessionClick(clickedSession.session.id)
+                            },
+                            showStartIcon = true,
+                            onStartIconClick = { startedSession ->
+                                onSessionStart(startedSession.session.id)
+                            }
+                        )
+                    }
                 }
             }
-
         }
 
         item {
@@ -122,8 +130,8 @@ fun DashboardScreen(
                     sessionsTomorrow.forEach {
                         SessionCardItem(
                             session = it,
-                            onSelect = {
-
+                            onSelect = { clickedSession ->
+                                onSessionClick(clickedSession.session.id)
                             },
                             showStartIcon = true,
                             onStartIconClick = { startedSession ->
@@ -166,6 +174,7 @@ fun DashboardScreenPreview() {
             ) {
                 DashboardScreen(
                     onSessionStart = {},
+                    onSessionClick = {},
                     sessions = listOf()
                 )
             }

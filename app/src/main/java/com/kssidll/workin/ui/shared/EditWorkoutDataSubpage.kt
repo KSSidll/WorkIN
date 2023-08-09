@@ -15,14 +15,14 @@ import androidx.compose.ui.tooling.preview.*
 import androidx.compose.ui.unit.*
 import com.kssidll.workin.ui.theme.*
 
-// Data
+/// Data ///
 data class EditWorkoutDataSubpageState(
     var name: String = String(),
     var description: String = String(),
 )
 
 
-// Component
+/// Subpage ///
 @Composable
 fun EditWorkoutDataSubpage(
     onBack: () -> Unit,
@@ -226,7 +226,7 @@ fun EditWorkoutDataSubpage(
     uiMode = Configuration.UI_MODE_NIGHT_NO
 )
 @Composable
-fun EditWorkoutDataComponentPreview() {
+fun EditWorkoutDataSubpagePreview() {
     WorkINTheme {
         Surface(modifier = Modifier.fillMaxSize()) {
             EditWorkoutDataSubpage(

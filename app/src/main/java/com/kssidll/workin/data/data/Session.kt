@@ -1,6 +1,9 @@
 package com.kssidll.workin.data.data
 
+import androidx.compose.runtime.*
+import androidx.compose.ui.res.*
 import androidx.room.*
+import com.kssidll.workin.R
 
 // TODO catch non uniques instead of crashing
 @Entity(
@@ -96,7 +99,7 @@ data class SessionWithSessionWorkouts(
 
 data class SessionWithFullSessionWorkouts(
     val session: Session,
-    val workouts: List<FullSessionWorkout>
+    var workouts: List<FullSessionWorkout>
 )
 
 /**
@@ -116,4 +119,69 @@ fun SessionWithSessionWorkouts.merge(fullSessionWorkouts: List<FullSessionWorkou
         }
             .sortedBy { it.sessionWorkout.order }
     )
+}
+
+/**
+ * @param id: id used to encode this in the datobase, has to be unique, and can never be changed,
+ *            we could use the ordinal, but i think having that set explicitly is less dangerous
+ *            because it won't be accidentally sorted
+ */
+enum class RepetitionTypes(val id: Int) {
+    Repetitions(0),
+    Seconds(1),
+    RiR(2)
+
+    ;
+
+    companion object {
+        private val idMap = RepetitionTypes.values()
+            .associateBy { it.id }
+
+        fun getById(id: Int) = idMap[id]
+    }
+}
+
+@Composable
+fun RepetitionTypes.getTranslation(): String {
+    return when (this) {
+        RepetitionTypes.Repetitions -> stringResource(id = R.string.repetitions)
+        RepetitionTypes.Seconds -> stringResource(id = R.string.seconds)
+        RepetitionTypes.RiR -> stringResource(id = R.string.rir)
+    }
+}
+
+/**
+ * @param id: id used to encode this in the datobase, has to be unique, and can never be changed,
+ *            we could use the ordinal, but i think having that set explicitly is less dangerous
+ *            because it won't be accidentally sorted
+ */
+enum class WeightTypes(
+    val id: Int,
+    val hideWeight: Boolean = false
+) {
+    KG(0),
+    LB(1),
+    BodyMass(2, true),
+    KGBodyMass(3),
+    LBBodyMass(4),
+
+    ;
+
+    companion object {
+        private val idMap = WeightTypes.values()
+            .associateBy { it.id }
+
+        fun getById(id: Int) = idMap[id]
+    }
+}
+
+@Composable
+fun WeightTypes.getTranslation(): String {
+    return when (this) {
+        WeightTypes.KG -> "KG"
+        WeightTypes.LB -> "LB"
+        WeightTypes.BodyMass -> stringResource(id = R.string.body_mass)
+        WeightTypes.KGBodyMass -> "KG + ${stringResource(id = R.string.body_mass)}"
+        WeightTypes.LBBodyMass -> "LB + ${stringResource(id = R.string.body_mass)}"
+    }
 }

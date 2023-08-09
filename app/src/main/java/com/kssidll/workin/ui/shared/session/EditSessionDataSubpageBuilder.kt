@@ -1,4 +1,4 @@
-package com.kssidll.workin.ui.addsession
+package com.kssidll.workin.ui.shared.session
 
 import android.annotation.*
 import android.content.res.*
@@ -18,6 +18,7 @@ import androidx.compose.material.icons.rounded.*
 import androidx.compose.material.icons.sharp.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.snapshots.*
 import androidx.compose.ui.*
 import androidx.compose.ui.focus.*
 import androidx.compose.ui.modifier.*
@@ -28,58 +29,77 @@ import androidx.compose.ui.unit.*
 import androidx.core.text.*
 import com.kssidll.workin.R
 import com.kssidll.workin.data.data.*
+import com.kssidll.workin.ui.addsession.*
 import com.kssidll.workin.ui.shared.*
+import com.kssidll.workin.ui.shared.session.*
 import com.kssidll.workin.ui.theme.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import org.burnoutcrew.reorderable.*
 
+/// Data ///
+data class EditSessionDataSubpageBuilderState(
+    val workouts: SnapshotStateList<EditSessionDataSubpageBuilderItemData> = mutableStateListOf(),
+    val isWorkoutSearch: MutableState<Boolean> = mutableStateOf(false),
+    val searchingWithId: MutableState<Int> = mutableIntStateOf(0)
+) {
+    constructor(workouts: List<SessionBuilderWorkout>) : this(
+        workouts = workouts.let {
+            if (it.isEmpty()) {
+                mutableStateListOf(EditSessionDataSubpageBuilderItemData(id = 0))
+            } else {
+                it.mapIndexed { index, item ->
+                    EditSessionDataSubpageBuilderItemData(
+                        id = index,
+                        workout = item,
+                    )
+                }
+                    .toMutableStateList()
+            }
+        }
+    )
+}
+
+
 /**
- * @param active: Whether this page is visible, required to ensure expected BackHandler behaviour
+ * @param id: Unique identifier for reordering
+ */
+data class EditSessionDataSubpageBuilderItemData(
+    val id: Int,
+    val workout: SessionBuilderWorkout = SessionBuilderWorkout()
+)
+
+/// Page ///
+/**
+ * @param onScreen: Whether this page is visible, required to ensure expected BackHandler behaviour
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun SessionBuilderPage(
-    onCreate: (MutableList<AddSessionWorkoutData>) -> Unit,
-    active: Boolean,
-    userWorkouts: Flow<List<Workout>>,
+fun EditSessionDataSubpageBuilder(
+    onSubmit: () -> Unit,
+    submitButtonContent: @Composable () -> Unit,
+    onScreen: Boolean,
+    userWorkouts: List<Workout>,
+    state: EditSessionDataSubpageBuilderState,
 ) {
-    var isWorkoutSearch: Boolean by remember {
-        mutableStateOf(false)
-    }
-
-    var searchingForId: Long by remember {
-        mutableLongStateOf(0)
-    }
-
-    val workouts: MutableList<AddSessionWorkoutData> = remember {
-        mutableStateListOf(AddSessionWorkoutData(id = 0))
-    }
-    var workoutsNextId: Long by remember {
-        mutableLongStateOf(1)
-    }
-
     BackHandler(
-        enabled = isWorkoutSearch && active
+        enabled = state.isWorkoutSearch.value && onScreen
     ) {
-        isWorkoutSearch = false
+        state.isWorkoutSearch.value = false
     }
 
-    if (isWorkoutSearch) {
-        Box {
-            val collectedWorkouts = userWorkouts.collectAsState(initial = emptyList()).value
-            SelectWorkoutSubpage(
-                collectedWorkouts = collectedWorkouts,
-                onSelect = {
-                    workouts.find { it.id == searchingForId }
-                        ?.apply {
-                            this.workoutName.value = it.name
-                            this.workoutId = it.id
-                        }
-                    isWorkoutSearch = false
-                },
-            )
-        }
+    if (state.isWorkoutSearch.value) {
+        SelectWorkoutSubpage(
+            workouts = userWorkouts,
+            onSelect = {
+                state.workouts.find { it.id == state.searchingWithId.value }
+                    ?.apply {
+                        this.workout.workoutName.value = it.name
+                        this.workout.workoutId = it.id
+                    }
+                state.isWorkoutSearch.value = false
+            },
+        )
     } else {
         Column {
             Column(
@@ -94,7 +114,7 @@ fun SessionBuilderPage(
                     val scrollState = rememberScrollState()
                     val reorderableState = rememberReorderableLazyListState(
                         onMove = { from, to ->
-                            workouts.apply {
+                            state.workouts.apply {
                                 add(to.index, removeAt(from.index))
                             }
                         }
@@ -112,7 +132,7 @@ fun SessionBuilderPage(
                                 .heightIn(this.minHeight, this.maxHeight.minus(60.dp))
                                 .reorderable(reorderableState)
                         ) {
-                            items(workouts, key = { it.id }) {
+                            items(state.workouts, key = { it.id }) {
                                 Box(
                                     modifier = Modifier.animateItemPlacement()
                                 ) {
@@ -120,30 +140,30 @@ fun SessionBuilderPage(
                                         reorderableState = reorderableState,
                                         key = { it.id },
                                     ) { _ ->
-                                        SessionBuilderItem(
+                                        EditSessionDataSubpageBuilderItem(
                                             reorderableState = reorderableState,
-                                            thisWorkout = it,
+                                            thisItem = it,
                                             onWorkoutSearch = {
-                                                isWorkoutSearch = true
-                                                searchingForId = it
+                                                state.isWorkoutSearch.value = true
+                                                state.searchingWithId.value = it
                                             },
-                                            showTimer = it != workouts.last(),
+                                            showTimer = it != state.workouts.last(),
                                             onMoveUp = {
-                                                workouts.apply {
+                                                state.workouts.apply {
                                                     val index = indexOf(it)
                                                     if (index == 0) return@apply
                                                     add(index, removeAt(index - 1))
                                                 }
                                             },
                                             onMoveDown = {
-                                                workouts.apply {
+                                                state.workouts.apply {
                                                     val index = indexOf(it)
                                                     if (index == lastIndex) return@apply
                                                     add(index, removeAt(index + 1))
                                                 }
                                             },
                                             onDelete = {
-                                                workouts.remove(it)
+                                                state.workouts.remove(it)
                                             }
                                         )
                                     }
@@ -160,8 +180,7 @@ fun SessionBuilderPage(
                     ) {
                         FilledIconButton(
                             onClick = {
-                                workouts.add(AddSessionWorkoutData(id = workoutsNextId))
-                                workoutsNextId += 1
+                                state.workouts.add(EditSessionDataSubpageBuilderItemData(id = state.workouts.size))
                             },
                             colors = IconButtonColors(
                                 disabledContainerColor = MaterialTheme.colorScheme.secondary,
@@ -191,7 +210,7 @@ fun SessionBuilderPage(
             ) {
                 Button(
                     onClick = {
-                        onCreate(workouts)
+                        onSubmit()
                     },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -199,16 +218,7 @@ fun SessionBuilderPage(
                         .padding(horizontal = 32.dp),
                     shape = RoundedCornerShape(23.dp)
                 ) {
-                    Row(
-                        modifier = Modifier.fillMaxSize(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        Text(
-                            text = stringResource(R.string.create),
-                            fontSize = 20.sp
-                        )
-                    }
+                    submitButtonContent()
                 }
             }
 
@@ -238,10 +248,12 @@ fun SessionBuilderPage(
 fun SessionBuilderPagePreview() {
     WorkINTheme {
         Surface(modifier = Modifier.fillMaxSize()) {
-            SessionBuilderPage(
-                onCreate = {},
-                active = true,
-                userWorkouts = flowOf(),
+            EditSessionDataSubpageBuilder(
+                onSubmit = {},
+                submitButtonContent = {},
+                onScreen = true,
+                userWorkouts = listOf(),
+                state = EditSessionDataSubpageBuilderState(),
             )
         }
     }

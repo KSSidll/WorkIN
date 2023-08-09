@@ -1,96 +1,140 @@
 package com.kssidll.workin.ui.shared
 
-import android.content.*
-import com.kssidll.workin.*
-import kotlin.experimental.*
-
-
-// TODO rework based on AddSessionViewModel translation implementation
-object EncodedDays {
-    const val SUNDAY: Byte = (1 shl 0).toByte()
-    const val MONDAY: Byte = (1 shl 1).toByte()
-    const val TUESDAY: Byte = (1 shl 2).toByte()
-    const val WEDNESDAY: Byte = (1 shl 3).toByte()
-    const val THURSDAY: Byte = (1 shl 4).toByte()
-    const val FRIDAY: Byte = (1 shl 5).toByte()
-    const val SATURDAY: Byte = (1 shl 6).toByte()
-}
-
-fun decodeDaysToString(
-    encodedDays: Byte,
-    context: Context
-): List<String> {
-    val daysOfWeek = listOf(
-        R.string.sunday,
-        R.string.monday,
-        R.string.tuesday,
-        R.string.wednesday,
-        R.string.thursday,
-        R.string.friday,
-        R.string.saturday,
-    )
-
-    val decodedDays = mutableListOf<String>()
-    var dayFlag: Byte = 1
-
-    for (i in daysOfWeek.indices) {
-        if (encodedDays and dayFlag == dayFlag) {
-            val dayName = context.getString(daysOfWeek[i])
-            decodedDays.add(dayName)
-        }
-
-        // why can't you be normal kotlin, why?
-        dayFlag = (dayFlag.toInt() shl 1).toByte()
-    }
-
-    return decodedDays
-}
+import androidx.compose.runtime.*
+import androidx.compose.ui.res.*
+import com.kssidll.workin.R
 
 /**
- * @return list of decoded days, the order is reversed (last day to first day of the week)
+ * @param encoding: id used to encode this in the datobase, has to be unique,
+ * every value has to be bit shifted compared to previous highest value, and can never be changed,
+ * we could use the ordinal, but i think having that set explicitly is less dangerous
+ * because it won't be accidentally sorted
  */
-fun decodeDays(
-    encodedDays: Byte,
-): List<Byte> {
-    var days: Int = encodedDays.toInt()
-    val decodedDays = mutableListOf<Byte>()
-    var dayFlag: Int = (1 shl 6)
+enum class DaysEncoding(val encoding: Byte) {
+    Sunday(
+        1.shl(0)
+            .toByte()
+    ),
+    Monday(
+        1.shl(1)
+            .toByte()
+    ),
+    Tuesday(
+        1.shl(2)
+            .toByte()
+    ),
+    Wednesday(
+        1.shl(3)
+            .toByte()
+    ),
+    Thursday(
+        1.shl(4)
+            .toByte()
+    ),
+    Friday(
+        1.shl(5)
+            .toByte()
+    ),
+    Saturday(
+        1.shl(6)
+            .toByte()
+    ),
 
-    while (dayFlag > 1) {
-        if (days >= dayFlag) {
-            decodedDays.add(dayFlag.toByte())
-            days -= dayFlag
+    ;
+
+    companion object {
+        private val idMap = DaysEncoding.values()
+            .associateBy { it.encoding }
+
+        fun getByEncoding(encoding: Byte) = idMap[encoding]
+
+        /**
+         * @return List of DaysEncoding encoded within encodedDays.
+         * The list has decremental ordering (first day in the list is the last day / day with highest number).
+         */
+        fun decode(encodedDays: Byte): List<DaysEncoding> {
+            var encoded = encodedDays
+            val days = mutableListOf<DaysEncoding>()
+
+            DaysEncoding.values()
+                .asList()
+                .sortedByDescending { it.encoding }
+                .forEach {
+                    if (encoded >= it.encoding) {
+                        encoded = encoded.minus(it.encoding)
+                            .toByte()
+
+                        when (it) {
+                            Saturday -> days.add(Saturday)
+                            Friday -> days.add(Friday)
+                            Thursday -> days.add(Thursday)
+                            Wednesday -> days.add(Wednesday)
+                            Tuesday -> days.add(Tuesday)
+                            Monday -> days.add(Monday)
+                            Sunday -> days.add(Sunday)
+                        }
+                    }
+                }
+
+            return days
         }
-
-        dayFlag = dayFlag.shr(1)
     }
+}
 
-    return decodedDays
+@Composable
+fun DaysEncoding.getTranslation(): String {
+    return when (this) {
+        DaysEncoding.Sunday -> stringResource(id = R.string.sunday)
+        DaysEncoding.Monday -> stringResource(id = R.string.monday)
+        DaysEncoding.Tuesday -> stringResource(id = R.string.tuesday)
+        DaysEncoding.Wednesday -> stringResource(id = R.string.wednesday)
+        DaysEncoding.Thursday -> stringResource(id = R.string.thursday)
+        DaysEncoding.Friday -> stringResource(id = R.string.friday)
+        DaysEncoding.Saturday -> stringResource(id = R.string.saturday)
+    }
 }
 
 class EncodedDaysBuilder {
     private var value: Int = 0
 
-    private var addedSunday: Boolean = false
-    private var addedMonday: Boolean = false
-    private var addedTuesday: Boolean = false
-    private var addedWednesday: Boolean = false
-    private var addedThursday: Boolean = false
-    private var addedFriday: Boolean = false
-    private var addedSaturday: Boolean = false
+    var addedSunday: Boolean = false
+        private set
+    var addedMonday: Boolean = false
+        private set
+    var addedTuesday: Boolean = false
+        private set
+    var addedWednesday: Boolean = false
+        private set
+    var addedThursday: Boolean = false
+        private set
+    var addedFriday: Boolean = false
+        private set
+    var addedSaturday: Boolean = false
+        private set
 
-    fun build(): Byte {
-        return value.toByte()
+    fun build(): Byte = value.toByte()
+
+    fun add(encodedDays: Byte): EncodedDaysBuilder {
+        DaysEncoding.decode(encodedDays)
+            .forEach {
+                when (it) {
+                    DaysEncoding.Sunday -> addSunday()
+                    DaysEncoding.Monday -> addMonday()
+                    DaysEncoding.Tuesday -> addTuesday()
+                    DaysEncoding.Wednesday -> addWednesday()
+                    DaysEncoding.Thursday -> addThursday()
+                    DaysEncoding.Friday -> addFriday()
+                    DaysEncoding.Saturday -> addSaturday()
+                }
+            }
+
+        return this
     }
 
-    // why is it impossible to write normal code in this language
-    // literally just let me value += EncodedDays.Monday * !addedMonday
-    // i don't want your branches
-    // why can't we make android apps in normal languages
     fun addSunday(): EncodedDaysBuilder {
         if (addedSunday) return this
 
-        value += EncodedDays.SUNDAY
+        value += DaysEncoding.Sunday.encoding
         addedSunday = true
         return this
     }
@@ -98,7 +142,7 @@ class EncodedDaysBuilder {
     fun addMonday(): EncodedDaysBuilder {
         if (addedMonday) return this
 
-        value += EncodedDays.MONDAY
+        value += DaysEncoding.Monday.encoding
         addedMonday = true
         return this
     }
@@ -106,7 +150,7 @@ class EncodedDaysBuilder {
     fun addTuesday(): EncodedDaysBuilder {
         if (addedTuesday) return this
 
-        value += EncodedDays.TUESDAY
+        value += DaysEncoding.Tuesday.encoding
         addedTuesday = true
         return this
     }
@@ -114,7 +158,7 @@ class EncodedDaysBuilder {
     fun addWednesday(): EncodedDaysBuilder {
         if (addedWednesday) return this
 
-        value += EncodedDays.WEDNESDAY
+        value += DaysEncoding.Wednesday.encoding
         addedWednesday = true
         return this
     }
@@ -122,7 +166,7 @@ class EncodedDaysBuilder {
     fun addThursday(): EncodedDaysBuilder {
         if (addedThursday) return this
 
-        value += EncodedDays.THURSDAY
+        value += DaysEncoding.Thursday.encoding
         addedThursday = true
         return this
     }
@@ -130,7 +174,7 @@ class EncodedDaysBuilder {
     fun addFriday(): EncodedDaysBuilder {
         if (addedFriday) return this
 
-        value += EncodedDays.FRIDAY
+        value += DaysEncoding.Friday.encoding
         addedFriday = true
         return this
     }
@@ -138,7 +182,7 @@ class EncodedDaysBuilder {
     fun addSaturday(): EncodedDaysBuilder {
         if (addedSaturday) return this
 
-        value += EncodedDays.SATURDAY
+        value += DaysEncoding.Saturday.encoding
         addedSaturday = true
         return this
     }

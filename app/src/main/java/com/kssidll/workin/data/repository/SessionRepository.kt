@@ -33,8 +33,8 @@ class SessionRepository(private val sessionDao: SessionDao) {
         sessionDao.update(session)
     }
 
-    suspend fun updateWorkouts(workouts: List<SessionWorkout>) {
-        sessionDao.updateWorkouts(workouts)
+    suspend fun deleteWorkouts(workouts: List<SessionWorkout>) {
+        sessionDao.deleteWorkouts(workouts)
     }
 
     suspend fun delete(session: Session) {

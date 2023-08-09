@@ -97,6 +97,7 @@ fun WorkoutsScreen(
                                     SessionsPage(
                                         collectedSessions = collectedSessions,
                                         onSessionStart = onSessionStart,
+                                        onSessionClick = onSessionClick
                                     )
                                 }
                             }

@@ -1,4 +1,4 @@
-package com.kssidll.workin.ui.addsession
+package com.kssidll.workin.ui.shared.session
 
 import android.annotation.*
 import android.content.res.*
@@ -28,19 +28,23 @@ import androidx.compose.ui.unit.*
 import androidx.core.graphics.*
 import androidx.core.text.*
 import com.kssidll.workin.R
+import com.kssidll.workin.data.data.*
+import com.kssidll.workin.ui.addsession.*
 import com.kssidll.workin.ui.shared.*
+import com.kssidll.workin.ui.shared.session.*
 import com.kssidll.workin.ui.theme.*
 import kotlinx.coroutines.*
 import org.burnoutcrew.reorderable.*
 import kotlin.concurrent.*
 
+/// Item ///
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun LazyItemScope.SessionBuilderItem(
+fun LazyItemScope.EditSessionDataSubpageBuilderItem(
     reorderableState: ReorderableLazyListState,
-    thisWorkout: AddSessionWorkoutData,
+    thisItem: EditSessionDataSubpageBuilderItemData,
     showTimer: Boolean,
-    onWorkoutSearch: (Long) -> Unit,
+    onWorkoutSearch: (Int) -> Unit,
     onMoveUp: () -> Unit,
     onMoveDown: () -> Unit,
     onDelete: () -> Unit,
@@ -66,7 +70,7 @@ fun LazyItemScope.SessionBuilderItem(
                         modifier = Modifier
                             .border(
                                 width = OutlinedTextFieldDefaults.UnfocusedBorderThickness,
-                                color = if (thisWorkout.isError.value) MaterialTheme.colorScheme.error
+                                color = if (thisItem.workout.isError.value) MaterialTheme.colorScheme.error
                                 else MaterialTheme.colorScheme.outline,
                                 shape = RoundedCornerShape(12.dp)
                             )
@@ -76,15 +80,15 @@ fun LazyItemScope.SessionBuilderItem(
                                 interactionSource = remember { MutableInteractionSource() },
                                 indication = null
                             ) {
-                                onWorkoutSearch(thisWorkout.id)
+                                onWorkoutSearch(thisItem.id)
                             },
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = thisWorkout.workoutName.value.ifBlank { stringResource(id = R.string.no_workout_session_builder_item) },
+                            text = thisItem.workout.workoutName.value.ifBlank { stringResource(id = R.string.no_workout_session_builder_item) },
                             modifier = Modifier.padding(vertical = 6.dp, horizontal = 12.dp),
                             maxLines = 2,
-                            color = if (thisWorkout.isError.value) MaterialTheme.colorScheme.error
+                            color = if (thisItem.workout.isError.value) MaterialTheme.colorScheme.error
                             else MaterialTheme.colorScheme.onSurface
                         )
 
@@ -99,7 +103,7 @@ fun LazyItemScope.SessionBuilderItem(
                     horizontalArrangement = Arrangement.Center
                 ) {
                     var repCountText: String by remember {
-                        mutableStateOf(thisWorkout.repetitionCount.value.toString())
+                        mutableStateOf(thisItem.workout.repetitionCount.value.toString())
                     }
 
                     OutlinedTextField(
@@ -110,12 +114,12 @@ fun LazyItemScope.SessionBuilderItem(
                         value = repCountText,
                         onValueChange = { newValue ->
                             if (newValue.isBlank()) {
-                                thisWorkout.repetitionCount.value = 0
+                                thisItem.workout.repetitionCount.value = 0
                                 repCountText = newValue
                             } else if (newValue.isDigitsOnly()) {
-                                thisWorkout.repetitionCount.value =
+                                thisItem.workout.repetitionCount.value =
                                     newValue.toInt()
-                                repCountText = thisWorkout.repetitionCount.value.toString()
+                                repCountText = thisItem.workout.repetitionCount.value.toString()
                             }
                         },
                         shape = RoundedCornerShape(12.dp),
@@ -143,9 +147,9 @@ fun LazyItemScope.SessionBuilderItem(
                                 .weight(1F)
                                 .width(18.dp),
                             onClick = {
-                                thisWorkout.repetitionCount.value =
-                                    thisWorkout.repetitionCount.value.inc()
-                                repCountText = thisWorkout.repetitionCount.value.toString()
+                                thisItem.workout.repetitionCount.value =
+                                    thisItem.workout.repetitionCount.value.inc()
+                                repCountText = thisItem.workout.repetitionCount.value.toString()
                             },
                             colors = IconButtonColors(
                                 contentColor = MaterialTheme.colorScheme.onTertiary,
@@ -167,11 +171,11 @@ fun LazyItemScope.SessionBuilderItem(
                                 .weight(1F)
                                 .width(18.dp),
                             onClick = {
-                                thisWorkout.repetitionCount.apply {
+                                thisItem.workout.repetitionCount.apply {
                                     if (this.value == 0) return@apply
 
                                     this.value = this.value.dec()
-                                    repCountText = thisWorkout.repetitionCount.value.toString()
+                                    repCountText = thisItem.workout.repetitionCount.value.toString()
                                 }
                             },
                             colors = IconButtonColors(
@@ -213,7 +217,7 @@ fun LazyItemScope.SessionBuilderItem(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = thisWorkout.repetitionType.value.getTranslation(),
+                            text = thisItem.workout.repetitionType.value.getTranslation(),
                             modifier = Modifier.padding(vertical = 6.dp, horizontal = 12.dp),
                             maxLines = 2
                         )
@@ -228,7 +232,7 @@ fun LazyItemScope.SessionBuilderItem(
 
                         ) {
                             for (item in RepetitionTypes.entries) {
-                                if (item == thisWorkout.repetitionType.value) continue
+                                if (item == thisItem.workout.repetitionType.value) continue
 
                                 DropdownMenuItem(
                                     text = {
@@ -236,7 +240,7 @@ fun LazyItemScope.SessionBuilderItem(
                                     },
                                     onClick = {
                                         menuExpanded = false
-                                        thisWorkout.repetitionType.value = item
+                                        thisItem.workout.repetitionType.value = item
                                     },
                                 )
                             }
@@ -258,12 +262,12 @@ fun LazyItemScope.SessionBuilderItem(
                             mutableStateOf(false)
                         }
 
-                        if (!thisWorkout.weightType.value.hideWeight && !currentlyResizing) {
+                        if (!thisItem.workout.weightType.value.hideWeight && !currentlyResizing) {
                             Row(
                                 modifier = Modifier.align(Alignment.CenterStart)
                             ) {
                                 var weightText: String by remember {
-                                    mutableStateOf(thisWorkout.weight.value.toString())
+                                    mutableStateOf(thisItem.workout.weight.value.toString())
                                 }
 
                                 OutlinedTextField(
@@ -274,16 +278,16 @@ fun LazyItemScope.SessionBuilderItem(
                                     value = weightText,
                                     onValueChange = { newValue ->
                                         if (newValue.isBlank()) {
-                                            thisWorkout.weight.value = 0F
+                                            thisItem.workout.weight.value = 0F
                                             weightText = String()
                                         } else if (newValue.matches(Regex("""\d+?\.?\d{0,2}"""))) {
-                                            thisWorkout.weight.value =
+                                            thisItem.workout.weight.value =
                                                 newValue.toFloat()
-                                            weightText = thisWorkout.weight.value.toString()
+                                            weightText = thisItem.workout.weight.value.toString()
                                                 .dropLast(
                                                     if (newValue.last() == '.') 1
                                                     else if (
-                                                        thisWorkout.weight.value.toString()
+                                                        thisItem.workout.weight.value.toString()
                                                             .endsWith(".0") &&
                                                         !newValue.endsWith(".0")
                                                     ) 2
@@ -317,9 +321,9 @@ fun LazyItemScope.SessionBuilderItem(
                                             .weight(1F)
                                             .width(18.dp),
                                         onClick = {
-                                            thisWorkout.weight.value =
-                                                thisWorkout.weight.value.plus(0.5F)
-                                            weightText = thisWorkout.weight.value.toString()
+                                            thisItem.workout.weight.value =
+                                                thisItem.workout.weight.value.plus(0.5F)
+                                            weightText = thisItem.workout.weight.value.toString()
                                         },
                                         colors = IconButtonColors(
                                             contentColor = MaterialTheme.colorScheme.onTertiary,
@@ -341,11 +345,12 @@ fun LazyItemScope.SessionBuilderItem(
                                             .weight(1F)
                                             .width(18.dp),
                                         onClick = {
-                                            thisWorkout.weight.apply {
+                                            thisItem.workout.weight.apply {
                                                 if (this.value == 0F) return@apply
 
                                                 this.value = this.value.minus(0.5F)
-                                                weightText = thisWorkout.weight.value.toString()
+                                                weightText =
+                                                    thisItem.workout.weight.value.toString()
                                             }
                                         },
                                         colors = IconButtonColors(
@@ -374,11 +379,12 @@ fun LazyItemScope.SessionBuilderItem(
                         Box(
                             modifier = Modifier.align(Alignment.CenterEnd)
                         ) {
-                            val targetWidth: Dp = if (thisWorkout.weightType.value.hideWeight) {
-                                223.dp
-                            } else {
-                                120.dp
-                            }
+                            val targetWidth: Dp =
+                                if (thisItem.workout.weightType.value.hideWeight) {
+                                    223.dp
+                                } else {
+                                    120.dp
+                                }
 
                             val currentWidth: Dp by animateDpAsState(
                                 targetValue = targetWidth,
@@ -412,7 +418,7 @@ fun LazyItemScope.SessionBuilderItem(
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
-                                    text = thisWorkout.weightType.value.getTranslation(),
+                                    text = thisItem.workout.weightType.value.getTranslation(),
                                     modifier = Modifier.padding(
                                         vertical = 6.dp,
                                         horizontal = 12.dp
@@ -430,7 +436,7 @@ fun LazyItemScope.SessionBuilderItem(
 
                                 ) {
                                     for (item in WeightTypes.entries) {
-                                        if (item == thisWorkout.weightType.value) continue
+                                        if (item == thisItem.workout.weightType.value) continue
 
                                         DropdownMenuItem(
                                             text = {
@@ -439,7 +445,7 @@ fun LazyItemScope.SessionBuilderItem(
                                             onClick = {
                                                 if (item.hideWeight) currentlyResizing = true
                                                 menuExpanded = false
-                                                thisWorkout.weightType.value = item
+                                                thisItem.workout.weightType.value = item
                                             },
                                         )
                                     }
@@ -461,8 +467,8 @@ fun LazyItemScope.SessionBuilderItem(
 
                         FilledIconButton(
                             onClick = {
-                                thisWorkout.postRestTime.value =
-                                    thisWorkout.postRestTime.value.minus(10)
+                                thisItem.workout.postRestTime.value =
+                                    thisItem.workout.postRestTime.value.minus(10)
                             }
                         ) {
                             Icon(
@@ -474,8 +480,8 @@ fun LazyItemScope.SessionBuilderItem(
 
                         FilledIconButton(
                             onClick = {
-                                thisWorkout.postRestTime.value =
-                                    thisWorkout.postRestTime.value.dec()
+                                thisItem.workout.postRestTime.value =
+                                    thisItem.workout.postRestTime.value.dec()
                             }
                         ) {
                             Icon(
@@ -496,7 +502,7 @@ fun LazyItemScope.SessionBuilderItem(
                                 modifier = Modifier.size(85.dp),
                             )
                             Text(
-                                text = formatTime(thisWorkout.postRestTime.value),
+                                text = formatTime(thisItem.workout.postRestTime.value),
                                 fontSize = 18.sp
                             )
                         }
@@ -505,8 +511,8 @@ fun LazyItemScope.SessionBuilderItem(
 
                         FilledIconButton(
                             onClick = {
-                                thisWorkout.postRestTime.value =
-                                    thisWorkout.postRestTime.value.inc()
+                                thisItem.workout.postRestTime.value =
+                                    thisItem.workout.postRestTime.value.inc()
                             }
                         ) {
                             Icon(
@@ -518,8 +524,8 @@ fun LazyItemScope.SessionBuilderItem(
 
                         FilledIconButton(
                             onClick = {
-                                thisWorkout.postRestTime.value =
-                                    thisWorkout.postRestTime.value.plus(10)
+                                thisItem.workout.postRestTime.value =
+                                    thisItem.workout.postRestTime.value.plus(10)
                             }
                         ) {
                             Icon(
@@ -667,15 +673,17 @@ fun SessionBuilderItemHideWeightPreview() {
         Surface(color = MaterialTheme.colorScheme.surface) {
             LazyColumn {
                 item {
-                    SessionBuilderItem(
+                    EditSessionDataSubpageBuilderItem(
                         reorderableState = rememberReorderableLazyListState(onMove = { _, _ -> }),
-                        thisWorkout = AddSessionWorkoutData(
+                        thisItem = EditSessionDataSubpageBuilderItemData(
                             id = 0,
-                            repetitionCount = mutableIntStateOf(3),
-                            repetitionType = mutableStateOf(RepetitionTypes.Repetitions),
-                            weight = mutableFloatStateOf(1.5F),
-                            weightType = mutableStateOf(WeightTypes.BodyMass),
-                            postRestTime = mutableIntStateOf(137),
+                            workout = SessionBuilderWorkout(
+                                repetitionCount = mutableIntStateOf(3),
+                                repetitionType = mutableStateOf(RepetitionTypes.Repetitions),
+                                weight = mutableFloatStateOf(1.5F),
+                                weightType = mutableStateOf(WeightTypes.BodyMass),
+                                postRestTime = mutableIntStateOf(137),
+                            ),
                         ),
                         showTimer = true,
                         onWorkoutSearch = {},
@@ -712,15 +720,17 @@ fun SessionBuilderItemPreview() {
         ) {
             LazyColumn {
                 item {
-                    SessionBuilderItem(
+                    EditSessionDataSubpageBuilderItem(
                         reorderableState = rememberReorderableLazyListState(onMove = { _, _ -> }),
-                        thisWorkout = AddSessionWorkoutData(
+                        thisItem = EditSessionDataSubpageBuilderItemData(
                             id = 0,
-                            repetitionCount = mutableIntStateOf(3),
-                            repetitionType = mutableStateOf(RepetitionTypes.Repetitions),
-                            weight = mutableFloatStateOf(1.5F),
-                            weightType = mutableStateOf(WeightTypes.KGBodyMass),
-                            postRestTime = mutableIntStateOf(137),
+                            workout = SessionBuilderWorkout(
+                                repetitionCount = mutableIntStateOf(3),
+                                repetitionType = mutableStateOf(RepetitionTypes.Repetitions),
+                                weight = mutableFloatStateOf(1.5F),
+                                weightType = mutableStateOf(WeightTypes.KGBodyMass),
+                                postRestTime = mutableIntStateOf(137),
+                            ),
                         ),
                         showTimer = true,
                         onWorkoutSearch = {},

@@ -27,7 +27,7 @@ fun WorkoutsPage(
         }
 
         SelectWorkoutSubpage(
-            collectedWorkouts = collectedWorkouts,
+            workouts = collectedWorkouts,
             onSelect = onWorkoutClick,
         )
     }

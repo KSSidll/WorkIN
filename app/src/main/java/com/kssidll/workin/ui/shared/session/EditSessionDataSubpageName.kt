@@ -1,4 +1,4 @@
-package com.kssidll.workin.ui.addsession
+package com.kssidll.workin.ui.shared.session
 
 import android.annotation.*
 import android.content.res.*
@@ -19,12 +19,18 @@ import androidx.compose.ui.unit.*
 import com.kssidll.workin.R
 import com.kssidll.workin.ui.theme.*
 
+/// Data ///
+data class EditSessionDataSubpageNameState(
+    val name: MutableState<String> = mutableStateOf(String()),
+    val nameError: MutableState<Boolean> = mutableStateOf(false),
+    val description: MutableState<String> = mutableStateOf(String())
+)
+
+/// Page ///
 @Composable
-fun NamePage(
+fun EditSessionDataSubpageName(
     onNext: () -> Unit,
-    nameText: MutableState<String>,
-    nameError: MutableState<Boolean>,
-    descriptionText: MutableState<String>,
+    state: EditSessionDataSubpageNameState,
 ) {
     Column {
         Column(
@@ -56,10 +62,10 @@ fun NamePage(
                             descriptionFocusRequester.requestFocus()
                         }
                     ),
-                    value = nameText.value,
+                    value = state.name.value,
                     onValueChange = {
-                        nameText.value = it
-                        nameError.value = false
+                        state.name.value = it
+                        state.nameError.value = false
                     },
                     label = {
                         Text(
@@ -87,9 +93,9 @@ fun NamePage(
                         focusedBorderColor = MaterialTheme.colorScheme.outline,
                         focusedTextColor = MaterialTheme.colorScheme.onBackground,
                     ),
-                    isError = nameError.value,
+                    isError = state.nameError.value,
                     supportingText = {
-                        if (nameError.value) {
+                        if (state.nameError.value) {
                             Text(text = stringResource(id = R.string.field_required))
                         }
                     }
@@ -107,9 +113,9 @@ fun NamePage(
                 OutlinedTextField(
                     modifier = Modifier.focusRequester(descriptionFocusRequester),
                     minLines = 10,
-                    value = descriptionText.value,
+                    value = state.description.value,
                     onValueChange = {
-                        descriptionText.value = it
+                        state.description.value = it
                     },
                     label = {
                         Text(
@@ -216,11 +222,9 @@ fun NamePage(
 fun NamePagePreview() {
     WorkINTheme {
         Surface(modifier = Modifier.fillMaxSize()) {
-            NamePage(
+            EditSessionDataSubpageName(
                 onNext = {},
-                nameText = mutableStateOf(String()),
-                nameError = mutableStateOf(false),
-                descriptionText = mutableStateOf(String()),
+                state = EditSessionDataSubpageNameState(),
             )
         }
     }

@@ -1,4 +1,4 @@
-package com.kssidll.workin.ui.addsession
+package com.kssidll.workin.ui.shared.session
 
 import android.annotation.*
 import android.content.res.*
@@ -23,16 +23,22 @@ import com.kssidll.workin.R
 import com.kssidll.workin.ui.theme.*
 import kotlinx.coroutines.*
 
+/// Data ///
+data class EditSessionDataSubpageDaysState(
+    val mondayChecked: MutableState<Boolean> = mutableStateOf(false),
+    val tuesdayChecked: MutableState<Boolean> = mutableStateOf(false),
+    val wednesdayChecked: MutableState<Boolean> = mutableStateOf(false),
+    val thursdayChecked: MutableState<Boolean> = mutableStateOf(false),
+    val fridayChecked: MutableState<Boolean> = mutableStateOf(false),
+    val saturdayChecked: MutableState<Boolean> = mutableStateOf(false),
+    val sundayChecked: MutableState<Boolean> = mutableStateOf(false),
+)
+
+/// Page ///
 @Composable
-fun DaysPage(
+fun EditSessionDataSubpageDays(
     onNext: () -> Unit,
-    mondayChecked: MutableState<Boolean>,
-    tuesdayChecked: MutableState<Boolean>,
-    wednesdayChecked: MutableState<Boolean>,
-    thursdayChecked: MutableState<Boolean>,
-    fridayChecked: MutableState<Boolean>,
-    saturdayChecked: MutableState<Boolean>,
-    sundayChecked: MutableState<Boolean>,
+    state: EditSessionDataSubpageDaysState
 ) {
     Column {
         Column(
@@ -49,7 +55,7 @@ fun DaysPage(
                 Box(
                     modifier = Modifier.pointerInput(Unit) {
                         detectTapGestures { _ ->
-                            mondayChecked.value = !mondayChecked.value
+                            state.mondayChecked.value = !state.mondayChecked.value
                         }
                     }
                 ) {
@@ -58,9 +64,9 @@ fun DaysPage(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Checkbox(
-                            checked = mondayChecked.value,
+                            checked = state.mondayChecked.value,
                             onCheckedChange = {
-                                mondayChecked.value = it
+                                state.mondayChecked.value = it
                             },
                             modifier = Modifier.scale(1.1F),
                         )
@@ -77,7 +83,7 @@ fun DaysPage(
                 Box(
                     modifier = Modifier.pointerInput(Unit) {
                         detectTapGestures { _ ->
-                            tuesdayChecked.value = !tuesdayChecked.value
+                            state.tuesdayChecked.value = !state.tuesdayChecked.value
                         }
                     }
                 ) {
@@ -86,9 +92,9 @@ fun DaysPage(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Checkbox(
-                            checked = tuesdayChecked.value,
+                            checked = state.tuesdayChecked.value,
                             onCheckedChange = {
-                                tuesdayChecked.value = it
+                                state.tuesdayChecked.value = it
                             },
                             modifier = Modifier.scale(1.1F),
                         )
@@ -105,7 +111,7 @@ fun DaysPage(
                 Box(
                     modifier = Modifier.pointerInput(Unit) {
                         detectTapGestures { _ ->
-                            wednesdayChecked.value = !wednesdayChecked.value
+                            state.wednesdayChecked.value = !state.wednesdayChecked.value
                         }
                     }
                 ) {
@@ -114,9 +120,9 @@ fun DaysPage(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Checkbox(
-                            checked = wednesdayChecked.value,
+                            checked = state.wednesdayChecked.value,
                             onCheckedChange = {
-                                wednesdayChecked.value = it
+                                state.wednesdayChecked.value = it
                             },
                             modifier = Modifier.scale(1.1F),
                         )
@@ -133,7 +139,7 @@ fun DaysPage(
                 Box(
                     modifier = Modifier.pointerInput(Unit) {
                         detectTapGestures { _ ->
-                            thursdayChecked.value = !thursdayChecked.value
+                            state.thursdayChecked.value = !state.thursdayChecked.value
                         }
                     }
                 ) {
@@ -142,9 +148,9 @@ fun DaysPage(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Checkbox(
-                            checked = thursdayChecked.value,
+                            checked = state.thursdayChecked.value,
                             onCheckedChange = {
-                                thursdayChecked.value = it
+                                state.thursdayChecked.value = it
                             },
                             modifier = Modifier.scale(1.1F),
                         )
@@ -161,7 +167,7 @@ fun DaysPage(
                 Box(
                     modifier = Modifier.pointerInput(Unit) {
                         detectTapGestures { _ ->
-                            fridayChecked.value = !fridayChecked.value
+                            state.fridayChecked.value = !state.fridayChecked.value
                         }
                     }
                 ) {
@@ -170,9 +176,9 @@ fun DaysPage(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Checkbox(
-                            checked = fridayChecked.value,
+                            checked = state.fridayChecked.value,
                             onCheckedChange = {
-                                fridayChecked.value = it
+                                state.fridayChecked.value = it
                             },
                             modifier = Modifier.scale(1.1F),
                         )
@@ -189,7 +195,7 @@ fun DaysPage(
                 Box(
                     modifier = Modifier.pointerInput(Unit) {
                         detectTapGestures { _ ->
-                            saturdayChecked.value = !saturdayChecked.value
+                            state.saturdayChecked.value = !state.saturdayChecked.value
                         }
                     }
                 ) {
@@ -198,9 +204,9 @@ fun DaysPage(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Checkbox(
-                            checked = saturdayChecked.value,
+                            checked = state.saturdayChecked.value,
                             onCheckedChange = {
-                                saturdayChecked.value = it
+                                state.saturdayChecked.value = it
                             },
                             modifier = Modifier.scale(1.1F),
                         )
@@ -217,7 +223,7 @@ fun DaysPage(
                 Box(
                     modifier = Modifier.pointerInput(Unit) {
                         detectTapGestures { _ ->
-                            sundayChecked.value = !sundayChecked.value
+                            state.sundayChecked.value = !state.sundayChecked.value
                         }
                     }
                 ) {
@@ -226,9 +232,9 @@ fun DaysPage(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Checkbox(
-                            checked = sundayChecked.value,
+                            checked = state.sundayChecked.value,
                             onCheckedChange = {
-                                sundayChecked.value = it
+                                state.sundayChecked.value = it
                             },
                             modifier = Modifier.scale(1.1F),
                         )
@@ -315,15 +321,9 @@ fun DaysPage(
 fun DaysPagePreview() {
     WorkINTheme {
         Surface(modifier = Modifier.fillMaxSize()) {
-            DaysPage(
+            EditSessionDataSubpageDays(
                 onNext = {},
-                mondayChecked = mutableStateOf(false),
-                tuesdayChecked = mutableStateOf(false),
-                wednesdayChecked = mutableStateOf(false),
-                thursdayChecked = mutableStateOf(false),
-                fridayChecked = mutableStateOf(false),
-                saturdayChecked = mutableStateOf(false),
-                sundayChecked = mutableStateOf(false),
+                state = EditSessionDataSubpageDaysState(),
             )
         }
     }

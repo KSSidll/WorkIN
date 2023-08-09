@@ -12,12 +12,10 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.draw.*
-import androidx.compose.ui.platform.*
 import androidx.compose.ui.res.*
 import androidx.compose.ui.tooling.preview.*
 import androidx.compose.ui.unit.*
 import com.kssidll.workin.data.data.*
-import com.kssidll.workin.ui.addsession.*
 import com.kssidll.workin.ui.theme.*
 
 @Composable
@@ -75,19 +73,21 @@ fun SessionCardItem(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Column {
-                    decodeDaysToString(session.session.days, LocalContext.current).forEach {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 24.dp),
-                        ) {
-                            Text(
-                                text = it,
-                                fontSize = 16.sp,
-                                modifier = Modifier.alpha(0.8F),
-                            )
+                    DaysEncoding.decode(session.session.days)
+                        .reversed()
+                        .forEach {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 24.dp),
+                            ) {
+                                Text(
+                                    text = it.getTranslation(),
+                                    fontSize = 16.sp,
+                                    modifier = Modifier.alpha(0.8F),
+                                )
+                            }
                         }
-                    }
                 }
 
                 Row(

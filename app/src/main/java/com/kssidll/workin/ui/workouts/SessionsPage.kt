@@ -18,6 +18,7 @@ import com.kssidll.workin.ui.theme.*
 fun SessionsPage(
     collectedSessions: List<SessionWithFullSessionWorkouts>,
     onSessionStart: (Long) -> Unit,
+    onSessionClick: (Long) -> Unit,
 ) {
     Column {
         PrimaryTopHeader {
@@ -30,7 +31,7 @@ fun SessionsPage(
         SelectSessionSubpage(
             collectedSessions = collectedSessions,
             onSelect = {
-                // TODO add session edition
+                onSessionClick(it.session.id)
             },
             showStartIcon = true,
             onStartIconClick = {
@@ -66,7 +67,8 @@ fun SessionsPagePreview() {
                 collectedSessions = listOf(
 
                 ),
-                onSessionStart = {}
+                onSessionStart = {},
+                onSessionClick = {},
             )
         }
     }
