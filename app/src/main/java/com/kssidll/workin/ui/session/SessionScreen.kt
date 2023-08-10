@@ -115,10 +115,9 @@ fun SessionScreen(
                         }
                     )
                 } else {
-                    // TODO finish page
-                    Box(modifier = Modifier.fillMaxSize()) {
-                        Text(text = "finish")
-                    }
+                    SessionFinishPage(
+                        onButtonClick = onBack,
+                    )
                 }
             }
         }

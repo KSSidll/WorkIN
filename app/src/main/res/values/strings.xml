@@ -58,4 +58,6 @@
     <string name="delete_session">Delete this session</string>
     <string name="workout_name_duplicate">A Workout with this Name already exists</string>
     <string name="session_name_duplicate">A Session with this Name already exists</string>
+    <string name="session_finished">You finished the Session!</string>
+    <string name="session_finished_return">Return</string>
 </resources>
