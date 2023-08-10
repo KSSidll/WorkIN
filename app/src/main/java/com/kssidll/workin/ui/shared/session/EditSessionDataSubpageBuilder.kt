@@ -108,6 +108,7 @@ fun EditSessionDataSubpageBuilder(
                     ?.apply {
                         this.workout.workoutName.value = it.name
                         this.workout.workoutId = it.id
+                        this.workout.isError.value = false
                     }
                 state.isWorkoutSearch.value = false
             },
