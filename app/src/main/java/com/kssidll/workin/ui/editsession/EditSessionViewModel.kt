@@ -1,6 +1,6 @@
 package com.kssidll.workin.ui.editsession
 
-import android.database.sqlite.SQLiteConstraintException
+import android.database.sqlite.*
 import androidx.lifecycle.*
 import com.kssidll.workin.data.data.*
 import com.kssidll.workin.data.repository.*
@@ -56,7 +56,8 @@ class EditSessionViewModel @Inject constructor(
                         restTime = it.sessionWorkout.restTime,
                     )
                 })
-            }.await()
+            }
+                .await()
         } catch (e: SQLiteConstraintException) {
             throw e
         }

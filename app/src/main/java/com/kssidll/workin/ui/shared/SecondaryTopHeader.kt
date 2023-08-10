@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.*
 import com.kssidll.workin.R
 import com.kssidll.workin.ui.theme.*
 
+/// Header ///
 @Composable
 fun SecondaryTopHeader(
     onIconClick: () -> Unit,
@@ -53,7 +54,7 @@ fun SecondaryTopHeader(
     }
 }
 
-/// Screen Preview ///
+/// Header Preview ///
 @Preview(
     group = "SecondaryTopHeader",
     name = "Dark",

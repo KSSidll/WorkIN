@@ -6,6 +6,7 @@ import com.kssidll.workin.data.repository.*
 import dagger.hilt.android.lifecycle.*
 import javax.inject.*
 
+/// ViewModel ///
 @HiltViewModel
 class SessionViewModel @Inject constructor(
     sessionRepository: SessionRepository,

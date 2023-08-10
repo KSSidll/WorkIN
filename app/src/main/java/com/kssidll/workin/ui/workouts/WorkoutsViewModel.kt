@@ -7,6 +7,7 @@ import dagger.hilt.android.lifecycle.*
 import kotlinx.coroutines.flow.*
 import javax.inject.*
 
+/// ViewModel ///
 @HiltViewModel
 class WorkoutsViewModel @Inject constructor(
     workoutRepository: WorkoutRepository,

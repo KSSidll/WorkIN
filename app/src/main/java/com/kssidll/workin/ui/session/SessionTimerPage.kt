@@ -16,6 +16,7 @@ import com.kssidll.workin.ui.theme.*
 import kotlinx.coroutines.*
 import java.util.*
 
+/// Page ///
 @Composable
 fun SessionTimerPage(
     time: Int,

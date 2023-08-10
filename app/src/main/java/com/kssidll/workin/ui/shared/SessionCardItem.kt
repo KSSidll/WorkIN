@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.*
 import com.kssidll.workin.data.data.*
 import com.kssidll.workin.ui.theme.*
 
+/// Card ///
 @Composable
 fun SessionCardItem(
     session: SessionWithFullSessionWorkouts,

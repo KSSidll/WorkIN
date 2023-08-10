@@ -15,6 +15,7 @@ import com.kssidll.workin.R
 import com.kssidll.workin.mock.*
 import com.kssidll.workin.ui.theme.*
 
+/// NavBar ///
 @Composable
 fun ScreenWithBottomNavBar(
     navigationController: INavigationController = LocalNavigation.current,
@@ -98,7 +99,7 @@ fun ScreenWithBottomNavBar(
     }
 }
 
-/// Screen Preview ///
+/// NavBar Preview ///
 @Preview(
     group = "ScreenWithBottomNavBar",
     name = "Dark",

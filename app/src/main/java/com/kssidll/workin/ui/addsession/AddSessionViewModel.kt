@@ -53,7 +53,8 @@ class AddSessionViewModel @Inject constructor(
                         )
                     }
                 )
-            }.await()
+            }
+                .await()
         } catch (e: SQLiteConstraintException) {
             throw e
         }

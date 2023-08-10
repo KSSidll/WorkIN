@@ -13,6 +13,7 @@ import com.kssidll.workin.data.data.*
 import com.kssidll.workin.ui.shared.*
 import com.kssidll.workin.ui.theme.*
 
+/// Page ///
 @Composable
 fun WorkoutsPage(
     collectedWorkouts: List<Workout>,

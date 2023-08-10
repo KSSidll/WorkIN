@@ -16,6 +16,7 @@ import com.kssidll.workin.R
 import com.kssidll.workin.data.data.*
 import com.kssidll.workin.ui.theme.*
 
+/// Subpage ///
 @Composable
 fun SelectWorkoutSubpage(
     workouts: List<Workout>,

@@ -40,7 +40,8 @@ class AddWorkoutViewModel @Inject constructor(
                         description = workoutData.description.trim()
                     )
                 )
-            }.await()
+            }
+                .await()
         } catch (e: SQLiteConstraintException) {
             throw e
         }

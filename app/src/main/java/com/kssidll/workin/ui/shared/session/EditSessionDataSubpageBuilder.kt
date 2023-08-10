@@ -45,7 +45,7 @@ data class EditSessionDataSubpageBuilderState(
     val isWorkoutSearch: MutableState<Boolean> = mutableStateOf(false),
     val searchingWithId: MutableState<Int> = mutableIntStateOf(0)
 ) {
-    constructor(workouts: List<SessionBuilderWorkout>) : this(
+    constructor(workouts: List<SessionBuilderWorkout>): this(
         workouts = workouts.let {
             if (it.isEmpty()) {
                 mutableStateListOf(EditSessionDataSubpageBuilderItemData(id = 0))
@@ -159,7 +159,9 @@ fun EditSessionDataSubpageBuilder(
                                                     add(index, removeAt(index - 1))
                                                     scope.launch {
                                                         delay(150)
-                                                        reorderableState.listState.animateScrollToItem(index - 1)
+                                                        reorderableState.listState.animateScrollToItem(
+                                                            index - 1
+                                                        )
                                                     }
                                                 }
                                             },
@@ -170,7 +172,9 @@ fun EditSessionDataSubpageBuilder(
                                                     add(index, removeAt(index + 1))
                                                     scope.launch {
                                                         delay(150)
-                                                        reorderableState.listState.animateScrollToItem(index + 1)
+                                                        reorderableState.listState.animateScrollToItem(
+                                                            index + 1
+                                                        )
                                                     }
                                                 }
                                             },
@@ -194,7 +198,7 @@ fun EditSessionDataSubpageBuilder(
                             onClick = {
                                 state.workouts.add(EditSessionDataSubpageBuilderItemData(id = state.workouts.size))
                                 scope.launch {
-                                    reorderableState.listState.animateScrollToItem(state.workouts.size-1)
+                                    reorderableState.listState.animateScrollToItem(state.workouts.size - 1)
                                 }
                             },
                             colors = IconButtonColors(

@@ -33,7 +33,8 @@ class EditWorkoutViewModel @Inject constructor(
         try {
             viewModelScope.async {
                 workoutRepository.update(workout)
-            }.await()
+            }
+                .await()
         } catch (e: SQLiteConstraintException) {
             throw e
         }

@@ -14,6 +14,7 @@ import com.kssidll.workin.ui.shared.*
 import com.kssidll.workin.ui.theme.*
 
 
+/// Page ///
 @Composable
 fun SessionsPage(
     collectedSessions: List<SessionWithFullSessionWorkouts>,
