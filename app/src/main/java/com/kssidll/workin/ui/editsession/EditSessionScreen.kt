@@ -62,7 +62,7 @@ fun EditSessionScreen(
     session: SessionWithFullSessionWorkouts,
     userWorkouts: List<Workout>,
     onBack: () -> Unit,
-    onEdit: (SessionWithFullSessionWorkouts) -> Unit,
+    onEdit: suspend (SessionWithFullSessionWorkouts) -> Unit,
     onDelete: () -> Unit,
 ) {
     EditSessionDataSubpage(

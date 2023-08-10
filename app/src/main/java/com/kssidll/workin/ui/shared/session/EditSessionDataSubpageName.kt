@@ -22,7 +22,8 @@ import com.kssidll.workin.ui.theme.*
 /// Data ///
 data class EditSessionDataSubpageNameState(
     val name: MutableState<String> = mutableStateOf(String()),
-    val nameError: MutableState<Boolean> = mutableStateOf(false),
+    val nameBlankError: MutableState<Boolean> = mutableStateOf(false),
+    val nameDuplicateError: MutableState<Boolean> = mutableStateOf(false),
     val description: MutableState<String> = mutableStateOf(String())
 )
 
@@ -65,7 +66,8 @@ fun EditSessionDataSubpageName(
                     value = state.name.value,
                     onValueChange = {
                         state.name.value = it
-                        state.nameError.value = false
+                        state.nameBlankError.value = false
+                        state.nameDuplicateError.value = false
                     },
                     label = {
                         Text(
@@ -93,10 +95,12 @@ fun EditSessionDataSubpageName(
                         focusedBorderColor = MaterialTheme.colorScheme.outline,
                         focusedTextColor = MaterialTheme.colorScheme.onBackground,
                     ),
-                    isError = state.nameError.value,
+                    isError = state.nameBlankError.value || state.nameDuplicateError.value,
                     supportingText = {
-                        if (state.nameError.value) {
+                        if (state.nameBlankError.value) {
                             Text(text = stringResource(id = R.string.field_required))
+                        } else if (state.nameDuplicateError.value) {
+                            Text(text = stringResource(id = R.string.session_name_duplicate))
                         }
                     }
                 )

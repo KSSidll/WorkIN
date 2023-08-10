@@ -5,7 +5,6 @@ import androidx.compose.ui.res.*
 import androidx.room.*
 import com.kssidll.workin.R
 
-// TODO catch non uniques instead of crashing
 @Entity(
     indices = [
         Index(

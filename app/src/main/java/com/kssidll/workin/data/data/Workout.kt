@@ -2,7 +2,6 @@ package com.kssidll.workin.data.data
 
 import androidx.room.*
 
-// TODO catch non uniques instead of crashing
 @Entity(
     indices = [
         Index(

@@ -39,7 +39,7 @@ fun AddSessionRoute(
 @Composable
 fun AddSessionScreen(
     onBack: () -> Unit,
-    onSessionAdd: (EditSessionDataSubpageState) -> Unit,
+    onSessionAdd: suspend (EditSessionDataSubpageState) -> Unit,
     workouts: List<Workout>,
 ) {
     EditSessionDataSubpage(

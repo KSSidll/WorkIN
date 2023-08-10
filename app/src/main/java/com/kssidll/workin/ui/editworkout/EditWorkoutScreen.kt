@@ -58,7 +58,7 @@ fun EditWorkoutRoute(
 fun EditWorkoutScreen(
     workout: Workout,
     onBack: () -> Unit,
-    onEdit: (Workout) -> Unit,
+    onEdit: suspend (Workout) -> Unit,
     onDelete: () -> Unit,
 ) {
     EditWorkoutDataSubpage(

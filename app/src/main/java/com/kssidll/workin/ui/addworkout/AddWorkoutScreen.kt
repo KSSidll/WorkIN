@@ -36,7 +36,7 @@ fun AddWorkoutRoute(
 @Composable
 fun AddWorkoutScreen(
     onBack: () -> Unit,
-    onWorkoutAdd: (AddWorkoutData) -> Unit
+    onWorkoutAdd: suspend (AddWorkoutData) -> Unit
 ) {
     EditWorkoutDataSubpage(
         onBack = onBack,

@@ -1,5 +1,6 @@
 package com.kssidll.workin.ui.addworkout
 
+import android.database.sqlite.*
 import androidx.lifecycle.*
 import com.kssidll.workin.data.data.*
 import com.kssidll.workin.data.repository.*
@@ -25,12 +26,23 @@ class AddWorkoutViewModel @Inject constructor(
         this.workoutRepository = workoutRepository
     }
 
-    fun addWorkout(workoutData: AddWorkoutData) = viewModelScope.launch {
-        workoutRepository.insert(
-            workout = Workout(
-                name = workoutData.name.trim(),
-                description = workoutData.description.trim()
-            )
-        )
+    /**
+     * @return id of the newly inserted workout
+     * @throws SQLiteConstraintException Attempted to insert a duplicate value,
+     * workout name has to be unique
+     */
+    suspend fun addWorkout(workoutData: AddWorkoutData): Long {
+        try {
+            return viewModelScope.async {
+                workoutRepository.insert(
+                    workout = Workout(
+                        name = workoutData.name.trim(),
+                        description = workoutData.description.trim()
+                    )
+                )
+            }.await()
+        } catch (e: SQLiteConstraintException) {
+            throw e
+        }
     }
 }

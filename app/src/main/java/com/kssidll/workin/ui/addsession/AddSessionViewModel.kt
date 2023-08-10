@@ -1,5 +1,6 @@
 package com.kssidll.workin.ui.addsession
 
+import android.database.sqlite.*
 import androidx.lifecycle.*
 import com.kssidll.workin.data.data.*
 import com.kssidll.workin.data.repository.*
@@ -23,29 +24,39 @@ class AddSessionViewModel @Inject constructor(
         this.workoutRepository = workoutRepository
     }
 
-    fun addSession(sessionData: EditSessionDataSubpageState) = viewModelScope.launch {
-        val sessionId = sessionRepository.insert(
-            session = Session(
-                name = sessionData.name.trim(),
-                description = sessionData.description.trim(),
-                days = sessionData.days,
-            )
-        )
-
-        sessionRepository.insertWorkouts(
-            sessionData.workouts.mapIndexed { index, it ->
-                SessionWorkout(
-                    sessionId = sessionId,
-                    workoutId = it.workoutId,
-                    repetitionCount = it.repetitionCount.value,
-                    repetitionType = it.repetitionType.value.id,
-                    weight = it.weight.value,
-                    weightType = it.weightType.value.id,
-                    order = index,
-                    restTime = it.postRestTime.value,
+    /**
+     * @throws SQLiteConstraintException Attempted to insert a duplicate value,
+     * session name has to be unique
+     */
+    suspend fun addSession(sessionData: EditSessionDataSubpageState) {
+        try {
+            viewModelScope.async {
+                val sessionId = sessionRepository.insert(
+                    session = Session(
+                        name = sessionData.name.trim(),
+                        description = sessionData.description.trim(),
+                        days = sessionData.days,
+                    )
                 )
-            }
-        )
+
+                sessionRepository.insertWorkouts(
+                    sessionData.workouts.mapIndexed { index, it ->
+                        SessionWorkout(
+                            sessionId = sessionId,
+                            workoutId = it.workoutId,
+                            repetitionCount = it.repetitionCount.value,
+                            repetitionType = it.repetitionType.value.id,
+                            weight = it.weight.value,
+                            weightType = it.weightType.value.id,
+                            order = index,
+                            restTime = it.postRestTime.value,
+                        )
+                    }
+                )
+            }.await()
+        } catch (e: SQLiteConstraintException) {
+            throw e
+        }
     }
 
     fun getWorkouts(): Flow<List<Workout>> {

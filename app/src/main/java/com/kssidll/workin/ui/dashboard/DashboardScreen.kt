@@ -75,7 +75,6 @@ fun DashboardScreen(
         }
     }
 
-    // TODO change to something scrollable that works better than this here
     LazyColumn {
         item {
             if (sessionsToday.isNotEmpty()) {
@@ -146,6 +145,10 @@ fun DashboardScreen(
 
         }
 
+    }
+
+    if (sessionsToday.isEmpty() && sessionsTomorrow.isEmpty()) {
+        // TODO show something
     }
 }
 

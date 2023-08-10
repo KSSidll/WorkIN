@@ -1,6 +1,7 @@
 package com.kssidll.workin.ui.shared.session
 
 import android.content.res.*
+import android.database.sqlite.SQLiteConstraintException
 import androidx.activity.compose.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -49,7 +50,7 @@ fun EditSessionDataSubpage(
     onBack: () -> Unit,
     workouts: List<Workout>,
     submitButtonContent: @Composable () -> Unit,
-    onSubmit: (EditSessionDataSubpageState) -> Unit,
+    onSubmit: suspend (EditSessionDataSubpageState) -> Unit,
     startState: EditSessionDataSubpageState = EditSessionDataSubpageState(),
     headerAdditionalContent: @Composable BoxScope.() -> Unit = {},
 ) {
@@ -169,7 +170,7 @@ fun EditSessionDataSubpage(
                 2 -> {
                     EditSessionDataSubpageBuilder(
                         onSubmit = {
-                            namePageState.nameError.value = namePageState.name.value.isBlank()
+                            namePageState.nameBlankError.value = namePageState.name.value.isBlank()
 
                             sessionBuilderState.workouts.forEach { workout ->
                                 if (workout.workout.workoutName.value.isBlank()) {
@@ -177,7 +178,7 @@ fun EditSessionDataSubpage(
                                 }
                             }
 
-                            if (namePageState.nameError.value) {
+                            if (namePageState.nameBlankError.value) {
                                 scope.launch {
                                     pagerState.animateScrollToPage(0)
                                 }
@@ -194,16 +195,23 @@ fun EditSessionDataSubpage(
                                 if (daysPageState.saturdayChecked.value) days.addSaturday()
                                 if (daysPageState.sundayChecked.value) days.addSunday()
 
-                                onSubmit(
-                                    EditSessionDataSubpageState(
-                                        name = namePageState.name.value,
-                                        description = namePageState.description.value,
-                                        days = days.build(),
-                                        workouts = sessionBuilderState.workouts.map {
-                                            it.workout
-                                        }
-                                    )
-                                )
+                                scope.launch {
+                                    try {
+                                        onSubmit(
+                                            EditSessionDataSubpageState(
+                                                name = namePageState.name.value,
+                                                description = namePageState.description.value,
+                                                days = days.build(),
+                                                workouts = sessionBuilderState.workouts.map {
+                                                    it.workout
+                                                }
+                                            )
+                                        )
+                                    } catch (_: SQLiteConstraintException) {
+                                        namePageState.nameDuplicateError.value = true
+                                        pagerState.animateScrollToPage(0)
+                                    }
+                                }
 
                             }
                         },

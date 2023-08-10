@@ -1,6 +1,8 @@
 package com.kssidll.workin.ui.shared
 
 import android.content.res.*
+import android.database.sqlite.SQLiteConstraintException
+import android.util.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.*
 import androidx.compose.foundation.text.*
@@ -13,7 +15,9 @@ import androidx.compose.ui.res.*
 import androidx.compose.ui.text.input.*
 import androidx.compose.ui.tooling.preview.*
 import androidx.compose.ui.unit.*
+import com.kssidll.workin.R
 import com.kssidll.workin.ui.theme.*
+import kotlinx.coroutines.*
 
 /// Data ///
 data class EditWorkoutDataSubpageState(
@@ -27,16 +31,20 @@ data class EditWorkoutDataSubpageState(
 fun EditWorkoutDataSubpage(
     onBack: () -> Unit,
     submitButtonContent: @Composable () -> Unit,
-    onSubmit: (EditWorkoutDataSubpageState) -> Unit,
-    onSubmitError: () -> Unit = {},
+    onSubmit: suspend (EditWorkoutDataSubpageState) -> Unit,
     startState: EditWorkoutDataSubpageState = EditWorkoutDataSubpageState(),
     headerText: @Composable () -> Unit = {},
     headerAdditionalContent: @Composable BoxScope.() -> Unit = {},
 ) {
+    val scope = rememberCoroutineScope()
+
     var nameText: String by remember {
         mutableStateOf(startState.name)
     }
-    var nameError: Boolean by remember {
+    var nameBlankError: Boolean by remember {
+        mutableStateOf(false)
+    }
+    var nameDuplicateError: Boolean by remember {
         mutableStateOf(false)
     }
 
@@ -84,7 +92,8 @@ fun EditWorkoutDataSubpage(
                     value = nameText,
                     onValueChange = {
                         nameText = it
-                        nameError = false
+                        nameBlankError = false
+                        nameDuplicateError = false
                     },
                     label = {
                         Text(
@@ -112,10 +121,12 @@ fun EditWorkoutDataSubpage(
                         focusedBorderColor = MaterialTheme.colorScheme.outline,
                         focusedTextColor = MaterialTheme.colorScheme.onBackground,
                     ),
-                    isError = nameError,
+                    isError = nameBlankError || nameDuplicateError,
                     supportingText = {
-                        if (nameError) {
-                            Text(text = stringResource(id = com.kssidll.workin.R.string.field_required))
+                        if (nameBlankError) {
+                            Text(text = stringResource(id = R.string.field_required))
+                        } else if (nameDuplicateError) {
+                            Text(text = stringResource(id = R.string.workout_name_duplicate))
                         }
                     }
                 )
@@ -178,17 +189,21 @@ fun EditWorkoutDataSubpage(
         ) {
             Button(
                 onClick = {
-                    nameError = nameText.isBlank()
+                    nameBlankError = nameText.isBlank()
 
-                    if (nameError) {
-                        onSubmitError()
-                    } else {
-                        onSubmit(
-                            EditWorkoutDataSubpageState(
-                                name = nameText,
-                                description = descriptionText,
-                            )
-                        )
+                    if (!nameBlankError) {
+                        scope.launch {
+                            try {
+                                onSubmit(
+                                    EditWorkoutDataSubpageState(
+                                        name = nameText,
+                                        description = descriptionText,
+                                    )
+                                )
+                            } catch (_: SQLiteConstraintException) {
+                                nameDuplicateError = true
+                            }
+                        }
                     }
                 },
                 modifier = Modifier
