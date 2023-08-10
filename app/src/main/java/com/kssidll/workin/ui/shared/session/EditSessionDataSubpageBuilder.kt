@@ -5,6 +5,7 @@ import android.content.res.*
 import android.icu.util.UniversalTimeScale.*
 import android.util.*
 import androidx.activity.compose.*
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.*
 import androidx.compose.foundation.interaction.*
@@ -22,6 +23,7 @@ import androidx.compose.runtime.snapshots.*
 import androidx.compose.ui.*
 import androidx.compose.ui.focus.*
 import androidx.compose.ui.modifier.*
+import androidx.compose.ui.platform.*
 import androidx.compose.ui.res.*
 import androidx.compose.ui.text.input.*
 import androidx.compose.ui.tooling.preview.*
@@ -82,11 +84,21 @@ fun EditSessionDataSubpageBuilder(
     userWorkouts: List<Workout>,
     state: EditSessionDataSubpageBuilderState,
 ) {
+    val scope = rememberCoroutineScope()
+
     BackHandler(
         enabled = state.isWorkoutSearch.value && onScreen
     ) {
         state.isWorkoutSearch.value = false
     }
+
+    val reorderableState = rememberReorderableLazyListState(
+        onMove = { from, to ->
+            state.workouts.apply {
+                add(to.index, removeAt(from.index))
+            }
+        }
+    )
 
     if (state.isWorkoutSearch.value) {
         SelectWorkoutSubpage(
@@ -111,30 +123,21 @@ fun EditSessionDataSubpageBuilder(
 
 
                 Column {
-                    val scrollState = rememberScrollState()
-                    val reorderableState = rememberReorderableLazyListState(
-                        onMove = { from, to ->
-                            state.workouts.apply {
-                                add(to.index, removeAt(from.index))
-                            }
-                        }
-                    )
 
                     BoxWithConstraints {
                         LazyColumn(
                             state = reorderableState.listState,
                             modifier = Modifier
-                                .scrollable(
-                                    state = scrollState,
-                                    orientation = Orientation.Vertical
-                                )
                                 .fillMaxWidth()
                                 .heightIn(this.minHeight, this.maxHeight.minus(60.dp))
                                 .reorderable(reorderableState)
                         ) {
                             items(state.workouts, key = { it.id }) {
                                 Box(
-                                    modifier = Modifier.animateItemPlacement()
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(350.dp)
+                                        .animateItemPlacement()
                                 ) {
                                     ReorderableItem(
                                         reorderableState = reorderableState,
@@ -153,6 +156,10 @@ fun EditSessionDataSubpageBuilder(
                                                     val index = indexOf(it)
                                                     if (index == 0) return@apply
                                                     add(index, removeAt(index - 1))
+                                                    scope.launch {
+                                                        delay(150)
+                                                        reorderableState.listState.animateScrollToItem(index - 1)
+                                                    }
                                                 }
                                             },
                                             onMoveDown = {
@@ -160,6 +167,10 @@ fun EditSessionDataSubpageBuilder(
                                                     val index = indexOf(it)
                                                     if (index == lastIndex) return@apply
                                                     add(index, removeAt(index + 1))
+                                                    scope.launch {
+                                                        delay(150)
+                                                        reorderableState.listState.animateScrollToItem(index + 1)
+                                                    }
                                                 }
                                             },
                                             onDelete = {
@@ -181,6 +192,9 @@ fun EditSessionDataSubpageBuilder(
                         FilledIconButton(
                             onClick = {
                                 state.workouts.add(EditSessionDataSubpageBuilderItemData(id = state.workouts.size))
+                                scope.launch {
+                                    reorderableState.listState.animateScrollToItem(state.workouts.size-1)
+                                }
                             },
                             colors = IconButtonColors(
                                 disabledContainerColor = MaterialTheme.colorScheme.secondary,
@@ -253,7 +267,22 @@ fun SessionBuilderPagePreview() {
                 submitButtonContent = {},
                 onScreen = true,
                 userWorkouts = listOf(),
-                state = EditSessionDataSubpageBuilderState(),
+                state = EditSessionDataSubpageBuilderState(
+                    workouts = mutableStateListOf(
+                        EditSessionDataSubpageBuilderItemData(
+                            id = 0,
+                            workout = SessionBuilderWorkout(
+
+                            )
+                        ),
+                        EditSessionDataSubpageBuilderItemData(
+                            id = 1,
+                            workout = SessionBuilderWorkout(
+
+                            )
+                        ),
+                    )
+                ),
             )
         }
     }
