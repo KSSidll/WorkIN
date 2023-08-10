@@ -96,7 +96,7 @@ fun EditWorkoutDataSubpage(
                     },
                     label = {
                         Text(
-                            text = stringResource(id = com.kssidll.workin.R.string.workout_name),
+                            text = stringResource(id = R.string.workout_name),
                             fontSize = 16.sp,
                         )
                     },
@@ -148,7 +148,7 @@ fun EditWorkoutDataSubpage(
                     },
                     label = {
                         Text(
-                            text = stringResource(id = com.kssidll.workin.R.string.workout_description),
+                            text = stringResource(id = R.string.workout_description),
                             fontSize = 16.sp,
                         )
                     },
