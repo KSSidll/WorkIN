@@ -258,118 +258,125 @@ fun LazyItemScope.EditSessionDataSubpageBuilderItem(
                     Box(
                         modifier = Modifier.width(223.dp)
                     ) {
-                        var currentlyResizing: Boolean by remember {
-                            mutableStateOf(false)
+                        var weightTargetAlpha: Float by remember {
+                            if (thisItem.workout.weightType.value.hideWeight) mutableFloatStateOf(0F)
+                            else mutableFloatStateOf(1F)
                         }
 
-                        if (!thisItem.workout.weightType.value.hideWeight && !currentlyResizing) {
-                            Row(
-                                modifier = Modifier.align(Alignment.CenterStart)
-                            ) {
-                                var weightText: String by remember {
-                                    mutableStateOf(thisItem.workout.weight.value.toString())
+                        val currentAlpha: Float by animateFloatAsState(
+                            targetValue = weightTargetAlpha,
+                            label = "Weight type resize animation on hide parameter"
+                        )
+
+                        Row(
+                            modifier = Modifier
+                                .align(Alignment.CenterStart)
+                                .alpha(currentAlpha)
+                        ) {
+                            var weightText: String by remember {
+                                mutableStateOf(thisItem.workout.weight.value.toString())
+                            }
+
+
+                            OutlinedTextField(
+                                singleLine = true,
+                                modifier = Modifier
+                                    .width(70.dp)
+                                    .height(65.dp),
+                                value = weightText,
+                                onValueChange = { newValue ->
+                                    if (newValue.isBlank()) {
+                                        thisItem.workout.weight.value = 0F
+                                        weightText = String()
+                                    } else if (newValue.matches(Regex("""\d+?\.?\d{0,2}"""))) {
+                                        thisItem.workout.weight.value =
+                                            newValue.toFloat()
+                                        weightText = thisItem.workout.weight.value.toString()
+                                            .dropLast(
+                                                if (newValue.last() == '.') 1
+                                                else if (
+                                                    thisItem.workout.weight.value.toString()
+                                                        .endsWith(".0") &&
+                                                    !newValue.endsWith(".0")
+                                                ) 2
+                                                else 0
+                                            )
+                                    }
+                                },
+                                shape = RoundedCornerShape(12.dp),
+                                keyboardOptions = KeyboardOptions(
+                                    keyboardType = KeyboardType.Decimal
+                                ),
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    cursorColor = MaterialTheme.colorScheme.onSurface,
+                                    selectionColors = TextSelectionColors(
+                                        handleColor = MaterialTheme.colorScheme.tertiary,
+                                        backgroundColor = MaterialTheme.colorScheme.tertiary.copy(
+                                            alpha = 0.4F
+                                        )
+                                    ),
+                                    focusedBorderColor = MaterialTheme.colorScheme.outline,
+                                    focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                                ),
+                            )
+
+                            Spacer(modifier = Modifier.width(2.dp))
+
+                            Column(modifier = Modifier.height(65.dp)) {
+                                Spacer(modifier = Modifier.height(8.dp))
+                                FilledIconButton(
+                                    modifier = Modifier
+                                        .weight(1F)
+                                        .width(18.dp),
+                                    onClick = {
+                                        thisItem.workout.weight.value =
+                                            thisItem.workout.weight.value.plus(0.5F)
+                                        weightText = thisItem.workout.weight.value.toString()
+                                    },
+                                    colors = IconButtonColors(
+                                        contentColor = MaterialTheme.colorScheme.onTertiary,
+                                        containerColor = MaterialTheme.colorScheme.tertiary,
+                                        disabledContentColor = MaterialTheme.colorScheme.onTertiary,
+                                        disabledContainerColor = MaterialTheme.colorScheme.tertiary,
+                                    )
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Sharp.KeyboardArrowUp,
+                                        contentDescription = stringResource(id = R.string.increase_weight_05_description),
+                                    )
                                 }
 
-                                OutlinedTextField(
-                                    singleLine = true,
+                                Spacer(modifier = Modifier.height(2.dp))
+
+                                FilledIconButton(
                                     modifier = Modifier
-                                        .width(70.dp)
-                                        .height(65.dp),
-                                    value = weightText,
-                                    onValueChange = { newValue ->
-                                        if (newValue.isBlank()) {
-                                            thisItem.workout.weight.value = 0F
-                                            weightText = String()
-                                        } else if (newValue.matches(Regex("""\d+?\.?\d{0,2}"""))) {
-                                            thisItem.workout.weight.value =
-                                                newValue.toFloat()
-                                            weightText = thisItem.workout.weight.value.toString()
-                                                .dropLast(
-                                                    if (newValue.last() == '.') 1
-                                                    else if (
-                                                        thisItem.workout.weight.value.toString()
-                                                            .endsWith(".0") &&
-                                                        !newValue.endsWith(".0")
-                                                    ) 2
-                                                    else 0
-                                                )
+                                        .weight(1F)
+                                        .width(18.dp),
+                                    onClick = {
+                                        thisItem.workout.weight.apply {
+                                            if (this.value == 0F) return@apply
+
+                                            this.value = this.value.minus(0.5F)
+                                            weightText =
+                                                thisItem.workout.weight.value.toString()
                                         }
                                     },
-                                    shape = RoundedCornerShape(12.dp),
-                                    keyboardOptions = KeyboardOptions(
-                                        keyboardType = KeyboardType.Decimal
-                                    ),
-                                    colors = OutlinedTextFieldDefaults.colors(
-                                        cursorColor = MaterialTheme.colorScheme.onSurface,
-                                        selectionColors = TextSelectionColors(
-                                            handleColor = MaterialTheme.colorScheme.tertiary,
-                                            backgroundColor = MaterialTheme.colorScheme.tertiary.copy(
-                                                alpha = 0.4F
-                                            )
-                                        ),
-                                        focusedBorderColor = MaterialTheme.colorScheme.outline,
-                                        focusedTextColor = MaterialTheme.colorScheme.onSurface,
-                                    ),
-                                )
-
-                                Spacer(modifier = Modifier.width(2.dp))
-
-                                Column(modifier = Modifier.height(65.dp)) {
-                                    Spacer(modifier = Modifier.height(8.dp))
-                                    FilledIconButton(
-                                        modifier = Modifier
-                                            .weight(1F)
-                                            .width(18.dp),
-                                        onClick = {
-                                            thisItem.workout.weight.value =
-                                                thisItem.workout.weight.value.plus(0.5F)
-                                            weightText = thisItem.workout.weight.value.toString()
-                                        },
-                                        colors = IconButtonColors(
-                                            contentColor = MaterialTheme.colorScheme.onTertiary,
-                                            containerColor = MaterialTheme.colorScheme.tertiary,
-                                            disabledContentColor = MaterialTheme.colorScheme.onTertiary,
-                                            disabledContainerColor = MaterialTheme.colorScheme.tertiary,
-                                        )
-                                    ) {
-                                        Icon(
-                                            imageVector = Icons.Sharp.KeyboardArrowUp,
-                                            contentDescription = stringResource(id = R.string.increase_weight_05_description),
-                                        )
-                                    }
-
-                                    Spacer(modifier = Modifier.height(2.dp))
-
-                                    FilledIconButton(
-                                        modifier = Modifier
-                                            .weight(1F)
-                                            .width(18.dp),
-                                        onClick = {
-                                            thisItem.workout.weight.apply {
-                                                if (this.value == 0F) return@apply
-
-                                                this.value = this.value.minus(0.5F)
-                                                weightText =
-                                                    thisItem.workout.weight.value.toString()
-                                            }
-                                        },
-                                        colors = IconButtonColors(
-                                            contentColor = MaterialTheme.colorScheme.onTertiary,
-                                            containerColor = MaterialTheme.colorScheme.tertiary,
-                                            disabledContentColor = MaterialTheme.colorScheme.onTertiary,
-                                            disabledContainerColor = MaterialTheme.colorScheme.tertiary,
-                                        )
-                                    ) {
-                                        Icon(
-                                            imageVector = Icons.Sharp
-                                                .KeyboardArrowDown,
-                                            contentDescription = stringResource(id = R.string.lower_weight_05_description),
-                                        )
-                                    }
-                                    Spacer(modifier = Modifier.height(8.dp))
+                                    colors = IconButtonColors(
+                                        contentColor = MaterialTheme.colorScheme.onTertiary,
+                                        containerColor = MaterialTheme.colorScheme.tertiary,
+                                        disabledContentColor = MaterialTheme.colorScheme.onTertiary,
+                                        disabledContainerColor = MaterialTheme.colorScheme.tertiary,
+                                    )
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Sharp
+                                            .KeyboardArrowDown,
+                                        contentDescription = stringResource(id = R.string.lower_weight_05_description),
+                                    )
                                 }
-                                Spacer(modifier = Modifier.width(12.dp))
+                                Spacer(modifier = Modifier.height(8.dp))
                             }
+                            Spacer(modifier = Modifier.width(12.dp))
                         }
 
                         var menuExpanded: Boolean by remember {
@@ -388,14 +395,6 @@ fun LazyItemScope.EditSessionDataSubpageBuilderItem(
 
                             val currentWidth: Dp by animateDpAsState(
                                 targetValue = targetWidth,
-                                finishedListener = {
-                                    scope.launch {
-                                        // i like how it's "finished" like 700ms or so before it's finished
-                                        // makes sense
-                                        delay(700)
-                                        currentlyResizing = false
-                                    }
-                                },
                                 label = "Weight type resize animation on hide parameter"
                             )
 
@@ -443,7 +442,14 @@ fun LazyItemScope.EditSessionDataSubpageBuilderItem(
                                                 Text(text = item.getTranslation())
                                             },
                                             onClick = {
-                                                if (item.hideWeight) currentlyResizing = true
+                                                if (item.hideWeight) {
+                                                    weightTargetAlpha = 0F
+                                                } else if (thisItem.workout.weightType.value.hideWeight) {
+                                                    scope.launch {
+                                                        delay(50)
+                                                        weightTargetAlpha = 1F
+                                                    }
+                                                }
                                                 menuExpanded = false
                                                 thisItem.workout.weightType.value = item
                                             },
