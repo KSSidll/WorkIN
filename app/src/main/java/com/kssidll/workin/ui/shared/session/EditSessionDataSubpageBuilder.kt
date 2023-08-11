@@ -120,8 +120,7 @@ fun EditSessionDataSubpageBuilder(
                     .weight(1F)
                     .fillMaxWidth()
             ) {
-                Spacer(modifier = Modifier.height(64.dp))
-
+                Spacer(modifier = Modifier.height(12.dp))
 
                 Column {
 
@@ -188,7 +187,7 @@ fun EditSessionDataSubpageBuilder(
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(6.dp))
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),
