@@ -17,12 +17,17 @@ import kotlinx.coroutines.*
 import java.util.*
 
 /// Page ///
+/**
+ * @param onTimerEnd: Optional event that triggers on normal timer end
+ * @param onEndEarlyClick: Optional event that triggers on early timer end
+ * @param activateTimer: flag that starts the timer if set as true
+ */
 @Composable
 fun SessionTimerPage(
     time: Int,
     activateTimer: Boolean,
-    onTimerEnd: () -> Unit,
-    onEndEarlyClick: () -> Unit,
+    onTimerEnd: () -> Unit = {},
+    onEndEarlyClick: () -> Unit = {},
 ) {
     val scope = rememberCoroutineScope()
 
@@ -34,107 +39,105 @@ fun SessionTimerPage(
         mutableStateOf(false)
     }
 
-    Box {
-        var remainingMiliseconds: Long by remember {
-            mutableLongStateOf(0)
-        }
+    var remainingMiliseconds: Long by remember {
+        mutableLongStateOf(0)
+    }
 
-        if (activateTimer && !timerStarted) {
-            LaunchedEffect(Unit) {
-                scope.launch {
-                    timerStarted = true
+    if (activateTimer && !timerStarted) {
+        LaunchedEffect(Unit) {
+            scope.launch {
+                timerStarted = true
 
-                    val timeStarted = Calendar.getInstance().timeInMillis
+                val timeStarted = Calendar.getInstance().timeInMillis
 
-                    while (remainingMiliseconds >= 0 && !timerFinished) {
-                        remainingMiliseconds =
-                            time.times(1000) - (Calendar.getInstance().timeInMillis - timeStarted)
-                        delay(100)
-                    }
-                    // consider early timer end event
-                    if (!timerFinished) {
+                while (remainingMiliseconds >= 0 && !timerFinished) {
+                    remainingMiliseconds =
+                        time.times(1000) - (Calendar.getInstance().timeInMillis - timeStarted)
+                    delay(100)
+
+                    if (remainingMiliseconds - 100 <= 0) {
                         timerFinished = true
                         onTimerEnd()
                     }
-                    remainingMiliseconds = 0
                 }
+
+                remainingMiliseconds = 0
+            }
+        }
+    }
+
+
+    Column {
+        Column(
+            modifier = Modifier
+                .weight(1F)
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Box {
+
+                val progress: Float = if (remainingMiliseconds > 0) {
+                    remainingMiliseconds / time.times(1000)
+                        .toFloat()
+                } else 1F
+
+                CircularProgressIndicator(
+                    progress = animateFloatAsState(
+                        targetValue = progress,
+                        animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec,
+                        label = "timer change value animation"
+                    ).value,
+                    modifier = Modifier.size(256.dp),
+                    strokeWidth = 14.dp,
+                    color = if (remainingMiliseconds > 0) {
+                        MaterialTheme.colorScheme.tertiary
+                    } else MaterialTheme.colorScheme.errorContainer,
+                )
+
+                Text(
+                    text = formatTime(
+                        remainingMiliseconds.div(1000)
+                            .toInt()
+                    ),
+                    fontSize = 40.sp,
+                    modifier = Modifier.align(Alignment.Center)
+                )
             }
         }
 
-
-        Column {
-            Column(
-                modifier = Modifier
-                    .weight(1F)
-                    .fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Box {
-
-                    val progress: Float = if (remainingMiliseconds > 0) {
-                        remainingMiliseconds / time.times(1000)
-                            .toFloat()
-                    } else 1F
-
-                    CircularProgressIndicator(
-                        progress = animateFloatAsState(
-                            targetValue = progress,
-                            animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec,
-                            label = "timer change value animation"
-                        ).value,
-                        modifier = Modifier.size(256.dp),
-                        strokeWidth = 14.dp,
-                        color = if (remainingMiliseconds > 0) {
-                            MaterialTheme.colorScheme.tertiary
-                        } else MaterialTheme.colorScheme.errorContainer,
-                    )
-
-                    Text(
-                        text = formatTime(
-                            remainingMiliseconds.div(1000)
-                                .toInt()
-                        ),
-                        fontSize = 40.sp,
-                        modifier = Modifier.align(Alignment.Center)
-                    )
-                }
-            }
-
-            Column(
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 12.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Button(
+                onClick = {
+                    timerFinished = true
+                    onEndEarlyClick()
+                },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 12.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                    .height(70.dp)
+                    .padding(horizontal = 32.dp),
+                shape = RoundedCornerShape(23.dp)
             ) {
-                Button(
-                    onClick = {
-                        timerFinished = true
-                        remainingMiliseconds = 0
-                        onEndEarlyClick()
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(70.dp)
-                        .padding(horizontal = 32.dp),
-                    shape = RoundedCornerShape(23.dp)
+                Row(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
                 ) {
-                    Row(
-                        modifier = Modifier.fillMaxSize(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        Text(
-                            text = stringResource(R.string.timer_end_early_text),
-                            fontSize = 24.sp
-                        )
-                    }
+                    Text(
+                        text = stringResource(R.string.timer_end_early_text),
+                        fontSize = 24.sp
+                    )
                 }
             }
-
-            Spacer(modifier = Modifier.height(24.dp))
-
         }
+
+        Spacer(modifier = Modifier.height(24.dp))
+
     }
 }
 
@@ -160,8 +163,6 @@ fun SessionTimerPagePreview() {
             SessionTimerPage(
                 time = 137,
                 activateTimer = false,
-                onTimerEnd = {},
-                onEndEarlyClick = {},
             )
         }
     }

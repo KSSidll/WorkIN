@@ -68,11 +68,12 @@ fun SessionScreen(
 
         }
 
+        var blockPagerScroll: Boolean by remember { mutableStateOf(false) }
+
         HorizontalPager(
             state = pagerState,
-            // not the smartest solution to decomposition data loss, but it works
-            // shouldn't have much of a performance hit in our context
-            beyondBoundsPageCount = pagerState.pageCount
+            beyondBoundsPageCount = 1,
+            userScrollEnabled = !blockPagerScroll
         ) { page ->
             if (page.mod(2) == 0) {
                 // TODO workout page
@@ -98,19 +99,30 @@ fun SessionScreen(
             } else {
                 // last workout page isn't a timer, but a session finish screen
                 if (page != pagerState.pageCount - 1) {
+                    val timerTime = session.workouts[page.div(2)].sessionWorkout.restTime
+                    if (pagerState.currentPage == page && timerTime != 0) blockPagerScroll = true
+
                     SessionTimerPage(
-                        time = session.workouts[page.div(2)].sessionWorkout.restTime,
+                        time = timerTime,
                         activateTimer = pagerState.currentPage == page,
                         onTimerEnd = {
                             scope.launch {
-                                delay(400)
-                                pagerState.animateScrollToPage(page + 1)
+                                if (timerTime != 0) {
+                                    delay(400)
+                                    pagerState.animateScrollToPage(page + 1)
+                                    session.workouts[page.div(2)].sessionWorkout.restTime = 0
+                                    blockPagerScroll = false
+                                }
                             }
                         },
                         onEndEarlyClick = {
                             scope.launch {
-                                delay(150)
-                                pagerState.animateScrollToPage(page + 1)
+                                if (timerTime != 0) {
+                                    delay(150)
+                                    pagerState.animateScrollToPage(page + 1)
+                                    session.workouts[page.div(2)].sessionWorkout.restTime = 0
+                                    blockPagerScroll = false
+                                }
                             }
                         }
                     )
