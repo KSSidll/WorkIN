@@ -4,6 +4,7 @@ import androidx.lifecycle.*
 import com.kssidll.workin.data.data.*
 import com.kssidll.workin.data.repository.*
 import dagger.hilt.android.lifecycle.*
+import kotlinx.coroutines.*
 import javax.inject.*
 
 /// ViewModel ///
@@ -21,5 +22,13 @@ class SessionViewModel @Inject constructor(
 
     suspend fun fetchSession(sessionId: Long) {
         session = sessionRepository.getMergedSessionWithWorkoutsById(sessionId)
+    }
+
+    fun updateWorkoutSettings(sessionWorkout: SessionWorkout) = viewModelScope.launch {
+        sessionRepository.updateSessionWorkout(sessionWorkout)
+    }
+
+    fun addLog(log: SessionWorkoutLog) = viewModelScope.launch {
+        sessionRepository.insertSessionLog(log)
     }
 }

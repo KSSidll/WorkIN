@@ -4,6 +4,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.res.*
 import androidx.room.*
 import com.kssidll.workin.R
+import java.util.*
 
 @Entity(
     indices = [
@@ -76,6 +77,44 @@ data class SessionWorkout(
         restTime = restTime,
     )
 }
+
+@Entity(
+    foreignKeys = [
+        ForeignKey(
+            entity = Workout::class,
+            parentColumns = ["id"],
+            childColumns = ["workoutId"],
+            onDelete = ForeignKey.CASCADE,
+            onUpdate = ForeignKey.RESTRICT,
+        ),
+    ],
+)
+data class SessionWorkoutLog(
+    @PrimaryKey(autoGenerate = true) val id: Long,
+    @ColumnInfo(index = true) val workoutId: Long,
+    var repetitionCount: Int,
+    var repetitionType: Int,
+    var weight: Float,
+    var weightType: Int,
+    var datetime: Long,
+) {
+    constructor(
+        workoutId: Long,
+        repetitionCount: Int,
+        repetitionType: Int,
+        weight: Float,
+        weightType: Int
+    ): this(
+        id = 0,
+        workoutId = workoutId,
+        repetitionCount = repetitionCount,
+        repetitionType = repetitionType,
+        weight = weight,
+        weightType = weightType,
+        datetime = Calendar.getInstance().timeInMillis,
+    )
+}
+
 
 /**
  * SessionWorkout with the workout itself instead of just the id

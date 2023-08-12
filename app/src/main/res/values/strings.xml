@@ -60,4 +60,9 @@
     <string name="session_name_duplicate">A Session with this Name already exists</string>
     <string name="session_finished">You finished the Session!</string>
     <string name="session_finished_return">Return</string>
+    <string name="no_sessions_today">Such empty... Is it rest day today?</string>
+    <string name="session_log_workout_complete">Add to history</string>
+    <string name="session_log_workout_complete_and_change">Change and add to history</string>
+    <string name="session_change_workout_weight_on_log_submit">Change the weight values for this workout</string>
+    <string name="session_change_workout_reps_on_log_submit">Change the repetition values for this workout</string>
 </resources>

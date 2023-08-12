@@ -25,8 +25,14 @@ interface SessionDao {
     @Insert
     suspend fun insertWorkouts(workouts: List<SessionWorkout>): List<Long>
 
+    @Insert
+    suspend fun insertSessionWorkoutLog(log: SessionWorkoutLog): Long
+
     @Update
     suspend fun update(session: Session)
+
+    @Update
+    suspend fun updateSessionWorkout(sessionWorkout: SessionWorkout)
 
     @Delete
     suspend fun delete(session: Session)

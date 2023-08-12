@@ -29,8 +29,16 @@ class SessionRepository(private val sessionDao: SessionDao) {
         return sessionDao.insertWorkouts(workouts)
     }
 
+    suspend fun insertSessionLog(log: SessionWorkoutLog): Long {
+        return sessionDao.insertSessionWorkoutLog(log)
+    }
+
     suspend fun update(session: Session) {
         sessionDao.update(session)
+    }
+
+    suspend fun updateSessionWorkout(sessionWorkout: SessionWorkout) {
+        sessionDao.updateSessionWorkout(sessionWorkout)
     }
 
     suspend fun deleteWorkouts(workouts: List<SessionWorkout>) {

@@ -10,7 +10,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.tooling.preview.*
-import androidx.compose.ui.unit.*
 import androidx.hilt.navigation.compose.*
 import com.kssidll.workin.data.data.*
 import com.kssidll.workin.ui.shared.*
@@ -37,6 +36,12 @@ fun SessionRoute(
     if (!isLoading) {
         SessionScreen(
             session = sessionViewModel.session,
+            updateSessionWorkout = {
+                sessionViewModel.updateWorkoutSettings(it)
+            },
+            addLog = {
+                sessionViewModel.addLog(it)
+            },
             onBack = onBack,
         )
     }
@@ -48,6 +53,8 @@ fun SessionRoute(
 @Composable
 fun SessionScreen(
     session: SessionWithFullSessionWorkouts,
+    updateSessionWorkout: (SessionWorkout) -> Unit,
+    addLog: (SessionWorkoutLog) -> Unit,
     onBack: () -> Unit,
 ) {
     val scope = rememberCoroutineScope()
@@ -76,26 +83,42 @@ fun SessionScreen(
             userScrollEnabled = !blockPagerScroll
         ) { page ->
             if (page.mod(2) == 0) {
-                // TODO workout page
-                Box(modifier = Modifier.fillMaxSize()) {
-                    Text(text = "workout")
-
-                    Column(
-                        modifier = Modifier.align(Alignment.Center),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            text = session.workouts[page.div(2)].workout.name,
-                            fontSize = 24.sp
+                SessionWorkoutPage(
+                    workout = session.workouts[page.div(2)],
+                    onLogSubmit = {
+                        addLog(
+                            SessionWorkoutLog(
+                                workoutId = session.workouts[page.div(2)].workout.id,
+                                repetitionCount = it.repetitionCount,
+                                repetitionType = it.repetitionType.id,
+                                weight = it.weight,
+                                weightType = it.weightType.id,
+                            )
                         )
 
-                        Spacer(modifier = Modifier.height(12.dp))
+                        if (it.changeSessionWorkoutRepsSettings.value) {
+                            session.workouts[page.div(2)].sessionWorkout.apply {
+                                this.repetitionCount = it.repetitionCount
+                                this.repetitionType = it.repetitionType.id
+                            }
+                        }
 
-                        Text(
-                            text = session.workouts[page.div(2)].workout.description
-                        )
-                    }
-                }
+                        if (it.changeSessionWorkoutWeightSettings.value) {
+                            session.workouts[page.div(2)].sessionWorkout.apply {
+                                this.weight = it.weight
+                                this.weightType = it.weightType.id
+                            }
+                        }
+
+                        if (it.changeSessionWorkoutRepsSettings.value || it.changeSessionWorkoutWeightSettings.value) {
+                            updateSessionWorkout(session.workouts[page.div(2)].sessionWorkout)
+                        }
+
+                        scope.launch {
+                            pagerState.animateScrollToPage(page + 1)
+                        }
+                    },
+                )
             } else {
                 // last workout page isn't a timer, but a session finish screen
                 if (page != pagerState.pageCount - 1) {
@@ -201,6 +224,8 @@ fun SessionScreenPreview() {
                         )
                     )
                 ),
+                updateSessionWorkout = {},
+                addLog = {},
                 onBack = {},
             )
         }
