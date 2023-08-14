@@ -48,12 +48,21 @@ fun SessionTimerPage(
             scope.launch {
                 timerStarted = true
 
-                val timeStarted = Calendar.getInstance().timeInMillis
+                val timeComplete = time.times(1000) + Calendar.getInstance().timeInMillis
+
+                // TODO let users modify this is settings when implemented
+                val updateSmoothness = 1.5F
+                var updateDelay = time.times(1000) / 360 / updateSmoothness
+
+                // ensure timer updates at least every second for extremely long timers
+                // ideally for this situation we could update timer and animation separately,
+                // but that would only positively impact extremely long timers
+                // (> 9 minutes at animation 1.5F smoothness) so i won't bother
+                if (updateDelay > 1000) updateDelay = 1000F
 
                 while (remainingMiliseconds >= 0 && !timerFinished) {
-                    remainingMiliseconds =
-                        time.times(1000) - (Calendar.getInstance().timeInMillis - timeStarted)
-                    delay(100)
+                    remainingMiliseconds = timeComplete - (Calendar.getInstance().timeInMillis)
+                    delay(updateDelay.toLong())
 
                     if (remainingMiliseconds - 100 <= 0) {
                         timerFinished = true
