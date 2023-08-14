@@ -49,7 +49,14 @@ fun SessionWorkoutPage(
     onLogSubmit: (SessionWorkoutPageState) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
-    val state = remember { SessionWorkoutPageState() }
+    val state = remember {
+        SessionWorkoutPageState(
+            repetitionCount = workout.sessionWorkout.repetitionCount,
+            repetitionType = RepetitionTypes.getById(workout.sessionWorkout.repetitionType)!!,
+            weight = workout.sessionWorkout.weight,
+            weightType = WeightTypes.getById(workout.sessionWorkout.weightType)!!,
+        )
+    }
 
     Column {
         Column(
