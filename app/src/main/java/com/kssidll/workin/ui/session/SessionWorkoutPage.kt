@@ -11,6 +11,7 @@ import androidx.compose.foundation.shape.*
 import androidx.compose.foundation.text.*
 import androidx.compose.foundation.text.selection.*
 import androidx.compose.material.icons.*
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.sharp.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -86,6 +87,88 @@ fun SessionWorkoutPage(
                         fontSize = 20.sp,
                         modifier = Modifier.alpha(0.8F),
                     )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(6.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Column {
+                    Row {
+                        Row(
+                            modifier = Modifier.weight(1F),
+                            horizontalArrangement = Arrangement.End,
+                        ) {
+                            Text(
+                                text = workout.sessionWorkout.repetitionCount.toString(),
+                                fontSize = 20.sp,
+                                modifier = Modifier
+                                    .alpha(0.8F)
+                            )
+
+                        }
+
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(16.dp)
+                                .alpha(0.8F)
+                                .align(Alignment.CenterVertically)
+                        )
+
+                        Row(modifier = Modifier.weight(1F)) {
+                            Text(
+                                text = RepetitionTypes.getById(workout.sessionWorkout.repetitionType)!!
+                                    .getTranslation(),
+                                fontSize = 20.sp,
+                                modifier = Modifier.alpha(0.8F),
+                            )
+                        }
+                    }
+
+                    Row {
+                        val weightType = WeightTypes.getById(workout.sessionWorkout.weightType)!!
+
+                        if (!weightType.hideWeight) {
+                            Row(
+                                modifier = Modifier.weight(1F),
+                                horizontalArrangement = Arrangement.End,
+                            ) {
+                                Text(
+                                    text = workout.sessionWorkout.weight.toString(),
+                                    fontSize = 20.sp,
+                                    modifier = Modifier.alpha(0.8F)
+                                )
+                            }
+
+                            Icon(
+                                imageVector = Icons.Default.Close,
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .size(16.dp)
+                                    .alpha(0.8F)
+                                    .align(Alignment.CenterVertically)
+                            )
+                        }
+
+                        Row(
+                            modifier = Modifier.weight(1F),
+                            horizontalArrangement = if (weightType.hideWeight)
+                                Arrangement.Center
+                            else
+                                Arrangement.Start
+                        ) {
+                            Text(
+                                text = weightType.getTranslation(),
+                                fontSize = 20.sp,
+                                modifier = Modifier.alpha(0.8F),
+                            )
+                        }
+                    }
                 }
             }
         }
