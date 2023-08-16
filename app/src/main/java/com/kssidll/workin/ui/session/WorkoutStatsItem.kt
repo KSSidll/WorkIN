@@ -21,51 +21,18 @@ fun WorkoutStatsItem(
     weight: String,
     weightType: WeightTypes,
 ) {
-    Column {
-        Row {
+    if (weightType.hideWeight) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             Row(
-                modifier = Modifier.weight(1F),
-                horizontalArrangement = Arrangement.End,
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = repetitionCount,
                     fontSize = 20.sp,
-                    modifier = Modifier
-                        .alpha(0.8F)
+                    modifier = Modifier.alpha(0.8F)
                 )
-
-            }
-
-            Icon(
-                imageVector = Icons.Default.Close,
-                contentDescription = null,
-                modifier = Modifier
-                    .size(16.dp)
-                    .alpha(0.8F)
-                    .align(Alignment.CenterVertically)
-            )
-
-            Row(modifier = Modifier.weight(1F)) {
-                Text(
-                    text = repetitionType.getTranslation(),
-                    fontSize = 20.sp,
-                    modifier = Modifier.alpha(0.8F),
-                )
-            }
-        }
-
-        Row {
-            if (!weightType.hideWeight) {
-                Row(
-                    modifier = Modifier.weight(1F),
-                    horizontalArrangement = Arrangement.End,
-                ) {
-                    Text(
-                        text = weight,
-                        fontSize = 20.sp,
-                        modifier = Modifier.alpha(0.8F)
-                    )
-                }
 
                 Icon(
                     imageVector = Icons.Default.Close,
@@ -73,17 +40,66 @@ fun WorkoutStatsItem(
                     modifier = Modifier
                         .size(16.dp)
                         .alpha(0.8F)
-                        .align(Alignment.CenterVertically)
+                )
+
+                Text(
+                    text = repetitionType.getTranslation(),
+                    fontSize = 20.sp,
+                    modifier = Modifier.alpha(0.8F),
                 )
             }
 
-            Row(
-                modifier = Modifier.weight(1F),
-                horizontalArrangement = if (weightType.hideWeight)
-                    Arrangement.Center
-                else
-                    Arrangement.Start
-            ) {
+            Row {
+                Text(
+                    text = weightType.getTranslation(),
+                    fontSize = 20.sp,
+                    modifier = Modifier.alpha(0.8F),
+                )
+            }
+        }
+    } else {
+        Row {
+            Column(horizontalAlignment = Alignment.End) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = repetitionCount,
+                        fontSize = 20.sp,
+                        modifier = Modifier.alpha(0.8F)
+                    )
+
+                    Icon(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(16.dp)
+                            .alpha(0.8F)
+                    )
+                }
+
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = weight,
+                        fontSize = 20.sp,
+                        modifier = Modifier.alpha(0.8F)
+                    )
+
+                    Icon(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(16.dp)
+                            .alpha(0.8F)
+                    )
+                }
+            }
+
+            Column {
+                Text(
+                    text = repetitionType.getTranslation(),
+                    fontSize = 20.sp,
+                    modifier = Modifier.alpha(0.8F),
+                )
+
                 Text(
                     text = weightType.getTranslation(),
                     fontSize = 20.sp,

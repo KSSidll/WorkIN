@@ -12,7 +12,6 @@ import androidx.compose.foundation.shape.*
 import androidx.compose.foundation.text.*
 import androidx.compose.foundation.text.selection.*
 import androidx.compose.material.icons.*
-import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.sharp.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -116,9 +115,7 @@ fun SessionWorkoutPage(
             }
         }
 
-        Spacer(modifier = Modifier.height(12.dp))
-        HorizontalDivider()
-        Spacer(modifier = Modifier.height(4.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
         Column(
             modifier = Modifier
@@ -128,19 +125,26 @@ fun SessionWorkoutPage(
             LazyColumn {
                 items(lastWorkoutLogs) {
                     Column {
+                        HorizontalDivider()
                         Spacer(modifier = Modifier.height(8.dp))
 
-                        WorkoutStatsItem(
-                            repetitionCount = it.repetitionCount.toString(),
-                            repetitionType = RepetitionTypes.getById(it.repetitionType)!!,
-                            weight = it.weight.toString(),
-                            weightType = WeightTypes.getById(it.weightType)!!
-                        )
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            WorkoutStatsItem(
+                                repetitionCount = it.repetitionCount.toString(),
+                                repetitionType = RepetitionTypes.getById(it.repetitionType)!!,
+                                weight = it.weight.toString(),
+                                weightType = WeightTypes.getById(it.weightType)!!
+                            )
+                        }
 
                         Spacer(modifier = Modifier.height(8.dp))
                     }
                 }
             }
+            HorizontalDivider()
         }
 
         Column {
