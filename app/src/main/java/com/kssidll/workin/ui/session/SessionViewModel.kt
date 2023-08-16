@@ -31,4 +31,8 @@ class SessionViewModel @Inject constructor(
     fun addLog(log: SessionWorkoutLog) = viewModelScope.launch {
         sessionRepository.insertSessionLog(log)
     }
+
+    suspend fun getLastWorkoutLogs(workoutId: Long): List<SessionWorkoutLog> {
+        return sessionRepository.getLastWorkoutLogs(workoutId, 3)
+    }
 }

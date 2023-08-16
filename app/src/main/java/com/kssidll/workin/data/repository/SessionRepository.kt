@@ -33,6 +33,14 @@ class SessionRepository(private val sessionDao: SessionDao) {
         return sessionDao.insertSessionWorkoutLog(log)
     }
 
+    suspend fun getLastWorkoutLogs(
+        workoutId: Long,
+        amount: Int
+    ): List<SessionWorkoutLog> {
+        return sessionDao.getLastWorkoutLogs(workoutId, amount)
+            .reversed()
+    }
+
     suspend fun update(session: Session) {
         sessionDao.update(session)
     }

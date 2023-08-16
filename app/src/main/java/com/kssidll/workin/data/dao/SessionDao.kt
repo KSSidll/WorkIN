@@ -19,6 +19,12 @@ interface SessionDao {
     @Query("SELECT * FROM sessionworkout WHERE sessionId = :sessionId")
     suspend fun getFullSessionWorkouts(sessionId: Long): List<FullSessionWorkout>
 
+    @Query("SELECT * FROM sessionworkoutlog WHERE workoutId = :workoutId ORDER BY id DESC LIMIT :amount")
+    suspend fun getLastWorkoutLogs(
+        workoutId: Long,
+        amount: Int
+    ): List<SessionWorkoutLog>
+
     @Insert
     suspend fun insert(session: Session): Long
 

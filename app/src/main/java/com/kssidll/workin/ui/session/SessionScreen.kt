@@ -1,5 +1,6 @@
 package com.kssidll.workin.ui.session
 
+import android.annotation.*
 import android.content.res.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -8,6 +9,7 @@ import androidx.compose.material.icons.*
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.snapshots.*
 import androidx.compose.ui.*
 import androidx.compose.ui.tooling.preview.*
 import androidx.hilt.navigation.compose.*
@@ -15,6 +17,7 @@ import com.kssidll.workin.data.data.*
 import com.kssidll.workin.ui.shared.*
 import com.kssidll.workin.ui.theme.*
 import kotlinx.coroutines.*
+import java.util.Optional
 
 /// Route ///
 @Composable
@@ -33,9 +36,26 @@ fun SessionRoute(
         isLoading = false
     }
 
+    val currentWorkoutId = remember {
+        mutableLongStateOf(0L)
+    }
+
+    val lastWorkoutLogs: SnapshotStateList<SessionWorkoutLog> = remember {
+        mutableStateListOf()
+    }
+
+    LaunchedEffect(currentWorkoutId.longValue) {
+        if (currentWorkoutId.longValue == 0L) return@LaunchedEffect
+
+        lastWorkoutLogs.clear()
+        lastWorkoutLogs.addAll(sessionViewModel.getLastWorkoutLogs(currentWorkoutId.longValue))
+    }
+
     if (!isLoading) {
         SessionScreen(
             session = sessionViewModel.session,
+            currentWorkoutId = currentWorkoutId,
+            lastWorkoutLogs = lastWorkoutLogs,
             updateSessionWorkout = {
                 sessionViewModel.updateWorkoutSettings(it)
             },
@@ -53,6 +73,8 @@ fun SessionRoute(
 @Composable
 fun SessionScreen(
     session: SessionWithFullSessionWorkouts,
+    currentWorkoutId: MutableState<Long>,
+    lastWorkoutLogs: List<SessionWorkoutLog>,
     updateSessionWorkout: (SessionWorkout) -> Unit,
     addLog: (SessionWorkoutLog) -> Unit,
     onBack: () -> Unit,
@@ -64,6 +86,8 @@ fun SessionScreen(
         // last workout doesn't have a rest timer but we add a finish screen instead
         session.workouts.size.times(2)
     }
+
+    currentWorkoutId.value = session.workouts[pagerState.currentPage.div(2)].workout.id
 
     Column {
         SecondaryTopHeader(
@@ -85,6 +109,7 @@ fun SessionScreen(
             if (page.mod(2) == 0) {
                 SessionWorkoutPage(
                     workout = session.workouts[page.div(2)],
+                    lastWorkoutLogs = lastWorkoutLogs,
                     onLogSubmit = {
                         addLog(
                             SessionWorkoutLog(
@@ -176,6 +201,7 @@ fun SessionScreen(
     apiLevel = 29,
     uiMode = Configuration.UI_MODE_NIGHT_NO
 )
+@SuppressLint("UnrememberedMutableState")
 @Composable
 fun SessionScreenPreview() {
     WorkINTheme {
@@ -224,6 +250,8 @@ fun SessionScreenPreview() {
                         )
                     )
                 ),
+                currentWorkoutId = mutableLongStateOf(0L),
+                lastWorkoutLogs = listOf(),
                 updateSessionWorkout = {},
                 addLog = {},
                 onBack = {},

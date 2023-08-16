@@ -7,6 +7,7 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.*
 import androidx.compose.foundation.interaction.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.*
 import androidx.compose.foundation.text.*
 import androidx.compose.foundation.text.selection.*
@@ -47,6 +48,7 @@ data class SessionWorkoutPageState(
 @Composable
 fun SessionWorkoutPage(
     workout: FullSessionWorkout,
+    lastWorkoutLogs: List<SessionWorkoutLog>,
     onLogSubmit: (SessionWorkoutPageState) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
@@ -59,13 +61,22 @@ fun SessionWorkoutPage(
         )
     }
 
+    LaunchedEffect(lastWorkoutLogs) {
+        if (lastWorkoutLogs.isEmpty()) return@LaunchedEffect
+
+        val lastWorkoutLog = lastWorkoutLogs.reversed()[0]
+
+        state.repetitionCount = lastWorkoutLog.repetitionCount
+        state.repetitionType = RepetitionTypes.getById(lastWorkoutLog.repetitionType)!!
+        state.weight = lastWorkoutLog.weight
+        state.weightType = WeightTypes.getById(lastWorkoutLog.weightType)!!
+    }
+
     Column {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1F),
-            verticalArrangement = Arrangement.Center,
-        ) {
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        Column(modifier = Modifier.fillMaxWidth()) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
@@ -96,78 +107,37 @@ fun SessionWorkoutPage(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
             ) {
-                Column {
-                    Row {
-                        Row(
-                            modifier = Modifier.weight(1F),
-                            horizontalArrangement = Arrangement.End,
-                        ) {
-                            Text(
-                                text = workout.sessionWorkout.repetitionCount.toString(),
-                                fontSize = 20.sp,
-                                modifier = Modifier
-                                    .alpha(0.8F)
-                            )
+                WorkoutStatsItem(
+                    repetitionCount = workout.sessionWorkout.repetitionCount.toString(),
+                    repetitionType = RepetitionTypes.getById(workout.sessionWorkout.repetitionType)!!,
+                    weight = workout.sessionWorkout.weight.toString(),
+                    weightType = WeightTypes.getById(workout.sessionWorkout.weightType)!!,
+                )
+            }
+        }
 
-                        }
+        Spacer(modifier = Modifier.height(12.dp))
+        HorizontalDivider()
+        Spacer(modifier = Modifier.height(4.dp))
 
-                        Icon(
-                            imageVector = Icons.Default.Close,
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(16.dp)
-                                .alpha(0.8F)
-                                .align(Alignment.CenterVertically)
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1F),
+        ) {
+            LazyColumn {
+                items(lastWorkoutLogs) {
+                    Column {
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        WorkoutStatsItem(
+                            repetitionCount = it.repetitionCount.toString(),
+                            repetitionType = RepetitionTypes.getById(it.repetitionType)!!,
+                            weight = it.weight.toString(),
+                            weightType = WeightTypes.getById(it.weightType)!!
                         )
 
-                        Row(modifier = Modifier.weight(1F)) {
-                            Text(
-                                text = RepetitionTypes.getById(workout.sessionWorkout.repetitionType)!!
-                                    .getTranslation(),
-                                fontSize = 20.sp,
-                                modifier = Modifier.alpha(0.8F),
-                            )
-                        }
-                    }
-
-                    Row {
-                        val weightType = WeightTypes.getById(workout.sessionWorkout.weightType)!!
-
-                        if (!weightType.hideWeight) {
-                            Row(
-                                modifier = Modifier.weight(1F),
-                                horizontalArrangement = Arrangement.End,
-                            ) {
-                                Text(
-                                    text = workout.sessionWorkout.weight.toString(),
-                                    fontSize = 20.sp,
-                                    modifier = Modifier.alpha(0.8F)
-                                )
-                            }
-
-                            Icon(
-                                imageVector = Icons.Default.Close,
-                                contentDescription = null,
-                                modifier = Modifier
-                                    .size(16.dp)
-                                    .alpha(0.8F)
-                                    .align(Alignment.CenterVertically)
-                            )
-                        }
-
-                        Row(
-                            modifier = Modifier.weight(1F),
-                            horizontalArrangement = if (weightType.hideWeight)
-                                Arrangement.Center
-                            else
-                                Arrangement.Start
-                        ) {
-                            Text(
-                                text = weightType.getTranslation(),
-                                fontSize = 20.sp,
-                                modifier = Modifier.alpha(0.8F),
-                            )
-                        }
+                        Spacer(modifier = Modifier.height(8.dp))
                     }
                 }
             }
@@ -677,6 +647,29 @@ fun SessionWorkoutPagePreview() {
                         name = "test workout name 2",
                         description = "test workout description 2"
                     )
+                ),
+                lastWorkoutLogs = listOf(
+                    SessionWorkoutLog(
+                        workoutId = 0,
+                        repetitionCount = 0,
+                        repetitionType = RepetitionTypes.Repetitions.id,
+                        weight = 0F,
+                        weightType = WeightTypes.BodyMass.id,
+                    ),
+                    SessionWorkoutLog(
+                        workoutId = 0,
+                        repetitionCount = 0,
+                        repetitionType = RepetitionTypes.Repetitions.id,
+                        weight = 0F,
+                        weightType = WeightTypes.KGBodyMass.id,
+                    ),
+                    SessionWorkoutLog(
+                        workoutId = 0,
+                        repetitionCount = 0,
+                        repetitionType = RepetitionTypes.Repetitions.id,
+                        weight = 0F,
+                        weightType = WeightTypes.KG.id,
+                    ),
                 ),
                 onLogSubmit = {},
             )

@@ -18,7 +18,7 @@ hilt = "2.47"
 hilt-navigation-compose = "1.0.0"
 reorderable = "0.9.6"
 
-agp = "8.2.0-alpha15"
+agp = "8.2.0-alpha16"
 kotlin = "1.9.0"
 ksp = "1.9.0-1.0.12"
 
