@@ -38,7 +38,6 @@ class SessionRepository(private val sessionDao: SessionDao) {
         amount: Int
     ): List<SessionWorkoutLog> {
         return sessionDao.getLastWorkoutLogs(workoutId, amount)
-            .reversed()
     }
 
     suspend fun update(session: Session) {

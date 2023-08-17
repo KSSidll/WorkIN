@@ -31,9 +31,9 @@ import kotlinx.coroutines.*
 /// Data ///
 data class SessionWorkoutPageState(
     var repetitionCount: Int = 0,
-    var repetitionType: RepetitionTypes = RepetitionTypes.Repetitions,
+    var repetitionType: MutableState<RepetitionTypes> = mutableStateOf(RepetitionTypes.Repetitions),
     var weight: Float = 0F,
-    var weightType: WeightTypes = WeightTypes.KG,
+    var weightType: MutableState<WeightTypes> = mutableStateOf(WeightTypes.KG),
     var changeSessionWorkoutRepsSettings: MutableState<Boolean> = mutableStateOf(false),
     var changeSessionWorkoutWeightSettings: MutableState<Boolean> = mutableStateOf(false),
 )
@@ -54,21 +54,41 @@ fun SessionWorkoutPage(
     val state = remember {
         SessionWorkoutPageState(
             repetitionCount = workout.sessionWorkout.repetitionCount,
-            repetitionType = RepetitionTypes.getById(workout.sessionWorkout.repetitionType)!!,
+            repetitionType = mutableStateOf(RepetitionTypes.getById(workout.sessionWorkout.repetitionType)!!),
             weight = workout.sessionWorkout.weight,
-            weightType = WeightTypes.getById(workout.sessionWorkout.weightType)!!,
+            weightType = mutableStateOf(WeightTypes.getById(workout.sessionWorkout.weightType)!!),
         )
     }
 
-    LaunchedEffect(lastWorkoutLogs) {
-        if (lastWorkoutLogs.isEmpty()) return@LaunchedEffect
 
-        val lastWorkoutLog = lastWorkoutLogs.reversed()[0]
+    var repCountText: String by remember {
+        mutableStateOf(state.repetitionCount.toString())
+    }
 
-        state.repetitionCount = lastWorkoutLog.repetitionCount
-        state.repetitionType = RepetitionTypes.getById(lastWorkoutLog.repetitionType)!!
-        state.weight = lastWorkoutLog.weight
-        state.weightType = WeightTypes.getById(lastWorkoutLog.weightType)!!
+    var weightText: String by remember {
+        mutableStateOf(state.weight.toString())
+    }
+
+    // for weight hiding/revealing animation
+    var weightTargetAlpha: Float by remember {
+        if (state.weightType.value.hideWeight) mutableFloatStateOf(0F)
+        else mutableFloatStateOf(1F)
+    }
+
+    if (lastWorkoutLogs.isNotEmpty()) {
+        LaunchedEffect(lastWorkoutLogs[0]) {
+            val lastWorkoutLog = lastWorkoutLogs[0]
+
+            state.repetitionCount = lastWorkoutLog.repetitionCount
+            repCountText = state.repetitionCount.toString()
+            state.repetitionType =
+                mutableStateOf(RepetitionTypes.getById(lastWorkoutLog.repetitionType)!!)
+            state.weight = lastWorkoutLog.weight
+            weightText = state.weight.toString()
+            state.weightType = mutableStateOf(WeightTypes.getById(lastWorkoutLog.weightType)!!)
+            weightTargetAlpha = if (state.weightType.value.hideWeight) 0F
+            else 1F
+        }
     }
 
     Column {
@@ -124,7 +144,26 @@ fun SessionWorkoutPage(
         ) {
             LazyColumn {
                 items(lastWorkoutLogs) {
-                    Column {
+                    Column(
+                        modifier = Modifier.clickable {
+                            val logRepetitionType = RepetitionTypes.getById(it.repetitionType)!!
+                            val logWeightType = WeightTypes.getById(it.weightType)!!
+
+                            if (logWeightType.hideWeight) {
+                                weightTargetAlpha = 0F
+                            } else if (state.weightType.value.hideWeight) {
+                                scope.launch {
+                                    delay(50)
+                                    weightTargetAlpha = 1F
+                                }
+                            }
+
+                            repCountText = it.repetitionCount.toString()
+                            state.repetitionType.value = logRepetitionType
+                            weightText = it.weight.toString()
+                            state.weightType.value = logWeightType
+                        }
+                    ) {
                         HorizontalDivider()
                         Spacer(modifier = Modifier.height(8.dp))
 
@@ -221,9 +260,6 @@ fun SessionWorkoutPage(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
             ) {
-                var repCountText: String by remember {
-                    mutableStateOf(state.repetitionCount.toString())
-                }
 
                 OutlinedTextField(
                     singleLine = true,
@@ -332,7 +368,7 @@ fun SessionWorkoutPage(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = state.repetitionType.getTranslation(),
+                        text = state.repetitionType.value.getTranslation(),
                         modifier = Modifier.padding(vertical = 6.dp, horizontal = 12.dp),
                         maxLines = 2
                     )
@@ -347,7 +383,7 @@ fun SessionWorkoutPage(
 
                     ) {
                         for (item in RepetitionTypes.entries) {
-                            if (item == state.repetitionType) continue
+                            if (item == state.repetitionType.value) continue
 
                             DropdownMenuItem(
                                 text = {
@@ -355,7 +391,7 @@ fun SessionWorkoutPage(
                                 },
                                 onClick = {
                                     menuExpanded = false
-                                    state.repetitionType = item
+                                    state.repetitionType.value = item
                                 },
                             )
                         }
@@ -373,11 +409,6 @@ fun SessionWorkoutPage(
                 Box(
                     modifier = Modifier.width(223.dp)
                 ) {
-                    var weightTargetAlpha: Float by remember {
-                        if (state.weightType.hideWeight) mutableFloatStateOf(0F)
-                        else mutableFloatStateOf(1F)
-                    }
-
                     val currentAlpha: Float by animateFloatAsState(
                         targetValue = weightTargetAlpha,
                         label = "Weight type resize animation on hide parameter"
@@ -388,9 +419,6 @@ fun SessionWorkoutPage(
                             .align(Alignment.CenterStart)
                             .alpha(currentAlpha)
                     ) {
-                        var weightText: String by remember {
-                            mutableStateOf(state.weight.toString())
-                        }
 
 
                         OutlinedTextField(
@@ -498,7 +526,7 @@ fun SessionWorkoutPage(
                         modifier = Modifier.align(Alignment.CenterEnd)
                     ) {
                         val targetWidth: Dp =
-                            if (state.weightType.hideWeight) {
+                            if (state.weightType.value.hideWeight) {
                                 223.dp
                             } else {
                                 120.dp
@@ -528,7 +556,7 @@ fun SessionWorkoutPage(
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                text = state.weightType.getTranslation(),
+                                text = state.weightType.value.getTranslation(),
                                 modifier = Modifier.padding(
                                     vertical = 6.dp,
                                     horizontal = 12.dp
@@ -546,7 +574,7 @@ fun SessionWorkoutPage(
 
                             ) {
                                 for (item in WeightTypes.entries) {
-                                    if (item == state.weightType) continue
+                                    if (item == state.weightType.value) continue
 
                                     DropdownMenuItem(
                                         text = {
@@ -555,14 +583,14 @@ fun SessionWorkoutPage(
                                         onClick = {
                                             if (item.hideWeight) {
                                                 weightTargetAlpha = 0F
-                                            } else if (state.weightType.hideWeight) {
+                                            } else if (state.weightType.value.hideWeight) {
                                                 scope.launch {
                                                     delay(50)
                                                     weightTargetAlpha = 1F
                                                 }
                                             }
                                             menuExpanded = false
-                                            state.weightType = item
+                                            state.weightType.value = item
                                         },
                                     )
                                 }
@@ -643,7 +671,7 @@ fun SessionWorkoutPagePreview() {
                         repetitionCount = 0,
                         repetitionType = RepetitionTypes.RiR.id,
                         weight = 0F,
-                        weightType = WeightTypes.BodyMass.id,
+                        weightType = WeightTypes.KGBodyMass.id,
                         order = 0,
                         restTime = 0,
                     ),

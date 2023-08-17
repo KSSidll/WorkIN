@@ -17,7 +17,6 @@ import com.kssidll.workin.data.data.*
 import com.kssidll.workin.ui.shared.*
 import com.kssidll.workin.ui.theme.*
 import kotlinx.coroutines.*
-import java.util.Optional
 
 /// Route ///
 @Composable
@@ -40,22 +39,17 @@ fun SessionRoute(
         mutableLongStateOf(0L)
     }
 
-    val lastWorkoutLogs: SnapshotStateList<SessionWorkoutLog> = remember {
-        mutableStateListOf()
-    }
-
     LaunchedEffect(currentWorkoutId.longValue) {
         if (currentWorkoutId.longValue == 0L) return@LaunchedEffect
 
-        lastWorkoutLogs.clear()
-        lastWorkoutLogs.addAll(sessionViewModel.getLastWorkoutLogs(currentWorkoutId.longValue))
+        sessionViewModel.getLastWorkoutLogs(currentWorkoutId.longValue)
     }
 
     if (!isLoading) {
         SessionScreen(
             session = sessionViewModel.session,
             currentWorkoutId = currentWorkoutId,
-            lastWorkoutLogs = lastWorkoutLogs,
+            lastWorkoutLogs = sessionViewModel.workoutLogs,
             updateSessionWorkout = {
                 sessionViewModel.updateWorkoutSettings(it)
             },
@@ -115,23 +109,23 @@ fun SessionScreen(
                             SessionWorkoutLog(
                                 workoutId = session.workouts[page.div(2)].workout.id,
                                 repetitionCount = it.repetitionCount,
-                                repetitionType = it.repetitionType.id,
+                                repetitionType = it.repetitionType.value.id,
                                 weight = it.weight,
-                                weightType = it.weightType.id,
+                                weightType = it.weightType.value.id,
                             )
                         )
 
                         if (it.changeSessionWorkoutRepsSettings.value) {
                             session.workouts[page.div(2)].sessionWorkout.apply {
                                 this.repetitionCount = it.repetitionCount
-                                this.repetitionType = it.repetitionType.id
+                                this.repetitionType = it.repetitionType.value.id
                             }
                         }
 
                         if (it.changeSessionWorkoutWeightSettings.value) {
                             session.workouts[page.div(2)].sessionWorkout.apply {
                                 this.weight = it.weight
-                                this.weightType = it.weightType.id
+                                this.weightType = it.weightType.value.id
                             }
                         }
 
