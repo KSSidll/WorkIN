@@ -4,7 +4,7 @@ import android.content.res.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.*
-import androidx.compose.material.icons.rounded.*
+import androidx.compose.material.icons.automirrored.rounded.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
@@ -19,7 +19,7 @@ import com.kssidll.workin.ui.theme.*
 @Composable
 fun SecondaryTopHeader(
     onIconClick: () -> Unit,
-    icon: ImageVector = Icons.Rounded.ArrowBack,
+    icon: ImageVector = Icons.AutoMirrored.Rounded.ArrowBack,
     iconDescription: String = stringResource(id = R.string.go_to_previews_screen_description),
     additionalContent: @Composable BoxScope.() -> Unit = {},
     text: @Composable () -> Unit,

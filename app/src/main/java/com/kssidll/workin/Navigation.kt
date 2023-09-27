@@ -1,15 +1,10 @@
 package com.kssidll.workin
 
+import android.os.*
+import androidx.compose.animation.*
+import androidx.compose.animation.core.*
 import androidx.compose.runtime.*
-import androidx.navigation.*
-import androidx.navigation.compose.*
-import com.kssidll.workin.NavigationDestinations.ADD_SESSION_ROUTE
-import com.kssidll.workin.NavigationDestinations.ADD_WORKOUT_ROUTE
-import com.kssidll.workin.NavigationDestinations.DASHBOARD_ROUTE
-import com.kssidll.workin.NavigationDestinations.EDIT_SESSION_ROUTE
-import com.kssidll.workin.NavigationDestinations.EDIT_WORKOUT_ROUTE
-import com.kssidll.workin.NavigationDestinations.SESSION_ROUTE
-import com.kssidll.workin.NavigationDestinations.WORKOUTS_ROUTE
+import androidx.compose.ui.platform.*
 import com.kssidll.workin.ui.addsession.*
 import com.kssidll.workin.ui.addworkout.*
 import com.kssidll.workin.ui.dashboard.*
@@ -17,187 +12,160 @@ import com.kssidll.workin.ui.editsession.*
 import com.kssidll.workin.ui.editworkout.*
 import com.kssidll.workin.ui.session.*
 import com.kssidll.workin.ui.workouts.*
+import dev.olshevski.navigation.reimagined.*
+import kotlinx.parcelize.*
 
-object NavigationDestinations {
-    const val DASHBOARD_ROUTE = "dashboard"
-    const val WORKOUTS_ROUTE = "workouts"
-    const val ADD_WORKOUT_ROUTE = "addworkout"
-    const val EDIT_WORKOUT_ROUTE = "editworkout"
-    const val ADD_SESSION_ROUTE = "addsession"
-    const val EDIT_SESSION_ROUTE = "editsession"
-    const val SESSION_ROUTE = "session"
-}
-
-val LocalNavigation = compositionLocalOf<NavigationController> {
+val LocalNavigation = compositionLocalOf<NavController<Screen>> {
     error("No NavigationController provided")
 }
 
-/**
- * I hate this but couldn't think of a better way to handle ScreenWithBottomNavBar that would be
- * preview compatible than making a mock of this, unless you prefer passing several navigation
- * functions to everything that uses a navbar or not seeing the navbar on preview, of all the
- * options i got this monstrosity seems the least painful to deal with
- */
-interface INavigationController {
-    val currentlyAt: String
-
-    /**
-     * Should only be used in the navigation bar to avoid multiple "home"/dashboard screens on
-     * backstack
-     * Dashboard screen should ALWAYS be the first on backstack, if it's not, the navigation
-     * logic is non functional, and something went terribly wrong in navigation design
-     */
-    fun popToDashboard()
-
-    fun navigateDashboard()
-    fun navigateWorkouts()
-    fun navigateAddWorkout()
-    fun navigateEditWorkout(workoutId: Long)
-    fun navigateAddSession()
-    fun navigateEditSession(sessionId: Long)
-    fun navigateSession(sessionId: Long)
-}
-
-class NavigationController(
-    private val navController: NavHostController
-): INavigationController {
-    override val currentlyAt: String
-        get() = navController.currentDestination?.route!!
-
-    override fun popToDashboard() {
-        navController.popBackStack(DASHBOARD_ROUTE, false)
-    }
-
-    override fun navigateDashboard() {
-        navController.navigate(DASHBOARD_ROUTE)
-    }
-
-    override fun navigateWorkouts() {
-        navController.navigate(WORKOUTS_ROUTE)
-    }
-
-    override fun navigateAddWorkout() {
-        navController.navigate(ADD_WORKOUT_ROUTE)
-    }
-
-    override fun navigateEditWorkout(workoutId: Long) {
-        navController.navigate("$EDIT_WORKOUT_ROUTE/$workoutId")
-    }
-
-    override fun navigateAddSession() {
-        navController.navigate(ADD_SESSION_ROUTE)
-    }
-
-    override fun navigateEditSession(sessionId: Long) {
-        navController.navigate("$EDIT_SESSION_ROUTE/$sessionId")
-    }
-
-    override fun navigateSession(sessionId: Long) {
-        navController.navigate("$SESSION_ROUTE/$sessionId")
-    }
+@Parcelize
+sealed class Screen: Parcelable {
+    data object Dashboard: Screen()
+    data object Workouts: Screen()
+    data object AddWorkout: Screen()
+    data class EditWorkout(val id: Long): Screen()
+    data object AddSession: Screen()
+    data class EditSession(val id: Long): Screen()
+    data class Session(val id: Long): Screen()
 }
 
 @Composable
 fun Navigation(
-    navController: NavHostController = rememberNavController()
+    navController: NavController<Screen> = rememberNavController(startDestination = Screen.Dashboard)
 ) {
+    NavBackHandler(controller = navController)
 
-    val navigationController = remember {
-        NavigationController(navController)
+    val onBack: () -> Unit = {
+        navController.apply {
+            if (backstack.entries.size > 1) pop()
+        }
     }
 
-    CompositionLocalProvider(LocalNavigation provides navigationController) {
-        NavHost(
-            navController = navController,
-            startDestination = DASHBOARD_ROUTE
-        ) {
-            composable(DASHBOARD_ROUTE) {
-                DashboardRoute(
-                    onSessionStart = {
-                        navigationController.navigateSession(it)
-                    },
-                    onSessionClick = {
-                        navigationController.navigateEditSession(it)
-                    }
-                )
-            }
+    val screenWidth = LocalConfiguration.current.screenWidthDp
+    val easing = CubicBezierEasing(
+        0.48f,
+        0.19f,
+        0.05f,
+        1.03f
+    )
 
-            composable(WORKOUTS_ROUTE) {
-                WorkoutsRoute(
-                    onSessionStart = {
-                        navigationController.navigateSession(it)
-                    },
-                    onAddWorkout = {
-                        navigationController.navigateAddWorkout()
-                    },
-                    onWorkoutClick = {
-                        navigationController.navigateEditWorkout(it)
-                    },
-                    onAddSession = {
-                        navigationController.navigateAddSession()
-                    },
-                    onSessionClick = {
-                        navigationController.navigateEditSession(it)
-                    },
-                )
-            }
+    CompositionLocalProvider(LocalNavigation provides navController) {
+        AnimatedNavHost(
+            controller = navController,
+            transitionSpec = { action, _, _ ->
+                if (action != NavAction.Pop) {
+                    slideInHorizontally(
+                        animationSpec = tween(
+                            600,
+                            easing = easing
+                        ),
+                        initialOffsetX = { screenWidth }) + fadeIn(
+                        tween(
+                            300,
+                            100
+                        )
+                    ) togetherWith slideOutHorizontally(
+                        animationSpec = tween(
+                            600,
+                            easing = easing
+                        ),
+                        targetOffsetX = { -screenWidth }) + fadeOut(
+                        tween(
+                            300,
+                            100
+                        )
+                    )
+                } else {
+                    slideInHorizontally(
+                        animationSpec = tween(
+                            600,
+                            easing = easing
+                        ),
+                        initialOffsetX = { -screenWidth }) + fadeIn(
+                        tween(
+                            300,
+                            100
+                        )
+                    ) togetherWith slideOutHorizontally(
+                        animationSpec = tween(
+                            600,
+                            easing = easing
+                        ),
+                        targetOffsetX = { screenWidth }) + fadeOut(
+                        tween(
+                            300,
+                            100
+                        )
+                    )
+                }
+            },
+        ) { screen ->
+            when (screen) {
+                is Screen.Dashboard -> {
+                    DashboardRoute(
+                        onSessionStart = {
+                            navController.navigate(Screen.Session(it))
+                        },
+                        onSessionClick = {
+                            navController.navigate(Screen.EditSession(it))
+                        }
+                    )
+                }
 
-            composable(ADD_WORKOUT_ROUTE) {
-                AddWorkoutRoute(
-                    onBack = {
-                        navController.popBackStack()
-                    }
-                )
-            }
+                is Screen.Workouts -> {
+                    WorkoutsRoute(
+                        onSessionStart = {
+                            navController.navigate(Screen.Session(it))
+                        },
+                        onAddWorkout = {
+                            navController.navigate(Screen.AddWorkout)
+                        },
+                        onWorkoutClick = {
+                            navController.navigate(Screen.EditWorkout(it))
+                        },
+                        onAddSession = {
+                            navController.navigate(Screen.AddSession)
+                        },
+                        onSessionClick = {
+                            navController.navigate(Screen.EditSession(it))
+                        },
+                    )
+                }
 
-            composable(ADD_SESSION_ROUTE) {
-                AddSessionRoute(
-                    onBack = {
-                        navController.popBackStack()
-                    }
-                )
-            }
+                is Screen.AddWorkout -> {
+                    AddWorkoutRoute(
+                        onBack = onBack,
+                    )
+                }
 
-            composable(
-                "$SESSION_ROUTE/{sessionId}",
-                arguments = listOf(
-                    navArgument("sessionId") { type = NavType.LongType }
-                )
-            ) {
-                SessionRoute(
-                    sessionId = it.arguments?.getLong("sessionId")!!,
-                    onBack = {
-                        navigationController.popToDashboard()
-                    }
-                )
-            }
+                is Screen.EditWorkout -> {
+                    EditWorkoutRoute(
+                        workoutId = screen.id,
+                        onBack = onBack,
+                    )
+                }
 
-            composable(
-                "$EDIT_WORKOUT_ROUTE/{workoutId}",
-                arguments = listOf(
-                    navArgument("workoutId") { type = NavType.LongType }
-                )
-            ) {
-                EditWorkoutRoute(
-                    workoutId = it.arguments?.getLong("workoutId")!!,
-                    onBack = {
-                        navController.popBackStack()
-                    }
-                )
-            }
+                is Screen.AddSession -> {
+                    AddSessionRoute(
+                        onBack = onBack,
+                    )
+                }
 
-            composable(
-                "$EDIT_SESSION_ROUTE/{sessionId}",
-                arguments = listOf(
-                    navArgument("sessionId") { type = NavType.LongType }
-                )
-            ) {
-                EditSessionRoute(
-                    sessionId = it.arguments?.getLong("sessionId")!!,
-                    onBack = {
-                        navController.popBackStack()
-                    }
-                )
+                is Screen.EditSession -> {
+                    EditSessionRoute(
+                        sessionId = screen.id,
+                        onBack = onBack,
+                    )
+                }
+
+                is Screen.Session -> {
+                    SessionRoute(
+                        sessionId = screen.id,
+                        onBack = onBack,
+                    )
+                }
+
             }
 
         }

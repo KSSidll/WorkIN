@@ -2,41 +2,25 @@ package com.kssidll.workin.ui.shared.session
 
 import android.annotation.*
 import android.content.res.*
-import android.icu.util.UniversalTimeScale.*
-import android.util.*
 import androidx.activity.compose.*
-import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
-import androidx.compose.foundation.gestures.*
-import androidx.compose.foundation.interaction.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.*
-import androidx.compose.foundation.text.*
-import androidx.compose.foundation.text.selection.*
 import androidx.compose.material.icons.*
 import androidx.compose.material.icons.rounded.*
-import androidx.compose.material.icons.sharp.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.*
 import androidx.compose.ui.*
-import androidx.compose.ui.focus.*
-import androidx.compose.ui.modifier.*
-import androidx.compose.ui.platform.*
 import androidx.compose.ui.res.*
-import androidx.compose.ui.text.input.*
 import androidx.compose.ui.tooling.preview.*
 import androidx.compose.ui.unit.*
-import androidx.core.text.*
 import com.kssidll.workin.R
 import com.kssidll.workin.data.data.*
-import com.kssidll.workin.ui.addsession.*
 import com.kssidll.workin.ui.shared.*
-import com.kssidll.workin.ui.shared.session.*
 import com.kssidll.workin.ui.theme.*
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
 import org.burnoutcrew.reorderable.*
 
 /// Data ///

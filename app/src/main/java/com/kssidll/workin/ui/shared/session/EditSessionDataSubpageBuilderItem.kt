@@ -2,11 +2,9 @@ package com.kssidll.workin.ui.shared.session
 
 import android.annotation.*
 import android.content.res.*
-import android.util.*
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
-import androidx.compose.foundation.gestures.*
 import androidx.compose.foundation.interaction.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
@@ -14,6 +12,7 @@ import androidx.compose.foundation.shape.*
 import androidx.compose.foundation.text.*
 import androidx.compose.foundation.text.selection.*
 import androidx.compose.material.icons.*
+import androidx.compose.material.icons.automirrored.rounded.*
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.material.icons.sharp.*
 import androidx.compose.material3.*
@@ -21,21 +20,16 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.draw.*
 import androidx.compose.ui.res.*
-import androidx.compose.ui.semantics.*
 import androidx.compose.ui.text.input.*
 import androidx.compose.ui.tooling.preview.*
 import androidx.compose.ui.unit.*
-import androidx.core.graphics.*
 import androidx.core.text.*
 import com.kssidll.workin.R
 import com.kssidll.workin.data.data.*
-import com.kssidll.workin.ui.addsession.*
 import com.kssidll.workin.ui.shared.*
-import com.kssidll.workin.ui.shared.session.*
 import com.kssidll.workin.ui.theme.*
 import kotlinx.coroutines.*
 import org.burnoutcrew.reorderable.*
-import kotlin.concurrent.*
 
 /// Item ///
 @OptIn(ExperimentalFoundationApi::class)
@@ -491,7 +485,7 @@ fun LazyItemScope.EditSessionDataSubpageBuilderItem(
                             }
                         ) {
                             Icon(
-                                imageVector = Icons.Rounded.KeyboardArrowLeft,
+                                imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowLeft,
                                 contentDescription = stringResource(id = R.string.lower_rest_time_1_description),
                                 modifier = Modifier.size(28.dp),
                             )
@@ -522,7 +516,7 @@ fun LazyItemScope.EditSessionDataSubpageBuilderItem(
                             }
                         ) {
                             Icon(
-                                imageVector = Icons.Rounded.KeyboardArrowRight,
+                                imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowRight,
                                 contentDescription = stringResource(id = R.string.increase_rest_time_1_description),
                                 modifier = Modifier.size(28.dp),
                             )

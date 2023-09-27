@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.*
 import androidx.compose.foundation.shape.*
 import androidx.compose.material.icons.*
+import androidx.compose.material.icons.automirrored.rounded.*
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -114,7 +115,7 @@ fun EditSessionDataSubpage(
             icon = if (pagerState.currentPage == 0)
                 Icons.Rounded.Close
             else
-                Icons.Rounded.ArrowBack,
+                Icons.AutoMirrored.Rounded.ArrowBack,
             iconDescription = if (pagerState.currentPage == 0)
                 stringResource(id = R.string.cancel_add_session)
             else

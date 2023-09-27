@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlinAndroid)
     alias(libs.plugins.daggerHiltAndroid)
     kotlin("kapt")
+    id("kotlin-parcelize")
     alias(libs.plugins.devtoolsKSP)
 }
 
@@ -47,7 +48,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
+        kotlinCompilerExtensionVersion = "1.5.3"
     }
     packaging {
         resources {
@@ -61,36 +62,41 @@ ksp {
 }
 
 dependencies {
-    implementation(libs.core.ktx)
-    implementation(libs.lifecycle.runtime.ktx)
+    // AndroidX
     implementation(libs.activity.compose)
-    implementation(libs.accompanist.system.ui.controller)
+    implementation(libs.core.splashscreen)
     implementation(libs.appcompat)
-    implementation(libs.navigation.ui.ktx)
-    implementation(libs.savedstate.ktx)
+    implementation(libs.datastore.preferences)
+    implementation(libs.lifecycle.viewmodel.compose)
+    implementation(libs.accompanist.systemuicontroller)
 
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.test.ext.junit)
-    androidTestImplementation(libs.espresso.core)
+    // Navigation
+    implementation(libs.reimagined)
+    implementation(libs.reimagined.hilt)
 
-    implementation(platform(libs.compose.bom))
-    androidTestImplementation(platform(libs.compose.bom))
-    implementation(libs.compose)
-    implementation(libs.compose.graphics)
-    debugImplementation(libs.compose.tooling)
-    implementation(libs.compose.tooling.preview)
-    debugImplementation(libs.compose.test.manifest)
-    androidTestImplementation(libs.compose.test.junit4)
+    // Compose
+    implementation(libs.compose.ui)
+    implementation(libs.compose.ui.tooling.preview)
+    debugImplementation(libs.compose.ui.tooling)
+    debugImplementation(libs.compose.ui.test.manifest)
     implementation(libs.material3)
-    implementation(libs.navigation.compose)
+    implementation(libs.material3.window.sizeclass)
+    implementation(libs.material.icons.extended)
+    implementation(libs.material)
 
-    implementation(libs.room)
-    ksp(libs.room.compiler)
-
+    // DI
     implementation(libs.hilt)
     kapt(libs.hilt.compiler)
-    implementation(libs.hilt.navigation.compose)
 
+    // Room
+    implementation(libs.room.ktx)
+    ksp(libs.room.ktx)
+    ksp(libs.room.compiler)
+
+    // Other
+    implementation(libs.fuzzywuzzy)
+    implementation(libs.vico.compose)
+    implementation(libs.vico.compose.m3)
     implementation(libs.reorderable)
 }
 

@@ -9,13 +9,12 @@ import androidx.compose.material.icons.*
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.snapshots.*
 import androidx.compose.ui.*
 import androidx.compose.ui.tooling.preview.*
-import androidx.hilt.navigation.compose.*
 import com.kssidll.workin.data.data.*
 import com.kssidll.workin.ui.shared.*
 import com.kssidll.workin.ui.theme.*
+import dev.olshevski.navigation.reimagined.hilt.*
 import kotlinx.coroutines.*
 
 /// Route ///

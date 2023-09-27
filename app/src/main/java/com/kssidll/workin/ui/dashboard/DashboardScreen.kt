@@ -10,13 +10,13 @@ import androidx.compose.ui.draw.*
 import androidx.compose.ui.res.*
 import androidx.compose.ui.tooling.preview.*
 import androidx.compose.ui.unit.*
-import androidx.hilt.navigation.compose.*
 import com.kssidll.workin.*
 import com.kssidll.workin.R
 import com.kssidll.workin.data.data.*
-import com.kssidll.workin.mock.*
 import com.kssidll.workin.ui.shared.*
 import com.kssidll.workin.ui.theme.*
+import dev.olshevski.navigation.reimagined.*
+import dev.olshevski.navigation.reimagined.hilt.*
 import java.util.*
 
 /// Route ///
@@ -188,7 +188,7 @@ fun DashboardScreenPreview() {
     WorkINTheme {
         Surface(modifier = Modifier.fillMaxSize()) {
             ScreenWithBottomNavBar(
-                navigationController = NavigationControllerMock(NavigationDestinations.DASHBOARD_ROUTE)
+                navigationController = rememberNavController(startDestination = Screen.Dashboard)
             ) {
                 DashboardScreen(
                     onSessionStart = {},

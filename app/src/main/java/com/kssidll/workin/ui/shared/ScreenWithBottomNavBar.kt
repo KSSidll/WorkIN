@@ -12,13 +12,13 @@ import androidx.compose.ui.tooling.preview.*
 import androidx.compose.ui.unit.*
 import com.kssidll.workin.*
 import com.kssidll.workin.R
-import com.kssidll.workin.mock.*
 import com.kssidll.workin.ui.theme.*
+import dev.olshevski.navigation.reimagined.*
 
 /// NavBar ///
 @Composable
 fun ScreenWithBottomNavBar(
-    navigationController: INavigationController = LocalNavigation.current,
+    navigationController: NavController<Screen> = LocalNavigation.current,
     content: @Composable () -> Unit,
 ) {
     Column {
@@ -39,12 +39,12 @@ fun ScreenWithBottomNavBar(
                 .height(50.dp)
         ) {
             IconButton(
-                enabled = navigationController.currentlyAt != NavigationDestinations.DASHBOARD_ROUTE,
+                enabled = navigationController.backstack.entries.last().destination != Screen.Dashboard,
                 modifier = Modifier
                     .weight(1F, true)
                     .fillMaxHeight(),
                 onClick = {
-                    navigationController.popToDashboard()
+                    navigationController.navigate(Screen.Dashboard)
                 },
                 colors = IconButtonColors(
                     containerColor = MaterialTheme.colorScheme.surface,
@@ -68,13 +68,13 @@ fun ScreenWithBottomNavBar(
             VerticalDivider()
 
             IconButton(
-                enabled = navigationController.currentlyAt != NavigationDestinations.WORKOUTS_ROUTE,
+                enabled = navigationController.backstack.entries.last().destination != Screen.Workouts,
                 modifier = Modifier
                     .weight(1F, true)
                     .fillMaxHeight(),
                 onClick = {
-                    navigationController.popToDashboard()
-                    navigationController.navigateWorkouts()
+                    navigationController.popUpTo { it == Screen.Dashboard }
+                    navigationController.navigate(Screen.Workouts)
                 },
                 colors = IconButtonColors(
                     containerColor = MaterialTheme.colorScheme.surface,
@@ -119,7 +119,7 @@ fun ScreenWithBottomNavBarPreview() {
     WorkINTheme {
         Surface(modifier = Modifier.fillMaxSize()) {
             ScreenWithBottomNavBar(
-                navigationController = NavigationControllerMock(),
+                navigationController = rememberNavController(startDestination = Screen.Dashboard),
                 content = {}
             )
         }

@@ -10,11 +10,11 @@ import androidx.compose.ui.*
 import androidx.compose.ui.res.*
 import androidx.compose.ui.tooling.preview.*
 import androidx.compose.ui.unit.*
-import androidx.hilt.navigation.compose.*
 import com.kssidll.workin.R
 import com.kssidll.workin.data.data.*
 import com.kssidll.workin.ui.shared.session.*
 import com.kssidll.workin.ui.theme.*
+import dev.olshevski.navigation.reimagined.hilt.*
 
 /// Route ///
 @Composable

@@ -2,15 +2,11 @@ package com.kssidll.workin.ui.shared.session
 
 import android.annotation.*
 import android.content.res.*
-import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.*
-import androidx.compose.foundation.interaction.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.grid.*
-import androidx.compose.foundation.lazy.staggeredgrid.*
 import androidx.compose.foundation.shape.*
 import androidx.compose.material.icons.*
-import androidx.compose.material.icons.rounded.*
+import androidx.compose.material.icons.automirrored.rounded.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
@@ -21,7 +17,6 @@ import androidx.compose.ui.tooling.preview.*
 import androidx.compose.ui.unit.*
 import com.kssidll.workin.R
 import com.kssidll.workin.ui.theme.*
-import kotlinx.coroutines.*
 
 /// Data ///
 data class EditSessionDataSubpageDaysState(
@@ -285,7 +280,7 @@ fun EditSessionDataSubpageDays(
                     )
 
                     Icon(
-                        imageVector = Icons.Rounded.KeyboardArrowRight,
+                        imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowRight,
                         contentDescription = stringResource(
                             R.string
                                 .next
