@@ -158,9 +158,11 @@ fun SessionWorkoutPage(
                                 }
                             }
 
-                            repCountText = it.repetitionCount.toString()
+                            state.repetitionCount = it.repetitionCount
+                            repCountText = state.repetitionCount.toString()
                             state.repetitionType.value = logRepetitionType
-                            weightText = it.weight.toString()
+                            state.weight = it.weight
+                            weightText = state.weight.toString()
                             state.weightType.value = logWeightType
                         }
                     ) {
