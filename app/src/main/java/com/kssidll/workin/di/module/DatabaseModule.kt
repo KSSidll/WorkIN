@@ -5,6 +5,7 @@ import androidx.room.*
 import com.kssidll.workin.data.dao.*
 import com.kssidll.workin.data.database.*
 import com.kssidll.workin.data.repository.*
+import com.kssidll.workin.domain.repository.*
 import dagger.*
 import dagger.hilt.*
 import dagger.hilt.android.qualifiers.*
@@ -31,7 +32,7 @@ class DatabaseModule {
     }
 
     @Provides
-    fun provideWorkoutRepository(workoutDao: WorkoutDao): WorkoutRepository {
+    fun provideWorkoutRepository(workoutDao: WorkoutDao): IWorkoutRepository {
         return WorkoutRepository(workoutDao)
     }
 
@@ -41,7 +42,7 @@ class DatabaseModule {
     }
 
     @Provides
-    fun provideSessionRepository(sessionDao: SessionDao): SessionRepository {
+    fun provideSessionRepository(sessionDao: SessionDao): ISessionRepository {
         return SessionRepository(sessionDao)
     }
 }

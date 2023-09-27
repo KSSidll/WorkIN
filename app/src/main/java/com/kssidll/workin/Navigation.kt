@@ -5,13 +5,13 @@ import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.*
-import com.kssidll.workin.ui.addsession.*
-import com.kssidll.workin.ui.addworkout.*
-import com.kssidll.workin.ui.dashboard.*
-import com.kssidll.workin.ui.editsession.*
-import com.kssidll.workin.ui.editworkout.*
-import com.kssidll.workin.ui.session.*
-import com.kssidll.workin.ui.workouts.*
+import com.kssidll.workin.presentation.screen.addsession.*
+import com.kssidll.workin.presentation.screen.addworkout.*
+import com.kssidll.workin.presentation.screen.dashboard.*
+import com.kssidll.workin.presentation.screen.editsession.*
+import com.kssidll.workin.presentation.screen.editworkout.*
+import com.kssidll.workin.presentation.screen.session.*
+import com.kssidll.workin.presentation.screen.workouts.*
 import dev.olshevski.navigation.reimagined.*
 import kotlinx.parcelize.*
 
