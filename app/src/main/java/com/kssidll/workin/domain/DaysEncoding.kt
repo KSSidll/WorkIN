@@ -43,7 +43,7 @@ enum class DaysEncoding(val encoding: Byte) {
     ;
 
     companion object {
-        private val idMap = DaysEncoding.values()
+        private val idMap = entries
             .associateBy { it.encoding }
 
         fun getByEncoding(encoding: Byte) = idMap[encoding]
@@ -56,8 +56,7 @@ enum class DaysEncoding(val encoding: Byte) {
             var encoded = encodedDays
             val days = mutableListOf<DaysEncoding>()
 
-            DaysEncoding.values()
-                .asList()
+            entries
                 .sortedByDescending { it.encoding }
                 .forEach {
                     if (encoded >= it.encoding) {
