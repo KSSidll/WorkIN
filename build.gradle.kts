@@ -5,3 +5,7 @@ plugins {
     alias(libs.plugins.daggerHiltAndroid) apply false
     alias(libs.plugins.devtoolsKSP) apply false
 }
+
+tasks.register("clean", Delete::class) {
+    delete(rootProject.layout.buildDirectory)
+}
