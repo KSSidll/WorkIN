@@ -3,6 +3,7 @@ package com.kssidll.workin.domain
 import androidx.compose.runtime.*
 import androidx.compose.ui.res.*
 import com.kssidll.workin.R
+import java.util.*
 
 /**
  * @param encoding: id used to encode this in the datobase, has to be unique,
@@ -10,7 +11,7 @@ import com.kssidll.workin.R
  * we could use the ordinal, but i think having that set explicitly is less dangerous
  * because it won't be accidentally sorted
  */
-enum class DaysEncoding(val encoding: Byte) {
+enum class WeekDays(val encoding: Byte) {
     Sunday(
         1.shl(0)
             .toByte()
@@ -49,12 +50,12 @@ enum class DaysEncoding(val encoding: Byte) {
         fun getByEncoding(encoding: Byte) = idMap[encoding]
 
         /**
-         * @return List of DaysEncoding encoded within encodedDays.
+         * @return List of WeekDays encoded within encodedDays.
          * The list has decremental ordering (first day in the list is the last day / day with highest number).
          */
-        fun decode(encodedDays: Byte): List<DaysEncoding> {
+        fun decode(encodedDays: Byte): List<WeekDays> {
             var encoded = encodedDays
-            val days = mutableListOf<DaysEncoding>()
+            val days = mutableListOf<WeekDays>()
 
             entries
                 .sortedByDescending { it.encoding }
@@ -77,19 +78,28 @@ enum class DaysEncoding(val encoding: Byte) {
 
             return days
         }
+
+        fun getCurrent(): WeekDays {
+            val currentDayEncoding = (1).shl(
+                Calendar.getInstance()
+                    .get(Calendar.DAY_OF_WEEK) - 1
+            )
+
+            return WeekDays.getByEncoding(currentDayEncoding.toByte())!!
+        }
     }
 }
 
 @Composable
-fun DaysEncoding.getTranslation(): String {
+fun WeekDays.getTranslation(): String {
     return when (this) {
-        DaysEncoding.Sunday -> stringResource(id = R.string.sunday)
-        DaysEncoding.Monday -> stringResource(id = R.string.monday)
-        DaysEncoding.Tuesday -> stringResource(id = R.string.tuesday)
-        DaysEncoding.Wednesday -> stringResource(id = R.string.wednesday)
-        DaysEncoding.Thursday -> stringResource(id = R.string.thursday)
-        DaysEncoding.Friday -> stringResource(id = R.string.friday)
-        DaysEncoding.Saturday -> stringResource(id = R.string.saturday)
+        WeekDays.Sunday -> stringResource(id = R.string.sunday)
+        WeekDays.Monday -> stringResource(id = R.string.monday)
+        WeekDays.Tuesday -> stringResource(id = R.string.tuesday)
+        WeekDays.Wednesday -> stringResource(id = R.string.wednesday)
+        WeekDays.Thursday -> stringResource(id = R.string.thursday)
+        WeekDays.Friday -> stringResource(id = R.string.friday)
+        WeekDays.Saturday -> stringResource(id = R.string.saturday)
     }
 }
 
@@ -114,16 +124,16 @@ class EncodedDaysBuilder {
     fun build(): Byte = value.toByte()
 
     fun add(encodedDays: Byte): EncodedDaysBuilder {
-        DaysEncoding.decode(encodedDays)
+        WeekDays.decode(encodedDays)
             .forEach {
                 when (it) {
-                    DaysEncoding.Sunday -> addSunday()
-                    DaysEncoding.Monday -> addMonday()
-                    DaysEncoding.Tuesday -> addTuesday()
-                    DaysEncoding.Wednesday -> addWednesday()
-                    DaysEncoding.Thursday -> addThursday()
-                    DaysEncoding.Friday -> addFriday()
-                    DaysEncoding.Saturday -> addSaturday()
+                    WeekDays.Sunday -> addSunday()
+                    WeekDays.Monday -> addMonday()
+                    WeekDays.Tuesday -> addTuesday()
+                    WeekDays.Wednesday -> addWednesday()
+                    WeekDays.Thursday -> addThursday()
+                    WeekDays.Friday -> addFriday()
+                    WeekDays.Saturday -> addSaturday()
                 }
             }
 
@@ -133,7 +143,7 @@ class EncodedDaysBuilder {
     fun addSunday(): EncodedDaysBuilder {
         if (addedSunday) return this
 
-        value += DaysEncoding.Sunday.encoding
+        value += WeekDays.Sunday.encoding
         addedSunday = true
         return this
     }
@@ -141,7 +151,7 @@ class EncodedDaysBuilder {
     fun addMonday(): EncodedDaysBuilder {
         if (addedMonday) return this
 
-        value += DaysEncoding.Monday.encoding
+        value += WeekDays.Monday.encoding
         addedMonday = true
         return this
     }
@@ -149,7 +159,7 @@ class EncodedDaysBuilder {
     fun addTuesday(): EncodedDaysBuilder {
         if (addedTuesday) return this
 
-        value += DaysEncoding.Tuesday.encoding
+        value += WeekDays.Tuesday.encoding
         addedTuesday = true
         return this
     }
@@ -157,7 +167,7 @@ class EncodedDaysBuilder {
     fun addWednesday(): EncodedDaysBuilder {
         if (addedWednesday) return this
 
-        value += DaysEncoding.Wednesday.encoding
+        value += WeekDays.Wednesday.encoding
         addedWednesday = true
         return this
     }
@@ -165,7 +175,7 @@ class EncodedDaysBuilder {
     fun addThursday(): EncodedDaysBuilder {
         if (addedThursday) return this
 
-        value += DaysEncoding.Thursday.encoding
+        value += WeekDays.Thursday.encoding
         addedThursday = true
         return this
     }
@@ -173,7 +183,7 @@ class EncodedDaysBuilder {
     fun addFriday(): EncodedDaysBuilder {
         if (addedFriday) return this
 
-        value += DaysEncoding.Friday.encoding
+        value += WeekDays.Friday.encoding
         addedFriday = true
         return this
     }
@@ -181,7 +191,7 @@ class EncodedDaysBuilder {
     fun addSaturday(): EncodedDaysBuilder {
         if (addedSaturday) return this
 
-        value += DaysEncoding.Saturday.encoding
+        value += WeekDays.Saturday.encoding
         addedSaturday = true
         return this
     }

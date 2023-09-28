@@ -10,6 +10,7 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.snapshots.*
 import androidx.compose.ui.*
 import androidx.compose.ui.draw.*
 import androidx.compose.ui.res.*
@@ -19,7 +20,9 @@ import com.kssidll.workin.data.data.*
 import com.kssidll.workin.domain.*
 import com.kssidll.workin.presentation.theme.*
 
-/// Card ///
+private val containerColor @Composable @ReadOnlyComposable get() = MaterialTheme.colorScheme.surfaceContainer
+private val containerShape @Composable @ReadOnlyComposable get() = RoundedCornerShape(24.dp)
+
 @Composable
 fun SessionCardItem(
     session: SessionWithFullSessionWorkouts,
@@ -27,21 +30,27 @@ fun SessionCardItem(
     showStartIcon: Boolean = false,
     onStartIconClick: (SessionWithFullSessionWorkouts) -> Unit = {},
 ) {
+    val sessionDays: SnapshotStateList<WeekDays> = remember { mutableStateListOf() }
+
+    LaunchedEffect(session.session.days) {
+        sessionDays.clear()
+        sessionDays.addAll(WeekDays.decode(session.session.days))
+    }
+
     Row(
         modifier = Modifier.fillMaxWidth()
     ) {
         Box(
             modifier = Modifier
                 .padding(horizontal = 24.dp, vertical = 8.dp)
-                .border(
-                    width = OutlinedTextFieldDefaults.UnfocusedBorderThickness,
-                    color = MaterialTheme.colorScheme.outline,
-                    shape = RoundedCornerShape(24.dp)
-                )
                 .clickable {
                     onSelect(session)
                 }
                 .animateContentSize()
+                .background(
+                    color = containerColor,
+                    shape = containerShape,
+                )
         ) {
             Column {
                 var isExpanded: Boolean by remember {
@@ -60,37 +69,37 @@ fun SessionCardItem(
                     )
                 }
 
+                if (session.session.description.isNotBlank()) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 24.dp),
+                    ) {
+                        Text(
+                            text = session.session.description,
+                            fontSize = 16.sp,
+                            modifier = Modifier.alpha(0.8F),
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(4.dp))
+                }
+
+                Spacer(modifier = Modifier.height(4.dp))
+
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 24.dp),
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center,
                 ) {
-                    Text(
-                        text = session.session.description,
-                        fontSize = 16.sp,
-                        modifier = Modifier.alpha(0.8F),
+                    HorizontalWeekdayList(
+                        highlightedDays = sessionDays,
+                        markCurrentDay = true,
+                        colors = horizontalWeekdayListDefaultColors(
+                            border = MaterialTheme.colorScheme.surfaceContainer,
+                        )
                     )
                 }
 
                 Spacer(modifier = Modifier.height(8.dp))
-
-                Column {
-                    DaysEncoding.decode(session.session.days)
-                        .reversed()
-                        .forEach {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 24.dp),
-                            ) {
-                                Text(
-                                    text = it.getTranslation(),
-                                    fontSize = 16.sp,
-                                    modifier = Modifier.alpha(0.8F),
-                                )
-                            }
-                        }
-                }
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),

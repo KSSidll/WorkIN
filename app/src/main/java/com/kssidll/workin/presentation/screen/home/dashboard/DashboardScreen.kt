@@ -44,8 +44,8 @@ fun DashboardScreen(
             .get(Calendar.DAY_OF_WEEK) - 1
     )
 
-    val currentDay = DaysEncoding.getByEncoding(currentDayEncoding.toByte())
-    val nextDay = DaysEncoding.getByEncoding(
+    val currentDay = WeekDays.getByEncoding(currentDayEncoding.toByte())
+    val nextDay = WeekDays.getByEncoding(
         currentDayEncoding.shl(1)
             .toByte()
     )
@@ -55,7 +55,7 @@ fun DashboardScreen(
 
     sessions.forEach {
         // requires incremental order of days to avoid duplicates
-        val decodedDays = DaysEncoding.decode(it.session.days)
+        val decodedDays = WeekDays.decode(it.session.days)
             .reversed()
 
         for (dayByte in decodedDays) {
