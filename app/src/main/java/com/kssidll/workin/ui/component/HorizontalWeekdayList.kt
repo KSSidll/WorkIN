@@ -29,15 +29,15 @@ data class HorizontalWeekdayListColors(
 fun horizontalWeekdayListDefaultColors(
     border: Color = MaterialTheme.colorScheme.outline,
     foreground: Color = MaterialTheme.colorScheme.onSurface,
-    highlightedDayBorder: Color = MaterialTheme.colorScheme.tertiary,
-    markedDayBackground: Color = MaterialTheme.colorScheme.tertiaryContainer,
-    markedDayForeground: Color = MaterialTheme.colorScheme.onTertiaryContainer,
+    markedDayBorder: Color = MaterialTheme.colorScheme.tertiary,
+    highlightedDayBackground: Color = MaterialTheme.colorScheme.tertiaryContainer,
+    highlightedDayForeground: Color = MaterialTheme.colorScheme.onTertiaryContainer,
 ) = HorizontalWeekdayListColors(
     border = border,
     foreground = foreground,
-    markedDayBorder = highlightedDayBorder,
-    highlightedDayBackground = markedDayBackground,
-    highlightedDayForeground = markedDayForeground,
+    markedDayBorder = markedDayBorder,
+    highlightedDayBackground = highlightedDayBackground,
+    highlightedDayForeground = highlightedDayForeground,
 )
 
 @Composable
