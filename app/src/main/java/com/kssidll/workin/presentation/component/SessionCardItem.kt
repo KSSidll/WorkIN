@@ -20,8 +20,6 @@ import com.kssidll.workin.data.data.*
 import com.kssidll.workin.domain.*
 import com.kssidll.workin.presentation.theme.*
 
-private val containerColor @Composable @ReadOnlyComposable get() = MaterialTheme.colorScheme.surfaceContainer
-private val containerShape @Composable @ReadOnlyComposable get() = RoundedCornerShape(24.dp)
 
 @Composable
 fun SessionCardItem(
@@ -48,8 +46,8 @@ fun SessionCardItem(
                 }
                 .animateContentSize()
                 .background(
-                    color = containerColor,
-                    shape = containerShape,
+                    color = MaterialTheme.colorScheme.surfaceContainer,
+                    shape = RoundedCornerShape(24.dp),
                 )
         ) {
             Column {
