@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.*
 import com.kssidll.workin.*
 import com.kssidll.workin.R
 import com.kssidll.workin.data.data.*
-import com.kssidll.workin.presentation.component.*
+import com.kssidll.workin.presentation.screen.dashboard.component.*
 import com.kssidll.workin.presentation.theme.*
 import dev.olshevski.navigation.reimagined.*
 import dev.olshevski.navigation.reimagined.hilt.*
@@ -36,24 +36,49 @@ fun WorkoutsRoute(
 ) {
     val workoutsViewModel: WorkoutsViewModel = hiltViewModel()
 
-    ScreenWithBottomNavBar {
-        WorkoutsScreen(
-            onSessionStart = onSessionStart,
-            workouts = workoutsViewModel.getAllWorkoutsDescFlow(),
-            sessions = workoutsViewModel.getAllSessionsDescFlow(),
-            onAddWorkout = onAddWorkout,
-            onWorkoutClick = onWorkoutClick,
-            onAddSession = onAddSession,
-            onSessionClick = onSessionClick,
-        )
+    WorkoutsScreen(
+        onSessionStart = onSessionStart,
+        workouts = workoutsViewModel.getAllWorkoutsDescFlow(),
+        sessions = workoutsViewModel.getAllSessionsDescFlow(),
+        onAddWorkout = onAddWorkout,
+        onWorkoutClick = onWorkoutClick,
+        onAddSession = onAddSession,
+        onSessionClick = onSessionClick,
+    )
+}
+
+@Composable
+fun WorkoutsScreen(
+    onSessionStart: (Long) -> Unit,
+    workouts: Flow<List<Workout>>,
+    sessions: Flow<List<SessionWithFullSessionWorkouts>>,
+    onAddWorkout: () -> Unit,
+    onWorkoutClick: (Long) -> Unit,
+    onAddSession: () -> Unit,
+    onSessionClick: (Long) -> Unit,
+) {
+    Scaffold(
+        bottomBar = {
+            BottomDashboardNavigationBar()
+        }
+    ) {
+        Box(modifier = Modifier.padding(it)) {
+            WorkoutsScreenContent(
+                onSessionStart = onSessionStart,
+                workouts = workouts,
+                sessions = sessions,
+                onAddWorkout = onAddWorkout,
+                onWorkoutClick = onWorkoutClick,
+                onAddSession = onAddSession,
+                onSessionClick = onSessionClick,
+            )
+        }
     }
 }
 
-
-/// Screen ///
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun WorkoutsScreen(
+private fun WorkoutsScreenContent(
     onSessionStart: (Long) -> Unit,
     workouts: Flow<List<Workout>>,
     sessions: Flow<List<SessionWithFullSessionWorkouts>>,
@@ -241,13 +266,8 @@ fun WorkoutsScreen(
 @Composable
 fun WorkoutsScreenPreview() {
     WorkINTheme {
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background,
-        ) {
-            ScreenWithBottomNavBar(
-                navigationController = rememberNavController(startDestination = Screen.Workouts)
-            ) {
+        Surface(modifier = Modifier.fillMaxSize()) {
+            CompositionLocalProvider(LocalNavigation provides rememberNavController(Screen.Workouts)) {
                 WorkoutsScreen(
                     onSessionStart = {},
                     workouts = flowOf(),

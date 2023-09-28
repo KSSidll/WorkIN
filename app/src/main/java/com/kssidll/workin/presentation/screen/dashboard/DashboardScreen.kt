@@ -15,6 +15,7 @@ import com.kssidll.workin.R
 import com.kssidll.workin.data.data.*
 import com.kssidll.workin.domain.*
 import com.kssidll.workin.presentation.component.*
+import com.kssidll.workin.presentation.screen.dashboard.component.*
 import com.kssidll.workin.presentation.theme.*
 import dev.olshevski.navigation.reimagined.*
 import dev.olshevski.navigation.reimagined.hilt.*
@@ -28,20 +29,38 @@ fun DashboardRoute(
 ) {
     val dashboardViewModel: DashboardViewModel = hiltViewModel()
 
-    ScreenWithBottomNavBar {
-        DashboardScreen(
-            onSessionStart = onSessionStart,
-            onSessionClick = onSessionClick,
-            sessions = dashboardViewModel.getAllSessionsDescFlow()
-                .collectAsState(initial = emptyList()).value,
-        )
-    }
+    DashboardScreen(
+        onSessionStart = onSessionStart,
+        onSessionClick = onSessionClick,
+        sessions = dashboardViewModel.getAllSessionsDescFlow()
+            .collectAsState(emptyList()).value,
+    )
 }
-
 
 /// Screen ///
 @Composable
 fun DashboardScreen(
+    onSessionStart: (Long) -> Unit,
+    onSessionClick: (Long) -> Unit,
+    sessions: List<SessionWithFullSessionWorkouts>,
+) {
+    Scaffold(
+        bottomBar = {
+            BottomDashboardNavigationBar()
+        }
+    ) {
+        Box(modifier = Modifier.padding(it)) {
+            DashboardScreenContent(
+                onSessionStart = onSessionStart,
+                onSessionClick = onSessionClick,
+                sessions = sessions,
+            )
+        }
+    }
+}
+
+@Composable
+private fun DashboardScreenContent(
     onSessionStart: (Long) -> Unit,
     onSessionClick: (Long) -> Unit,
     sessions: List<SessionWithFullSessionWorkouts>,
@@ -188,9 +207,7 @@ fun DashboardScreen(
 fun DashboardScreenPreview() {
     WorkINTheme {
         Surface(modifier = Modifier.fillMaxSize()) {
-            ScreenWithBottomNavBar(
-                navigationController = rememberNavController(startDestination = Screen.Dashboard)
-            ) {
+            CompositionLocalProvider(LocalNavigation provides rememberNavController(Screen.Dashboard)) {
                 DashboardScreen(
                     onSessionStart = {},
                     onSessionClick = {},
