@@ -97,7 +97,7 @@ private fun WeekdayItem(
 
     val highlightedModifier = if (highlighted)
         Modifier.border(
-            width = Dp.Hairline,
+            width = OutlinedTextFieldDefaults.UnfocusedBorderThickness,
             color = colors.highlightedDayBorder,
             shape = CircleShape,
         )
