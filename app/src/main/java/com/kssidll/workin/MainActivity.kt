@@ -8,7 +8,7 @@ import androidx.activity.compose.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.ui.*
-import com.kssidll.workin.presentation.theme.*
+import com.kssidll.workin.ui.theme.*
 import dagger.hilt.android.*
 
 @AndroidEntryPoint
