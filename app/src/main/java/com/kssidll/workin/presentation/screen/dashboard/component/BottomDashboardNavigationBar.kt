@@ -43,7 +43,7 @@ fun BottomDashboardNavigationBar(
         BottomDashboardNavigationBarItem(
             selected = navigationController.backstack.entries.last().destination == Screen.Dashboard,
             onClick = {
-                navigationController.navigate(Screen.Dashboard)
+                navigationController.popUpTo { it == Screen.Dashboard }
             },
             imageVector = Icons.Rounded.Home,
             description = stringResource(id = R.string.navigate_to_dashboard_description),
