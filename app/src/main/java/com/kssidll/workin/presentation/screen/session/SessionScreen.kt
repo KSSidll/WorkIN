@@ -13,7 +13,7 @@ import androidx.compose.ui.*
 import androidx.compose.ui.tooling.preview.*
 import com.kssidll.workin.data.data.*
 import com.kssidll.workin.domain.*
-import com.kssidll.workin.presentation.component.*
+import com.kssidll.workin.presentation.component.topbar.*
 import com.kssidll.workin.presentation.theme.*
 import dev.olshevski.navigation.reimagined.hilt.*
 import kotlinx.coroutines.*

@@ -1,4 +1,4 @@
-package com.kssidll.workin.presentation.component
+package com.kssidll.workin.presentation.component.topbar
 
 import android.content.res.*
 import androidx.compose.foundation.*
