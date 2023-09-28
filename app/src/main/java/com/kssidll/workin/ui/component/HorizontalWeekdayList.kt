@@ -30,8 +30,8 @@ fun horizontalWeekdayListDefaultColors(
     border: Color = MaterialTheme.colorScheme.outline,
     foreground: Color = MaterialTheme.colorScheme.onSurface,
     markedDayBorder: Color = MaterialTheme.colorScheme.tertiary,
-    highlightedDayBackground: Color = MaterialTheme.colorScheme.tertiaryContainer,
-    highlightedDayForeground: Color = MaterialTheme.colorScheme.onTertiaryContainer,
+    highlightedDayBackground: Color = MaterialTheme.colorScheme.surfaceContainerHighest,
+    highlightedDayForeground: Color = MaterialTheme.colorScheme.onSurface,
 ) = HorizontalWeekdayListColors(
     border = border,
     foreground = foreground,

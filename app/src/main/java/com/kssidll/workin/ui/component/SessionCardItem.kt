@@ -397,7 +397,7 @@ fun SessionCardItem(
 @Composable
 fun SessionCardItemPrieview() {
     WorkINTheme {
-        Surface(modifier = Modifier.fillMaxSize()) {
+        Surface {
             SessionCardItem(
                 session = SessionWithFullSessionWorkouts(
                     session = Session(
