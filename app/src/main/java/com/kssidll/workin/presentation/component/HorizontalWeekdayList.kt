@@ -19,9 +19,9 @@ private val paddingBetweenValues = 3.dp
 data class HorizontalWeekdayListColors(
     val border: Color,
     val foreground: Color,
-    val highlightedDayBorder: Color,
-    val markedDayBackground: Color,
-    val markedDayForeground: Color,
+    val markedDayBorder: Color,
+    val highlightedDayBackground: Color,
+    val highlightedDayForeground: Color,
 )
 
 @Composable
@@ -35,9 +35,9 @@ fun horizontalWeekdayListDefaultColors(
 ) = HorizontalWeekdayListColors(
     border = border,
     foreground = foreground,
-    highlightedDayBorder = highlightedDayBorder,
-    markedDayBackground = markedDayBackground,
-    markedDayForeground = markedDayForeground,
+    markedDayBorder = highlightedDayBorder,
+    highlightedDayBackground = markedDayBackground,
+    highlightedDayForeground = markedDayForeground,
 )
 
 @Composable
@@ -87,18 +87,17 @@ private fun WeekdayItem(
     marked: Boolean,
     colors: HorizontalWeekdayListColors,
 ) {
-
     val markedModifier = if (marked)
-        Modifier.background(
-            color = colors.markedDayBackground,
+        Modifier.border(
+            width = OutlinedTextFieldDefaults.UnfocusedBorderThickness,
+            color = colors.markedDayBorder,
             shape = CircleShape,
         )
     else Modifier
 
     val highlightedModifier = if (highlighted)
-        Modifier.border(
-            width = OutlinedTextFieldDefaults.UnfocusedBorderThickness,
-            color = colors.highlightedDayBorder,
+        Modifier.background(
+            color = colors.highlightedDayBackground,
             shape = CircleShape,
         )
     else Modifier
@@ -120,7 +119,7 @@ private fun WeekdayItem(
                 text = day.getTranslation()
                     .first()
                     .toString(),
-                color = if (marked) colors.markedDayForeground else colors.foreground,
+                color = if (highlighted) colors.highlightedDayForeground else colors.foreground,
             )
         }
     }
