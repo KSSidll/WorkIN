@@ -172,8 +172,7 @@ enum class RepetitionTypes(val id: Int) {
     ;
 
     companion object {
-        private val idMap = RepetitionTypes.values()
-            .associateBy { it.id }
+        private val idMap = entries.associateBy { it.id }
 
         fun getById(id: Int) = idMap[id]
     }
@@ -206,8 +205,7 @@ enum class WeightTypes(
     ;
 
     companion object {
-        private val idMap = WeightTypes.values()
-            .associateBy { it.id }
+        private val idMap = entries.associateBy { it.id }
 
         fun getById(id: Int) = idMap[id]
     }
