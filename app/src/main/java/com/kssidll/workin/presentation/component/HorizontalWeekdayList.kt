@@ -110,7 +110,7 @@ private fun WeekdayItem(
                 .then(highlightedModifier)
                 .then(
                     Modifier
-                        .width(25.dp)
+                        .width(30.dp)
                         .aspectRatio(0.9F)
                 )
         ) {
