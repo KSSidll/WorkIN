@@ -7,22 +7,16 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.platform.*
 import com.kssidll.workin.presentation.screen.addsession.*
 import com.kssidll.workin.presentation.screen.addworkout.*
-import com.kssidll.workin.presentation.screen.dashboard.*
 import com.kssidll.workin.presentation.screen.editsession.*
 import com.kssidll.workin.presentation.screen.editworkout.*
+import com.kssidll.workin.presentation.screen.home.*
 import com.kssidll.workin.presentation.screen.session.*
-import com.kssidll.workin.presentation.screen.workouts.*
 import dev.olshevski.navigation.reimagined.*
 import kotlinx.parcelize.*
 
-val LocalNavigation = compositionLocalOf<NavController<Screen>> {
-    error("No NavigationController provided")
-}
-
 @Parcelize
 sealed class Screen: Parcelable {
-    data object Dashboard: Screen()
-    data object Workouts: Screen()
+    data object Home: Screen()
     data object AddWorkout: Screen()
     data class EditWorkout(val id: Long): Screen()
     data object AddSession: Screen()
@@ -32,7 +26,7 @@ sealed class Screen: Parcelable {
 
 @Composable
 fun Navigation(
-    navController: NavController<Screen> = rememberNavController(startDestination = Screen.Dashboard)
+    navController: NavController<Screen> = rememberNavController(startDestination = Screen.Home)
 ) {
     NavBackHandler(controller = navController)
 
@@ -50,124 +44,111 @@ fun Navigation(
         1.03f
     )
 
-    CompositionLocalProvider(LocalNavigation provides navController) {
-        AnimatedNavHost(
-            controller = navController,
-            transitionSpec = { action, _, _ ->
-                if (action != NavAction.Pop) {
-                    slideInHorizontally(
-                        animationSpec = tween(
-                            600,
-                            easing = easing
-                        ),
-                        initialOffsetX = { screenWidth }) + fadeIn(
-                        tween(
-                            300,
-                            100
-                        )
-                    ) togetherWith slideOutHorizontally(
-                        animationSpec = tween(
-                            600,
-                            easing = easing
-                        ),
-                        targetOffsetX = { -screenWidth }) + fadeOut(
-                        tween(
-                            300,
-                            100
-                        )
+    AnimatedNavHost(
+        controller = navController,
+        transitionSpec = { action, _, _ ->
+            if (action != NavAction.Pop) {
+                slideInHorizontally(
+                    animationSpec = tween(
+                        600,
+                        easing = easing
+                    ),
+                    initialOffsetX = { screenWidth }) + fadeIn(
+                    tween(
+                        300,
+                        100
                     )
-                } else {
-                    slideInHorizontally(
-                        animationSpec = tween(
-                            600,
-                            easing = easing
-                        ),
-                        initialOffsetX = { -screenWidth }) + fadeIn(
-                        tween(
-                            300,
-                            100
-                        )
-                    ) togetherWith slideOutHorizontally(
-                        animationSpec = tween(
-                            600,
-                            easing = easing
-                        ),
-                        targetOffsetX = { screenWidth }) + fadeOut(
-                        tween(
-                            300,
-                            100
-                        )
+                ) togetherWith slideOutHorizontally(
+                    animationSpec = tween(
+                        600,
+                        easing = easing
+                    ),
+                    targetOffsetX = { -screenWidth }) + fadeOut(
+                    tween(
+                        300,
+                        100
                     )
-                }
-            },
-        ) { screen ->
-            when (screen) {
-                is Screen.Dashboard -> {
-                    DashboardRoute(
-                        onSessionStart = {
-                            navController.navigate(Screen.Session(it))
-                        },
-                        onSessionClick = {
-                            navController.navigate(Screen.EditSession(it))
-                        }
+                )
+            } else {
+                slideInHorizontally(
+                    animationSpec = tween(
+                        600,
+                        easing = easing
+                    ),
+                    initialOffsetX = { -screenWidth }) + fadeIn(
+                    tween(
+                        300,
+                        100
                     )
-                }
+                ) togetherWith slideOutHorizontally(
+                    animationSpec = tween(
+                        600,
+                        easing = easing
+                    ),
+                    targetOffsetX = { screenWidth }) + fadeOut(
+                    tween(
+                        300,
+                        100
+                    )
+                )
+            }
+        },
+    ) { screen ->
+        when (screen) {
+            is Screen.Home -> {
+                HomeRoute(
+                    onSessionStart = {
+                        navController.navigate(Screen.Session(it))
+                    },
+                    onSessionClick = {
+                        navController.navigate(Screen.EditSession(it))
+                    },
+                    onAddSession = {
+                        navController.navigate(Screen.AddSession)
+                    },
+                    onWorkoutClick = {
+                        navController.navigate(Screen.EditWorkout(it))
+                    },
+                    onAddWorkout = {
+                        navController.navigate(Screen.AddWorkout)
+                    },
+                )
+            }
 
-                is Screen.Workouts -> {
-                    WorkoutsRoute(
-                        onSessionStart = {
-                            navController.navigate(Screen.Session(it))
-                        },
-                        onAddWorkout = {
-                            navController.navigate(Screen.AddWorkout)
-                        },
-                        onWorkoutClick = {
-                            navController.navigate(Screen.EditWorkout(it))
-                        },
-                        onAddSession = {
-                            navController.navigate(Screen.AddSession)
-                        },
-                        onSessionClick = {
-                            navController.navigate(Screen.EditSession(it))
-                        },
-                    )
-                }
+            is Screen.AddWorkout -> {
+                AddWorkoutRoute(
+                    onBack = onBack,
+                )
+            }
 
-                is Screen.AddWorkout -> {
-                    AddWorkoutRoute(
-                        onBack = onBack,
-                    )
-                }
+            is Screen.EditWorkout -> {
+                EditWorkoutRoute(
+                    workoutId = screen.id,
+                    onBack = onBack,
+                )
+            }
 
-                is Screen.EditWorkout -> {
-                    EditWorkoutRoute(
-                        workoutId = screen.id,
-                        onBack = onBack,
-                    )
-                }
+            is Screen.AddSession -> {
+                AddSessionRoute(
+                    onBack = onBack,
+                )
+            }
 
-                is Screen.AddSession -> {
-                    AddSessionRoute(
-                        onBack = onBack,
-                    )
-                }
+            is Screen.EditSession -> {
+                EditSessionRoute(
+                    sessionId = screen.id,
+                    onBack = onBack,
+                )
+            }
 
-                is Screen.EditSession -> {
-                    EditSessionRoute(
-                        sessionId = screen.id,
-                        onBack = onBack,
-                    )
-                }
-
-                is Screen.Session -> {
-                    SessionRoute(
-                        sessionId = screen.id,
-                        onBack = onBack,
-                    )
-                }
-
+            is Screen.Session -> {
+                SessionRoute(
+                    sessionId = screen.id,
+                    onBack = onBack,
+                )
             }
 
         }
+
     }
 }

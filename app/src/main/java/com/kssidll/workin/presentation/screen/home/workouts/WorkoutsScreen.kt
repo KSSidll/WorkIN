@@ -1,4 +1,4 @@
-package com.kssidll.workin.presentation.screen.workouts
+package com.kssidll.workin.presentation.screen.home.workouts
 
 import android.content.res.*
 import androidx.compose.foundation.*
@@ -15,77 +15,45 @@ import androidx.compose.ui.graphics.*
 import androidx.compose.ui.res.*
 import androidx.compose.ui.tooling.preview.*
 import androidx.compose.ui.unit.*
-import com.kssidll.workin.*
 import com.kssidll.workin.R
 import com.kssidll.workin.data.data.*
-import com.kssidll.workin.presentation.screen.dashboard.component.*
+import com.kssidll.workin.presentation.screen.home.workouts.component.*
 import com.kssidll.workin.presentation.theme.*
-import dev.olshevski.navigation.reimagined.*
 import dev.olshevski.navigation.reimagined.hilt.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 
-/// Route ///
 @Composable
 fun WorkoutsRoute(
     onSessionStart: (Long) -> Unit,
-    onAddWorkout: () -> Unit,
-    onWorkoutClick: (Long) -> Unit,
+    onSessionClick: (Long) -> Unit,
     onAddSession: () -> Unit,
-    onSessionClick: (Long) -> Unit
+    onWorkoutClick: (Long) -> Unit,
+    onAddWorkout: () -> Unit,
 ) {
     val workoutsViewModel: WorkoutsViewModel = hiltViewModel()
 
     WorkoutsScreen(
         onSessionStart = onSessionStart,
+        onSessionClick = onSessionClick,
+        onAddSession = onAddSession,
+        onWorkoutClick = onWorkoutClick,
+        onAddWorkout = onAddWorkout,
         workouts = workoutsViewModel.getAllWorkoutsDescFlow(),
         sessions = workoutsViewModel.getAllSessionsDescFlow(),
-        onAddWorkout = onAddWorkout,
-        onWorkoutClick = onWorkoutClick,
-        onAddSession = onAddSession,
-        onSessionClick = onSessionClick,
     )
-}
-
-@Composable
-fun WorkoutsScreen(
-    onSessionStart: (Long) -> Unit,
-    workouts: Flow<List<Workout>>,
-    sessions: Flow<List<SessionWithFullSessionWorkouts>>,
-    onAddWorkout: () -> Unit,
-    onWorkoutClick: (Long) -> Unit,
-    onAddSession: () -> Unit,
-    onSessionClick: (Long) -> Unit,
-) {
-    Scaffold(
-        bottomBar = {
-            BottomDashboardNavigationBar()
-        }
-    ) {
-        Box(modifier = Modifier.padding(it)) {
-            WorkoutsScreenContent(
-                onSessionStart = onSessionStart,
-                workouts = workouts,
-                sessions = sessions,
-                onAddWorkout = onAddWorkout,
-                onWorkoutClick = onWorkoutClick,
-                onAddSession = onAddSession,
-                onSessionClick = onSessionClick,
-            )
-        }
-    }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun WorkoutsScreenContent(
+private fun WorkoutsScreen(
     onSessionStart: (Long) -> Unit,
+    onSessionClick: (Long) -> Unit,
+    onAddSession: () -> Unit,
+    onWorkoutClick: (Long) -> Unit,
+    onAddWorkout: () -> Unit,
     workouts: Flow<List<Workout>>,
     sessions: Flow<List<SessionWithFullSessionWorkouts>>,
-    onAddWorkout: () -> Unit,
-    onWorkoutClick: (Long) -> Unit,
-    onAddSession: () -> Unit,
-    onSessionClick: (Long) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
 
@@ -247,18 +215,16 @@ private fun WorkoutsScreenContent(
     }
 }
 
-
-/// Screen Preview ///
 @Preview(
-    group = "WorkoutsScreen",
-    name = "Workouts Screen Dark",
+    group = "Workouts Screen",
+    name = "Dark",
     showBackground = true,
     apiLevel = 29,
     uiMode = Configuration.UI_MODE_NIGHT_YES
 )
 @Preview(
-    group = "WorkoutsScreen",
-    name = "Workouts Screen Light",
+    group = "Workouts Screen",
+    name = "Light",
     showBackground = true,
     apiLevel = 29,
     uiMode = Configuration.UI_MODE_NIGHT_NO
@@ -267,17 +233,15 @@ private fun WorkoutsScreenContent(
 fun WorkoutsScreenPreview() {
     WorkINTheme {
         Surface(modifier = Modifier.fillMaxSize()) {
-            CompositionLocalProvider(LocalNavigation provides rememberNavController(Screen.Workouts)) {
-                WorkoutsScreen(
-                    onSessionStart = {},
-                    workouts = flowOf(),
-                    sessions = flowOf(),
-                    onAddWorkout = {},
-                    onWorkoutClick = {},
-                    onAddSession = {},
-                    onSessionClick = {},
-                )
-            }
+            WorkoutsScreen(
+                onSessionStart = {},
+                onSessionClick = {},
+                onAddSession = {},
+                onWorkoutClick = {},
+                onAddWorkout = {},
+                workouts = flowOf(),
+                sessions = flowOf(),
+            )
         }
     }
 }

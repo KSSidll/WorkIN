@@ -1,4 +1,4 @@
-package com.kssidll.workin.presentation.screen.workouts
+package com.kssidll.workin.presentation.screen.home.dashboard
 
 import androidx.lifecycle.*
 import com.kssidll.workin.data.data.*
@@ -7,22 +7,14 @@ import dagger.hilt.android.lifecycle.*
 import kotlinx.coroutines.flow.*
 import javax.inject.*
 
-/// ViewModel ///
 @HiltViewModel
-class WorkoutsViewModel @Inject constructor(
-    workoutRepository: IWorkoutRepository,
+class DashboardViewModel @Inject constructor(
     sessionRepository: ISessionRepository,
 ): ViewModel() {
-    private val workoutRepository: IWorkoutRepository
     private val sessionRepository: ISessionRepository
 
     init {
-        this.workoutRepository = workoutRepository
         this.sessionRepository = sessionRepository
-    }
-
-    fun getAllWorkoutsDescFlow(): Flow<List<Workout>> {
-        return workoutRepository.getAllDescFlow()
     }
 
     fun getAllSessionsDescFlow(): Flow<List<SessionWithFullSessionWorkouts>> {

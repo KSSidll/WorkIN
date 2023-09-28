@@ -2,6 +2,7 @@
     <string name="app_name">WorkIN</string>
 
     <string name="navigate_to_dashboard_description">Navigate to the Dashboard</string>
+    <string name="navigate_to_workouts_description">Navigate to Workouts Screen</string>
     <string name="go_to_previews_screen_description">Go to Previous Screen</string>
     <string name="workout_name">Workout Name</string>
     <string name="confirm_add_workout_description">Add the workout</string>

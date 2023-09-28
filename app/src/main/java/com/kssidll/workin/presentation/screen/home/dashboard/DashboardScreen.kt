@@ -1,4 +1,4 @@
-package com.kssidll.workin.presentation.screen.dashboard
+package com.kssidll.workin.presentation.screen.home.dashboard
 
 import android.content.res.*
 import androidx.compose.foundation.*
@@ -10,18 +10,14 @@ import androidx.compose.ui.draw.*
 import androidx.compose.ui.res.*
 import androidx.compose.ui.tooling.preview.*
 import androidx.compose.ui.unit.*
-import com.kssidll.workin.*
 import com.kssidll.workin.R
 import com.kssidll.workin.data.data.*
 import com.kssidll.workin.domain.*
 import com.kssidll.workin.presentation.component.*
-import com.kssidll.workin.presentation.screen.dashboard.component.*
 import com.kssidll.workin.presentation.theme.*
-import dev.olshevski.navigation.reimagined.*
 import dev.olshevski.navigation.reimagined.hilt.*
 import java.util.*
 
-/// Route ///
 @Composable
 fun DashboardRoute(
     onSessionStart: (Long) -> Unit,
@@ -37,30 +33,8 @@ fun DashboardRoute(
     )
 }
 
-/// Screen ///
 @Composable
 fun DashboardScreen(
-    onSessionStart: (Long) -> Unit,
-    onSessionClick: (Long) -> Unit,
-    sessions: List<SessionWithFullSessionWorkouts>,
-) {
-    Scaffold(
-        bottomBar = {
-            BottomDashboardNavigationBar()
-        }
-    ) {
-        Box(modifier = Modifier.padding(it)) {
-            DashboardScreenContent(
-                onSessionStart = onSessionStart,
-                onSessionClick = onSessionClick,
-                sessions = sessions,
-            )
-        }
-    }
-}
-
-@Composable
-private fun DashboardScreenContent(
     onSessionStart: (Long) -> Unit,
     onSessionClick: (Long) -> Unit,
     sessions: List<SessionWithFullSessionWorkouts>,
@@ -187,17 +161,15 @@ private fun DashboardScreenContent(
     }
 }
 
-
-/// Screen Preview ///
 @Preview(
-    group = "DashboardScreen",
+    group = "Dashboard Screen",
     name = "Dark",
     showBackground = true,
     apiLevel = 29,
     uiMode = Configuration.UI_MODE_NIGHT_YES
 )
 @Preview(
-    group = "DashboardScreen",
+    group = "Dashboard Screen",
     name = "Light",
     showBackground = true,
     apiLevel = 29,
@@ -207,13 +179,11 @@ private fun DashboardScreenContent(
 fun DashboardScreenPreview() {
     WorkINTheme {
         Surface(modifier = Modifier.fillMaxSize()) {
-            CompositionLocalProvider(LocalNavigation provides rememberNavController(Screen.Dashboard)) {
-                DashboardScreen(
-                    onSessionStart = {},
-                    onSessionClick = {},
-                    sessions = listOf()
-                )
-            }
+            DashboardScreen(
+                onSessionStart = {},
+                onSessionClick = {},
+                sessions = listOf()
+            )
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.kssidll.workin.presentation.screen.workouts
+package com.kssidll.workin.presentation.screen.home.workouts.component
 
 import android.content.res.*
 import androidx.compose.foundation.layout.*
@@ -14,54 +14,63 @@ import com.kssidll.workin.presentation.component.*
 import com.kssidll.workin.presentation.component.topbar.*
 import com.kssidll.workin.presentation.theme.*
 
+
 /// Page ///
 @Composable
-fun WorkoutsPage(
-    collectedWorkouts: List<Workout>,
-    onWorkoutClick: (Workout) -> Unit,
+fun SessionsPage(
+    collectedSessions: List<SessionWithFullSessionWorkouts>,
+    onSessionStart: (Long) -> Unit,
+    onSessionClick: (Long) -> Unit,
 ) {
     Column {
         PrimaryTopHeader {
             Text(
-                text = stringResource(id = R.string.workouts),
+                text = stringResource(id = R.string.sessions),
                 fontSize = 21.sp,
             )
         }
 
-        SelectWorkoutSubpage(
-            workouts = collectedWorkouts,
-            onSelect = onWorkoutClick,
+        SelectSessionSubpage(
+            collectedSessions = collectedSessions,
+            onSelect = {
+                onSessionClick(it.session.id)
+            },
+            showStartIcon = true,
+            onStartIconClick = {
+                onSessionStart(it.session.id)
+            }
         )
     }
 }
 
 /// Page Preview ///
 @Preview(
-    group = "WorkoutsPage",
-    name = "Workouts Page Dark",
+    group = "SessionsPage",
+    name = "Sessions Page Dark",
     showBackground = true,
     apiLevel = 29,
     uiMode = Configuration.UI_MODE_NIGHT_YES
 )
 @Preview(
-    group = "WorkoutsPage",
-    name = "Workouts Page Light",
+    group = "SessionsPage",
+    name = "Sessions Page Light",
     showBackground = true,
     apiLevel = 29,
     uiMode = Configuration.UI_MODE_NIGHT_NO
 )
 @Composable
-fun WorkoutsPagePreview() {
+fun SessionsPagePreview() {
     WorkINTheme {
         Surface(
             modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background,
+            color = MaterialTheme.colorScheme.surface,
         ) {
-            WorkoutsPage(
-                collectedWorkouts = listOf(
-                    Workout("test", "A")
+            SessionsPage(
+                collectedSessions = listOf(
+
                 ),
-                onWorkoutClick = {},
+                onSessionStart = {},
+                onSessionClick = {},
             )
         }
     }

@@ -1,25 +1,20 @@
-package com.kssidll.workin.presentation.screen.dashboard.component
+package com.kssidll.workin.presentation.screen.home.component
 
 import android.content.res.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.*
-import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.graphics.painter.*
 import androidx.compose.ui.graphics.vector.*
-import androidx.compose.ui.res.*
 import androidx.compose.ui.tooling.preview.*
 import androidx.compose.ui.unit.*
-import com.kssidll.workin.*
-import com.kssidll.workin.R
+import com.kssidll.workin.presentation.screen.home.*
 import com.kssidll.workin.presentation.theme.*
-import dev.olshevski.navigation.reimagined.*
 
-private val containerColor @Composable get() = MaterialTheme.colorScheme.surfaceContainer
+private val containerColor @Composable @ReadOnlyComposable get() = MaterialTheme.colorScheme.surfaceContainer
 private val navigationBarItemColors
-    @Composable get() = NavigationBarItemColors(
+    @Composable @ReadOnlyComposable get() = NavigationBarItemColors(
         selectedIconColor = MaterialTheme.colorScheme.onSecondaryContainer,
         selectedTextColor = MaterialTheme.colorScheme.onSurface,
         selectedIndicatorColor = MaterialTheme.colorScheme.secondaryContainer,
@@ -33,36 +28,42 @@ private val topPadding = 10.dp
 private val bottomPadding = 8.dp
 
 @Composable
-fun BottomDashboardNavigationBar(
-    navigationController: NavController<Screen> = LocalNavigation.current
+fun BottomHomeNavigationBar(
+    currentLocation: HomeScreenLocations,
+    onLocationChange: (HomeScreenLocations) -> Unit,
 ) {
     NavigationBar(
         modifier = Modifier.height(65.dp),
         containerColor = containerColor,
     ) {
-        BottomDashboardNavigationBarItem(
-            selected = navigationController.backstack.entries.last().destination == Screen.Dashboard,
-            onClick = {
-                navigationController.popUpTo { it == Screen.Dashboard }
-            },
-            imageVector = Icons.Rounded.Home,
-            description = stringResource(id = R.string.navigate_to_dashboard_description),
-        )
-
-        BottomDashboardNavigationBarItem(
-            selected = navigationController.backstack.entries.last().destination == Screen.Workouts,
-            onClick = {
-                navigationController.popUpTo { it == Screen.Dashboard }
-                navigationController.navigate(Screen.Workouts)
-            },
-            painter = painterResource(R.drawable.exercise),
-            description = stringResource(id = R.string.navigate_to_dashboard_description),
-        )
+        HomeScreenLocations.entries.forEach {
+            if (it.imageVector != null) {
+                BottomHomeNavigationBarItem(
+                    selected = currentLocation == it,
+                    onClick = {
+                        onLocationChange(it)
+                    },
+                    imageVector = it.imageVector!!,
+                    description = it.description,
+                )
+            } else if (it.painter != null) {
+                BottomHomeNavigationBarItem(
+                    selected = currentLocation == it,
+                    onClick = {
+                        onLocationChange(it)
+                    },
+                    painter = it.painter!!,
+                    description = it.description,
+                )
+            } else {
+                error("A HomeScreenLocations entry needs to have either ImageVector or Painter data set to something other than null")
+            }
+        }
     }
 }
 
 @Composable
-private fun RowScope.BottomDashboardNavigationBarItem(
+private fun RowScope.BottomHomeNavigationBarItem(
     modifier: Modifier = Modifier,
     selected: Boolean,
     onClick: () -> Unit,
@@ -87,7 +88,7 @@ private fun RowScope.BottomDashboardNavigationBarItem(
 }
 
 @Composable
-private fun RowScope.BottomDashboardNavigationBarItem(
+private fun RowScope.BottomHomeNavigationBarItem(
     modifier: Modifier = Modifier,
     selected: Boolean,
     onClick: () -> Unit,
@@ -112,26 +113,27 @@ private fun RowScope.BottomDashboardNavigationBarItem(
 }
 
 @Preview(
-    group = "Bottom Dashboard Navigation Bar",
+    group = "Bottom Home Navigation Bar",
     name = "Dark",
     showBackground = true,
     apiLevel = 29,
     uiMode = Configuration.UI_MODE_NIGHT_YES
 )
 @Preview(
-    group = "Bottom Dashboard Navigation Bar",
+    group = "Bottom Home Navigation Bar",
     name = "Light",
     showBackground = true,
     apiLevel = 29,
     uiMode = Configuration.UI_MODE_NIGHT_NO
 )
 @Composable
-fun BottomBashboardNavigationBarPreview() {
+fun BottomHomeNavigationBarPreview() {
     WorkINTheme {
         Surface {
-            CompositionLocalProvider(LocalNavigation provides rememberNavController(Screen.Dashboard)) {
-                BottomDashboardNavigationBar()
-            }
+            BottomHomeNavigationBar(
+                currentLocation = HomeScreenLocations.Dashboard,
+                onLocationChange = {},
+            )
         }
     }
 }
