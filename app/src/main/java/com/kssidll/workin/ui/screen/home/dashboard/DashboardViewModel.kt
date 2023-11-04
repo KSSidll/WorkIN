@@ -9,14 +9,8 @@ import javax.inject.*
 
 @HiltViewModel
 class DashboardViewModel @Inject constructor(
-    sessionRepository: ISessionRepository,
+    private val sessionRepository: ISessionRepository,
 ): ViewModel() {
-    private val sessionRepository: ISessionRepository
-
-    init {
-        this.sessionRepository = sessionRepository
-    }
-
     fun getAllSessionsDescFlow(): Flow<List<SessionWithFullSessionWorkouts>> {
         return sessionRepository.getAllMergedSessionsWithWorkouts()
     }

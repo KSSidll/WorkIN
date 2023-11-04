@@ -48,19 +48,19 @@ fun WorkoutCardItem(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 24.dp),
+                        .padding(horizontal = 24.dp)
                 ) {
                     if (workout.description.isBlank()) {
                         Text(
                             text = stringResource(id = R.string.workout_no_description_text),
                             fontSize = 16.sp,
-                            modifier = Modifier.alpha(0.45F),
+                            modifier = Modifier.alpha(0.45F)
                         )
                     } else {
                         Text(
                             text = workout.description,
                             fontSize = 16.sp,
-                            modifier = Modifier.alpha(0.8F),
+                            modifier = Modifier.alpha(0.8F)
                         )
                     }
                 }

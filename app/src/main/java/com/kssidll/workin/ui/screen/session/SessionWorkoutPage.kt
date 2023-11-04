@@ -57,7 +57,6 @@ fun SessionWorkoutPage(
         )
     }
 
-
     var repCountText: String by remember {
         mutableStateOf(state.repetitionCount.toString())
     }
@@ -89,30 +88,29 @@ fun SessionWorkoutPage(
     }
 
     Column {
-
         Spacer(modifier = Modifier.height(10.dp))
 
         Column(modifier = Modifier.fillMaxWidth()) {
             Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
                     text = workout.workout.name,
-                    fontSize = 28.sp
+                    fontSize = 28.sp,
                 )
             }
 
             Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier.fillMaxWidth()
             ) {
                 val description = workout.workout.description
                 if (description.isNotBlank()) {
                     Text(
                         text = description,
                         fontSize = 20.sp,
-                        modifier = Modifier.alpha(0.8F),
+                        modifier = Modifier.alpha(0.8F)
                     )
                 }
             }
@@ -120,8 +118,8 @@ fun SessionWorkoutPage(
             Spacer(modifier = Modifier.height(6.dp))
 
             Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier.fillMaxWidth()
             ) {
                 WorkoutStatsItem(
                     repetitionCount = workout.sessionWorkout.repetitionCount.toString(),
@@ -137,7 +135,7 @@ fun SessionWorkoutPage(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(1F),
+                .weight(1F)
         ) {
             LazyColumn {
                 items(lastWorkoutLogs) {
@@ -167,8 +165,8 @@ fun SessionWorkoutPage(
                         Spacer(modifier = Modifier.height(8.dp))
 
                         Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.Center
+                            horizontalArrangement = Arrangement.Center,
+                            modifier = Modifier.fillMaxWidth()
                         ) {
                             WorkoutStatsItem(
                                 repetitionCount = it.repetitionCount.toString(),
@@ -187,31 +185,27 @@ fun SessionWorkoutPage(
 
         Column {
 
-            Column(
-                modifier = Modifier.align(Alignment.CenterHorizontally)
-            ) {
-                Column(
-                    modifier = Modifier.wrapContentSize(Alignment.Center)
-                ) {
-
+            Column(modifier = Modifier.align(Alignment.CenterHorizontally)) {
+                Column(modifier = Modifier.wrapContentSize(Alignment.Center)) {
                     Box(
-                        modifier = Modifier.pointerInput(Unit) {
-                            detectTapGestures { _ ->
-                                state.changeSessionWorkoutRepsSettings.value =
-                                    !state.changeSessionWorkoutRepsSettings.value
+                        modifier = Modifier
+                            .pointerInput(Unit) {
+                                detectTapGestures { _ ->
+                                    state.changeSessionWorkoutRepsSettings.value =
+                                        !state.changeSessionWorkoutRepsSettings.value
+                                }
                             }
-                        }
                     ) {
                         Row(
-                            modifier = Modifier.padding(horizontal = 4.dp),
                             verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.padding(horizontal = 4.dp)
                         ) {
                             Checkbox(
                                 checked = state.changeSessionWorkoutRepsSettings.value,
                                 onCheckedChange = {
                                     state.changeSessionWorkoutRepsSettings.value = it
                                 },
-                                modifier = Modifier.scale(1.1F),
+                                modifier = Modifier.scale(1.1F)
                             )
 
                             Text(
@@ -223,23 +217,24 @@ fun SessionWorkoutPage(
 
 
                     Box(
-                        modifier = Modifier.pointerInput(Unit) {
-                            detectTapGestures { _ ->
-                                state.changeSessionWorkoutWeightSettings.value =
-                                    !state.changeSessionWorkoutWeightSettings.value
+                        modifier = Modifier
+                            .pointerInput(Unit) {
+                                detectTapGestures { _ ->
+                                    state.changeSessionWorkoutWeightSettings.value =
+                                        !state.changeSessionWorkoutWeightSettings.value
+                                }
                             }
-                        }
                     ) {
                         Row(
-                            modifier = Modifier.padding(horizontal = 4.dp),
                             verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.padding(horizontal = 4.dp)
                         ) {
                             Checkbox(
                                 checked = state.changeSessionWorkoutWeightSettings.value,
                                 onCheckedChange = {
                                     state.changeSessionWorkoutWeightSettings.value = it
                                 },
-                                modifier = Modifier.scale(1.1F),
+                                modifier = Modifier.scale(1.1F)
                             )
 
                             Text(
@@ -251,20 +246,14 @@ fun SessionWorkoutPage(
                 }
             }
 
-
-
             Spacer(modifier = Modifier.height(8.dp))
 
             Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier.fillMaxWidth()
             ) {
-
                 OutlinedTextField(
                     singleLine = true,
-                    modifier = Modifier
-                        .width(70.dp)
-                        .height(65.dp),
                     value = repCountText,
                     onValueChange = { newValue ->
                         if (newValue.isBlank()) {
@@ -288,6 +277,9 @@ fun SessionWorkoutPage(
                         focusedBorderColor = MaterialTheme.colorScheme.outline,
                         focusedTextColor = MaterialTheme.colorScheme.onSurface,
                     ),
+                    modifier = Modifier
+                        .width(70.dp)
+                        .height(65.dp)
                 )
 
                 Spacer(modifier = Modifier.width(2.dp))
@@ -296,9 +288,6 @@ fun SessionWorkoutPage(
                     Spacer(modifier = Modifier.height(8.dp))
 
                     FilledIconButton(
-                        modifier = Modifier
-                            .weight(1F)
-                            .width(18.dp),
                         onClick = {
                             state.repetitionCount = state.repetitionCount.inc()
                             repCountText = state.repetitionCount.toString()
@@ -308,7 +297,10 @@ fun SessionWorkoutPage(
                             containerColor = MaterialTheme.colorScheme.tertiary,
                             disabledContentColor = MaterialTheme.colorScheme.onTertiary,
                             disabledContainerColor = MaterialTheme.colorScheme.tertiary,
-                        )
+                        ),
+                        modifier = Modifier
+                            .weight(1F)
+                            .width(18.dp)
                     ) {
                         Icon(
                             imageVector = Icons.Sharp.KeyboardArrowUp,
@@ -319,9 +311,6 @@ fun SessionWorkoutPage(
                     Spacer(modifier = Modifier.height(2.dp))
 
                     FilledIconButton(
-                        modifier = Modifier
-                            .weight(1F)
-                            .width(18.dp),
                         onClick = {
                             if (state.repetitionCount != 0) {
                                 state.repetitionCount = state.repetitionCount.dec()
@@ -333,7 +322,10 @@ fun SessionWorkoutPage(
                             containerColor = MaterialTheme.colorScheme.tertiary,
                             disabledContentColor = MaterialTheme.colorScheme.onTertiary,
                             disabledContainerColor = MaterialTheme.colorScheme.tertiary,
-                        )
+                        ),
+                        modifier = Modifier
+                            .weight(1F)
+                            .width(18.dp)
                     ) {
                         Icon(
                             imageVector = Icons.Sharp
@@ -350,6 +342,7 @@ fun SessionWorkoutPage(
                 }
 
                 Box(
+                    contentAlignment = Alignment.Center,
                     modifier = Modifier
                         .border(
                             width = OutlinedTextFieldDefaults.UnfocusedBorderThickness,
@@ -363,13 +356,12 @@ fun SessionWorkoutPage(
                             indication = null
                         ) {
                             menuExpanded = true
-                        },
-                    contentAlignment = Alignment.Center
+                        }
                 ) {
                     Text(
                         text = state.repetitionType.value.getTranslation(),
-                        modifier = Modifier.padding(vertical = 6.dp, horizontal = 12.dp),
-                        maxLines = 2
+                        maxLines = 2,
+                        modifier = Modifier.padding(vertical = 6.dp, horizontal = 12.dp)
                     )
 
                     DropdownMenu(
@@ -377,9 +369,8 @@ fun SessionWorkoutPage(
                         onDismissRequest = {
                             menuExpanded = false
                         },
-                        modifier = Modifier.background
-                            (MaterialTheme.colorScheme.surfaceContainer)
-
+                        modifier = Modifier
+                            .background(MaterialTheme.colorScheme.surfaceContainer)
                     ) {
                         for (item in RepetitionTypes.entries) {
                             if (item == state.repetitionType.value) continue
@@ -402,12 +393,10 @@ fun SessionWorkoutPage(
             Spacer(modifier = Modifier.height(8.dp))
 
             Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier.fillMaxWidth()
             ) {
-                Box(
-                    modifier = Modifier.width(223.dp)
-                ) {
+                Box(modifier = Modifier.width(223.dp)) {
                     val currentAlpha: Float by animateFloatAsState(
                         targetValue = weightTargetAlpha,
                         label = "Weight type resize animation on hide parameter"
@@ -418,13 +407,8 @@ fun SessionWorkoutPage(
                             .align(Alignment.CenterStart)
                             .alpha(currentAlpha)
                     ) {
-
-
                         OutlinedTextField(
                             singleLine = true,
-                            modifier = Modifier
-                                .width(70.dp)
-                                .height(65.dp),
                             value = weightText,
                             onValueChange = { newValue ->
                                 if (newValue.isBlank()) {
@@ -459,6 +443,9 @@ fun SessionWorkoutPage(
                                 focusedBorderColor = MaterialTheme.colorScheme.outline,
                                 focusedTextColor = MaterialTheme.colorScheme.onSurface,
                             ),
+                            modifier = Modifier
+                                .width(70.dp)
+                                .height(65.dp)
                         )
 
                         Spacer(modifier = Modifier.width(2.dp))
@@ -466,9 +453,6 @@ fun SessionWorkoutPage(
                         Column(modifier = Modifier.height(65.dp)) {
                             Spacer(modifier = Modifier.height(8.dp))
                             FilledIconButton(
-                                modifier = Modifier
-                                    .weight(1F)
-                                    .width(18.dp),
                                 onClick = {
                                     state.weight =
                                         state.weight.plus(0.5F)
@@ -479,7 +463,10 @@ fun SessionWorkoutPage(
                                     containerColor = MaterialTheme.colorScheme.tertiary,
                                     disabledContentColor = MaterialTheme.colorScheme.onTertiary,
                                     disabledContainerColor = MaterialTheme.colorScheme.tertiary,
-                                )
+                                ),
+                                modifier = Modifier
+                                    .weight(1F)
+                                    .width(18.dp)
                             ) {
                                 Icon(
                                     imageVector = Icons.Sharp.KeyboardArrowUp,
@@ -490,9 +477,6 @@ fun SessionWorkoutPage(
                             Spacer(modifier = Modifier.height(2.dp))
 
                             FilledIconButton(
-                                modifier = Modifier
-                                    .weight(1F)
-                                    .width(18.dp),
                                 onClick = {
                                     if (state.weight != 0F) {
                                         state.weight = state.weight.minus(0.5F)
@@ -504,7 +488,10 @@ fun SessionWorkoutPage(
                                     containerColor = MaterialTheme.colorScheme.tertiary,
                                     disabledContentColor = MaterialTheme.colorScheme.onTertiary,
                                     disabledContainerColor = MaterialTheme.colorScheme.tertiary,
-                                )
+                                ),
+                                modifier = Modifier
+                                    .weight(1F)
+                                    .width(18.dp)
                             ) {
                                 Icon(
                                     imageVector = Icons.Sharp
@@ -521,9 +508,7 @@ fun SessionWorkoutPage(
                         mutableStateOf(false)
                     }
 
-                    Box(
-                        modifier = Modifier.align(Alignment.CenterEnd)
-                    ) {
+                    Box(modifier = Modifier.align(Alignment.CenterEnd)) {
                         val targetWidth: Dp =
                             if (state.weightType.value.hideWeight) {
                                 223.dp
@@ -537,6 +522,7 @@ fun SessionWorkoutPage(
                         )
 
                         Box(
+                            contentAlignment = Alignment.Center,
                             modifier = Modifier
                                 .border(
                                     width = OutlinedTextFieldDefaults.UnfocusedBorderThickness,
@@ -551,16 +537,15 @@ fun SessionWorkoutPage(
                                 ) {
                                     menuExpanded = true
                                 }
-                                .animateContentSize(),
-                            contentAlignment = Alignment.Center
+                                .animateContentSize()
                         ) {
                             Text(
                                 text = state.weightType.value.getTranslation(),
+                                maxLines = 2,
                                 modifier = Modifier.padding(
                                     vertical = 6.dp,
                                     horizontal = 12.dp
-                                ),
-                                maxLines = 2
+                                )
                             )
 
                             DropdownMenu(
@@ -568,9 +553,8 @@ fun SessionWorkoutPage(
                                 onDismissRequest = {
                                     menuExpanded = false
                                 },
-                                modifier = Modifier.background
-                                    (MaterialTheme.colorScheme.surfaceContainer)
-
+                                modifier = Modifier
+                                    .background(MaterialTheme.colorScheme.surfaceContainer)
                             ) {
                                 for (item in WeightTypes.entries) {
                                     if (item == state.weightType.value) continue
@@ -603,25 +587,25 @@ fun SessionWorkoutPage(
             Spacer(modifier = Modifier.height(8.dp))
 
             Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 12.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                    .padding(top = 12.dp)
             ) {
                 Button(
                     onClick = {
                         onLogSubmit(state)
                     },
+                    shape = RoundedCornerShape(23.dp),
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(70.dp)
-                        .padding(horizontal = 32.dp),
-                    shape = RoundedCornerShape(23.dp)
+                        .padding(horizontal = 32.dp)
                 ) {
                     Row(
-                        modifier = Modifier.fillMaxSize(),
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
+                        horizontalArrangement = Arrangement.Center,
+                        modifier = Modifier.fillMaxSize()
                     ) {
                         Text(
                             text = if (state.changeSessionWorkoutRepsSettings.value || state.changeSessionWorkoutWeightSettings.value)

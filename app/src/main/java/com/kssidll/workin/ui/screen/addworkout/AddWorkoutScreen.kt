@@ -52,7 +52,7 @@ fun AddWorkoutScreen(
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = stringResource(R.string.confirm_add_workout_text),
-                    fontSize = 20.sp
+                    fontSize = 20.sp,
                 )
             }
         },

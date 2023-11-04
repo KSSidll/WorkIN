@@ -12,15 +12,11 @@ import com.kssidll.workin.data.data.*
 import com.kssidll.workin.domain.*
 import com.kssidll.workin.ui.theme.*
 
-/**
- * @param showStartIcon: when set to true, shows an icon that when clicked, triggers onStartIconClick event
- */
 @Composable
 fun SelectSessionSubpage(
     collectedSessions: List<SessionWithFullSessionWorkouts>,
     onSelect: (SessionWithFullSessionWorkouts) -> Unit,
-    showStartIcon: Boolean = false,
-    onStartIconClick: (SessionWithFullSessionWorkouts) -> Unit = {},
+    onStartIconClick: ((SessionWithFullSessionWorkouts) -> Unit)? = null,
 ) {
     Column {
         Spacer(modifier = Modifier.height(12.dp))
@@ -33,8 +29,7 @@ fun SelectSessionSubpage(
             items(collectedSessions) {
                 SessionCardItem(
                     session = it,
-                    onSelect = onSelect,
-                    showStartIcon = showStartIcon,
+                    onClick = onSelect,
                     onStartIconClick = onStartIconClick,
                 )
             }
@@ -109,7 +104,7 @@ fun SelectSessionSubpagePreview() {
 
                     ),
                 onSelect = {},
-                showStartIcon = true,
+                onStartIconClick = {},
             )
         }
     }

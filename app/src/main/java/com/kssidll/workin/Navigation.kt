@@ -24,6 +24,72 @@ sealed class Screen: Parcelable {
     data class Session(val id: Long): Screen()
 }
 
+fun defaultNavigateContentTransformation(
+    screenWidth: Int,
+): ContentTransform {
+    val easing = CubicBezierEasing(
+        0.48f,
+        0.19f,
+        0.05f,
+        1.03f
+    )
+
+    return slideInHorizontally(
+        animationSpec = tween(
+            500,
+            easing = easing
+        ),
+        initialOffsetX = { screenWidth }) + fadeIn(
+        tween(
+            250,
+            50
+        )
+    ) togetherWith slideOutHorizontally(
+        animationSpec = tween(
+            500,
+            easing = easing
+        ),
+        targetOffsetX = { -screenWidth }) + fadeOut(
+        tween(
+            250,
+            50
+        )
+    )
+}
+
+fun defaultPopContentTransformation(
+    screenWidth: Int,
+): ContentTransform {
+    val easing = CubicBezierEasing(
+        0.48f,
+        0.19f,
+        0.05f,
+        1.03f
+    )
+
+    return slideInHorizontally(
+        animationSpec = tween(
+            500,
+            easing = easing
+        ),
+        initialOffsetX = { -screenWidth }) + fadeIn(
+        tween(
+            250,
+            50
+        )
+    ) togetherWith slideOutHorizontally(
+        animationSpec = tween(
+            500,
+            easing = easing
+        ),
+        targetOffsetX = { screenWidth }) + fadeOut(
+        tween(
+            250,
+            50
+        )
+    )
+}
+
 @Composable
 fun Navigation(
     navController: NavController<Screen> = rememberNavController(startDestination = Screen.Home)
@@ -37,60 +103,14 @@ fun Navigation(
     }
 
     val screenWidth = LocalConfiguration.current.screenWidthDp
-    val easing = CubicBezierEasing(
-        0.48f,
-        0.19f,
-        0.05f,
-        1.03f
-    )
 
     AnimatedNavHost(
         controller = navController,
         transitionSpec = { action, _, _ ->
             if (action != NavAction.Pop) {
-                slideInHorizontally(
-                    animationSpec = tween(
-                        600,
-                        easing = easing
-                    ),
-                    initialOffsetX = { screenWidth }) + fadeIn(
-                    tween(
-                        300,
-                        100
-                    )
-                ) togetherWith slideOutHorizontally(
-                    animationSpec = tween(
-                        600,
-                        easing = easing
-                    ),
-                    targetOffsetX = { -screenWidth }) + fadeOut(
-                    tween(
-                        300,
-                        100
-                    )
-                )
+                defaultNavigateContentTransformation(screenWidth)
             } else {
-                slideInHorizontally(
-                    animationSpec = tween(
-                        600,
-                        easing = easing
-                    ),
-                    initialOffsetX = { -screenWidth }) + fadeIn(
-                    tween(
-                        300,
-                        100
-                    )
-                ) togetherWith slideOutHorizontally(
-                    animationSpec = tween(
-                        600,
-                        easing = easing
-                    ),
-                    targetOffsetX = { screenWidth }) + fadeOut(
-                    tween(
-                        300,
-                        100
-                    )
-                )
+                defaultPopContentTransformation(screenWidth)
             }
         },
     ) { screen ->

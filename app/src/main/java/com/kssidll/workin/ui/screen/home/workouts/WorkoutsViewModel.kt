@@ -9,17 +9,9 @@ import javax.inject.*
 
 @HiltViewModel
 class WorkoutsViewModel @Inject constructor(
-    workoutRepository: IWorkoutRepository,
-    sessionRepository: ISessionRepository,
+    private val workoutRepository: IWorkoutRepository,
+    private val sessionRepository: ISessionRepository,
 ): ViewModel() {
-    private val workoutRepository: IWorkoutRepository
-    private val sessionRepository: ISessionRepository
-
-    init {
-        this.workoutRepository = workoutRepository
-        this.sessionRepository = sessionRepository
-    }
-
     fun getAllWorkoutsDescFlow(): Flow<List<Workout>> {
         return workoutRepository.getAllDescFlow()
     }

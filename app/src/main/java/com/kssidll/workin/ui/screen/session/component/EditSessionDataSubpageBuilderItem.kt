@@ -49,16 +49,15 @@ fun LazyItemScope.EditSessionDataSubpageBuilderItem(
                 .animateItemPlacement()
         ) {
 
-            Column(
-                modifier = Modifier.fillMaxWidth()
-            ) {
+            Column(modifier = Modifier.fillMaxWidth()) {
                 Spacer(modifier = Modifier.height(12.dp))
 
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxWidth()
                 ) {
                     Box(
+                        contentAlignment = Alignment.Center,
                         modifier = Modifier
                             .border(
                                 width = OutlinedTextFieldDefaults.UnfocusedBorderThickness,
@@ -73,15 +72,14 @@ fun LazyItemScope.EditSessionDataSubpageBuilderItem(
                                 indication = null
                             ) {
                                 onWorkoutSearch(thisItem.id)
-                            },
-                        contentAlignment = Alignment.Center
+                            }
                     ) {
                         Text(
                             text = thisItem.workout.workoutName.value.ifBlank { stringResource(id = R.string.no_workout_session_builder_item) },
-                            modifier = Modifier.padding(vertical = 6.dp, horizontal = 12.dp),
                             maxLines = 2,
                             color = if (thisItem.workout.isError.value) MaterialTheme.colorScheme.error
-                            else MaterialTheme.colorScheme.onSurface
+                            else MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.padding(vertical = 6.dp, horizontal = 12.dp),
                         )
 
                     }
@@ -91,8 +89,8 @@ fun LazyItemScope.EditSessionDataSubpageBuilderItem(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxWidth()
                 ) {
                     var repCountText: String by remember {
                         mutableStateOf(thisItem.workout.repetitionCount.value.toString())
@@ -100,9 +98,6 @@ fun LazyItemScope.EditSessionDataSubpageBuilderItem(
 
                     OutlinedTextField(
                         singleLine = true,
-                        modifier = Modifier
-                            .width(70.dp)
-                            .height(65.dp),
                         value = repCountText,
                         onValueChange = { newValue ->
                             if (newValue.isBlank()) {
@@ -127,6 +122,9 @@ fun LazyItemScope.EditSessionDataSubpageBuilderItem(
                             focusedBorderColor = MaterialTheme.colorScheme.outline,
                             focusedTextColor = MaterialTheme.colorScheme.onSurface,
                         ),
+                        modifier = Modifier
+                            .width(70.dp)
+                            .height(65.dp)
                     )
 
                     Spacer(modifier = Modifier.width(2.dp))
@@ -135,9 +133,6 @@ fun LazyItemScope.EditSessionDataSubpageBuilderItem(
                         Spacer(modifier = Modifier.height(8.dp))
 
                         FilledIconButton(
-                            modifier = Modifier
-                                .weight(1F)
-                                .width(18.dp),
                             onClick = {
                                 thisItem.workout.repetitionCount.value =
                                     thisItem.workout.repetitionCount.value.inc()
@@ -148,7 +143,10 @@ fun LazyItemScope.EditSessionDataSubpageBuilderItem(
                                 containerColor = MaterialTheme.colorScheme.tertiary,
                                 disabledContentColor = MaterialTheme.colorScheme.onTertiary,
                                 disabledContainerColor = MaterialTheme.colorScheme.tertiary,
-                            )
+                            ),
+                            modifier = Modifier
+                                .weight(1F)
+                                .width(18.dp)
                         ) {
                             Icon(
                                 imageVector = Icons.Sharp.KeyboardArrowUp,
@@ -159,9 +157,6 @@ fun LazyItemScope.EditSessionDataSubpageBuilderItem(
                         Spacer(modifier = Modifier.height(2.dp))
 
                         FilledIconButton(
-                            modifier = Modifier
-                                .weight(1F)
-                                .width(18.dp),
                             onClick = {
                                 thisItem.workout.repetitionCount.apply {
                                     if (this.value == 0) return@apply
@@ -175,7 +170,10 @@ fun LazyItemScope.EditSessionDataSubpageBuilderItem(
                                 containerColor = MaterialTheme.colorScheme.tertiary,
                                 disabledContentColor = MaterialTheme.colorScheme.onTertiary,
                                 disabledContainerColor = MaterialTheme.colorScheme.tertiary,
-                            )
+                            ),
+                            modifier = Modifier
+                                .weight(1F)
+                                .width(18.dp)
                         ) {
                             Icon(
                                 imageVector = Icons.Sharp
@@ -192,6 +190,7 @@ fun LazyItemScope.EditSessionDataSubpageBuilderItem(
                     }
 
                     Box(
+                        contentAlignment = Alignment.Center,
                         modifier = Modifier
                             .border(
                                 width = OutlinedTextFieldDefaults.UnfocusedBorderThickness,
@@ -205,13 +204,13 @@ fun LazyItemScope.EditSessionDataSubpageBuilderItem(
                                 indication = null
                             ) {
                                 menuExpanded = true
-                            },
-                        contentAlignment = Alignment.Center
+                            }
                     ) {
                         Text(
                             text = thisItem.workout.repetitionType.value.getTranslation(),
-                            modifier = Modifier.padding(vertical = 6.dp, horizontal = 12.dp),
-                            maxLines = 2
+                            maxLines = 2,
+                            modifier = Modifier
+                                .padding(vertical = 6.dp, horizontal = 12.dp)
                         )
 
                         DropdownMenu(
@@ -219,8 +218,8 @@ fun LazyItemScope.EditSessionDataSubpageBuilderItem(
                             onDismissRequest = {
                                 menuExpanded = false
                             },
-                            modifier = Modifier.background
-                                (MaterialTheme.colorScheme.surfaceContainer)
+                            modifier = Modifier
+                                .background(MaterialTheme.colorScheme.surfaceContainer)
 
                         ) {
                             for (item in RepetitionTypes.entries) {
@@ -244,12 +243,10 @@ fun LazyItemScope.EditSessionDataSubpageBuilderItem(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    Box(
-                        modifier = Modifier.width(223.dp)
-                    ) {
+                    Box(modifier = Modifier.width(223.dp)) {
                         var weightTargetAlpha: Float by remember {
                             if (thisItem.workout.weightType.value.hideWeight) mutableFloatStateOf(0F)
                             else mutableFloatStateOf(1F)
@@ -269,12 +266,8 @@ fun LazyItemScope.EditSessionDataSubpageBuilderItem(
                                 mutableStateOf(thisItem.workout.weight.value.toString())
                             }
 
-
                             OutlinedTextField(
                                 singleLine = true,
-                                modifier = Modifier
-                                    .width(70.dp)
-                                    .height(65.dp),
                                 value = weightText,
                                 onValueChange = { newValue ->
                                     if (newValue.isBlank()) {
@@ -310,6 +303,9 @@ fun LazyItemScope.EditSessionDataSubpageBuilderItem(
                                     focusedBorderColor = MaterialTheme.colorScheme.outline,
                                     focusedTextColor = MaterialTheme.colorScheme.onSurface,
                                 ),
+                                modifier = Modifier
+                                    .width(70.dp)
+                                    .height(65.dp)
                             )
 
                             Spacer(modifier = Modifier.width(2.dp))
@@ -317,9 +313,6 @@ fun LazyItemScope.EditSessionDataSubpageBuilderItem(
                             Column(modifier = Modifier.height(65.dp)) {
                                 Spacer(modifier = Modifier.height(8.dp))
                                 FilledIconButton(
-                                    modifier = Modifier
-                                        .weight(1F)
-                                        .width(18.dp),
                                     onClick = {
                                         thisItem.workout.weight.value =
                                             thisItem.workout.weight.value.plus(0.5F)
@@ -330,7 +323,10 @@ fun LazyItemScope.EditSessionDataSubpageBuilderItem(
                                         containerColor = MaterialTheme.colorScheme.tertiary,
                                         disabledContentColor = MaterialTheme.colorScheme.onTertiary,
                                         disabledContainerColor = MaterialTheme.colorScheme.tertiary,
-                                    )
+                                    ),
+                                    modifier = Modifier
+                                        .weight(1F)
+                                        .width(18.dp)
                                 ) {
                                     Icon(
                                         imageVector = Icons.Sharp.KeyboardArrowUp,
@@ -341,9 +337,6 @@ fun LazyItemScope.EditSessionDataSubpageBuilderItem(
                                 Spacer(modifier = Modifier.height(2.dp))
 
                                 FilledIconButton(
-                                    modifier = Modifier
-                                        .weight(1F)
-                                        .width(18.dp),
                                     onClick = {
                                         thisItem.workout.weight.apply {
                                             if (this.value == 0F) return@apply
@@ -358,7 +351,10 @@ fun LazyItemScope.EditSessionDataSubpageBuilderItem(
                                         containerColor = MaterialTheme.colorScheme.tertiary,
                                         disabledContentColor = MaterialTheme.colorScheme.onTertiary,
                                         disabledContainerColor = MaterialTheme.colorScheme.tertiary,
-                                    )
+                                    ),
+                                    modifier = Modifier
+                                        .weight(1F)
+                                        .width(18.dp)
                                 ) {
                                     Icon(
                                         imageVector = Icons.Sharp
@@ -375,9 +371,7 @@ fun LazyItemScope.EditSessionDataSubpageBuilderItem(
                             mutableStateOf(false)
                         }
 
-                        Box(
-                            modifier = Modifier.align(Alignment.CenterEnd)
-                        ) {
+                        Box(modifier = Modifier.align(Alignment.CenterEnd)) {
                             val targetWidth: Dp =
                                 if (thisItem.workout.weightType.value.hideWeight) {
                                     223.dp
@@ -391,6 +385,7 @@ fun LazyItemScope.EditSessionDataSubpageBuilderItem(
                             )
 
                             Box(
+                                contentAlignment = Alignment.Center,
                                 modifier = Modifier
                                     .border(
                                         width = OutlinedTextFieldDefaults.UnfocusedBorderThickness,
@@ -405,16 +400,16 @@ fun LazyItemScope.EditSessionDataSubpageBuilderItem(
                                     ) {
                                         menuExpanded = true
                                     }
-                                    .animateContentSize(),
-                                contentAlignment = Alignment.Center
+                                    .animateContentSize()
                             ) {
                                 Text(
                                     text = thisItem.workout.weightType.value.getTranslation(),
-                                    modifier = Modifier.padding(
-                                        vertical = 6.dp,
-                                        horizontal = 12.dp
-                                    ),
-                                    maxLines = 2
+                                    maxLines = 2,
+                                    modifier = Modifier
+                                        .padding(
+                                            vertical = 6.dp,
+                                            horizontal = 12.dp
+                                        )
                                 )
 
                                 DropdownMenu(
@@ -451,16 +446,15 @@ fun LazyItemScope.EditSessionDataSubpageBuilderItem(
                             }
                         }
                     }
-
                 }
 
                 Spacer(modifier = Modifier.height(8.dp))
 
                 if (showTimer) {
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth()
                     ) {
 
                         FilledIconButton(
@@ -472,7 +466,7 @@ fun LazyItemScope.EditSessionDataSubpageBuilderItem(
                             Icon(
                                 painter = painterResource(id = R.drawable.keyboard_double_arrow_left),
                                 contentDescription = stringResource(id = R.string.lower_rest_time_10_description),
-                                modifier = Modifier.size(28.dp),
+                                modifier = Modifier.size(28.dp)
                             )
                         }
 
@@ -485,15 +479,13 @@ fun LazyItemScope.EditSessionDataSubpageBuilderItem(
                             Icon(
                                 imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowLeft,
                                 contentDescription = stringResource(id = R.string.lower_rest_time_1_description),
-                                modifier = Modifier.size(28.dp),
+                                modifier = Modifier.size(28.dp)
                             )
                         }
 
                         Spacer(modifier = Modifier.width(5.dp))
 
-                        Box(
-                            contentAlignment = Alignment.Center
-                        ) {
+                        Box(contentAlignment = Alignment.Center) {
                             CircularProgressIndicator(
                                 progress = 1F,
                                 color = MaterialTheme.colorScheme.outline,
@@ -516,7 +508,7 @@ fun LazyItemScope.EditSessionDataSubpageBuilderItem(
                             Icon(
                                 imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowRight,
                                 contentDescription = stringResource(id = R.string.increase_rest_time_1_description),
-                                modifier = Modifier.size(28.dp),
+                                modifier = Modifier.size(28.dp)
                             )
                         }
 
@@ -529,7 +521,7 @@ fun LazyItemScope.EditSessionDataSubpageBuilderItem(
                             Icon(
                                 painter = painterResource(id = R.drawable.keyboard_double_arrow_right),
                                 contentDescription = stringResource(id = R.string.increase_rest_time_10_description),
-                                modifier = Modifier.size(28.dp),
+                                modifier = Modifier.size(28.dp)
                             )
                         }
                     }
@@ -585,9 +577,9 @@ fun LazyItemScope.EditSessionDataSubpageBuilderItem(
                     ) {
                         Box(modifier = Modifier.align(Alignment.Center)) {
                             Icon(
-                                modifier = Modifier.align(Alignment.Center),
                                 imageVector = Icons.Rounded.KeyboardArrowUp,
                                 contentDescription = null,
+                                modifier = Modifier.align(Alignment.Center)
                             )
                         }
                     }
@@ -645,7 +637,6 @@ fun LazyItemScope.EditSessionDataSubpageBuilderItem(
 
         Spacer(modifier = Modifier.height(10.dp))
     }
-
 }
 
 @Preview(

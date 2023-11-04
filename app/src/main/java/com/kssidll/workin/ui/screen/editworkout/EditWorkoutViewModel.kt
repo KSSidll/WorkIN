@@ -10,15 +10,9 @@ import javax.inject.*
 
 @HiltViewModel
 class EditWorkoutViewModel @Inject constructor(
-    workoutRepository: IWorkoutRepository,
+    private val workoutRepository: IWorkoutRepository,
 ): ViewModel() {
-    private val workoutRepository: IWorkoutRepository
-
     lateinit var workout: Workout
-
-    init {
-        this.workoutRepository = workoutRepository
-    }
 
     suspend fun fetchWorkout(workoutId: Long) {
         workout = workoutRepository.getById(workoutId)

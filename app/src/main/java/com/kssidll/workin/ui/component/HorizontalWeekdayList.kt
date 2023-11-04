@@ -108,18 +108,15 @@ private fun WeekdayItem(
         Box(
             modifier = markedModifier
                 .then(highlightedModifier)
-                .then(
-                    Modifier
-                        .width(30.dp)
-                        .aspectRatio(0.9F)
-                )
+                .width(30.dp)
+                .aspectRatio(0.9F)
         ) {
             Text(
-                modifier = Modifier.align(Alignment.Center),
                 text = day.getTranslation()
                     .first()
                     .toString(),
                 color = if (highlighted) colors.highlightedDayForeground else colors.foreground,
+                modifier = Modifier.align(Alignment.Center)
             )
         }
     }

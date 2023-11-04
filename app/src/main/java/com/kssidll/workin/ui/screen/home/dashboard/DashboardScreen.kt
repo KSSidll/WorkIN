@@ -83,38 +83,37 @@ fun DashboardScreen(
             Spacer(modifier = Modifier.height(12.dp))
 
             Row(
+                horizontalArrangement = Arrangement.Center,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(12.dp),
-                horizontalArrangement = Arrangement.Center,
+                    .padding(12.dp)
             ) {
                 Text(
                     text = stringResource(id = R.string.sessions_today),
-                    fontSize = 20.sp
+                    fontSize = 20.sp,
                 )
             }
 
             if (sessionsToday.isEmpty()) {
                 Row(
+                    horizontalArrangement = Arrangement.Center,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(12.dp),
-                    horizontalArrangement = Arrangement.Center,
+                        .padding(12.dp)
                 ) {
                     Text(
                         text = stringResource(id = R.string.no_sessions_today),
                         fontSize = 16.sp,
-                        modifier = Modifier.alpha(0.8F),
+                        modifier = Modifier.alpha(0.8F)
                     )
                 }
             } else {
                 sessionsToday.forEach {
                     SessionCardItem(
                         session = it,
-                        onSelect = { clickedSession ->
+                        onClick = { clickedSession ->
                             onSessionClick(clickedSession.session.id)
                         },
-                        showStartIcon = true,
                         onStartIconClick = { startedSession ->
                             onSessionStart(startedSession.session.id)
                         }
@@ -128,14 +127,14 @@ fun DashboardScreen(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Row(
+                    horizontalArrangement = Arrangement.Center,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(12.dp),
-                    horizontalArrangement = Arrangement.Center
+                        .padding(12.dp)
                 ) {
                     Text(
                         text = stringResource(id = R.string.sessions_tomorrow),
-                        fontSize = 20.sp
+                        fontSize = 20.sp,
                     )
                 }
 
@@ -143,10 +142,9 @@ fun DashboardScreen(
                     sessionsTomorrow.forEach {
                         SessionCardItem(
                             session = it,
-                            onSelect = { clickedSession ->
+                            onClick = { clickedSession ->
                                 onSessionClick(clickedSession.session.id)
                             },
-                            showStartIcon = true,
                             onStartIconClick = { startedSession ->
                                 onSessionStart(startedSession.session.id)
                             }
@@ -156,7 +154,6 @@ fun DashboardScreen(
             }
 
             Spacer(modifier = Modifier.height(12.dp))
-
         }
     }
 }

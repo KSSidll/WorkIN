@@ -12,17 +12,9 @@ import javax.inject.*
 
 @HiltViewModel
 class AddSessionViewModel @Inject constructor(
-    sessionRepository: ISessionRepository,
-    workoutRepository: IWorkoutRepository
-): ViewModel() {
-    private val sessionRepository: ISessionRepository
+    private val sessionRepository: ISessionRepository,
     private val workoutRepository: IWorkoutRepository
-
-    init {
-        this.sessionRepository = sessionRepository
-        this.workoutRepository = workoutRepository
-    }
-
+): ViewModel() {
     /**
      * @throws SQLiteConstraintException Attempted to insert a duplicate value,
      * session name has to be unique

@@ -52,7 +52,6 @@ enum class HomeScreenLocations(
     companion object {
         private val idMap = entries.associateBy { it.ordinal }
         fun getByOrdinal(ordinal: Int) = idMap[ordinal]
-
     }
 }
 

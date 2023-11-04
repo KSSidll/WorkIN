@@ -77,11 +77,11 @@ fun SessionTimerPage(
 
     Column {
         Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
             modifier = Modifier
                 .weight(1F)
-                .fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+                .fillMaxWidth()
         ) {
             Box {
 
@@ -96,11 +96,11 @@ fun SessionTimerPage(
                         animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec,
                         label = "timer change value animation"
                     ).value,
-                    modifier = Modifier.size(256.dp),
                     strokeWidth = 14.dp,
                     color = if (remainingMiliseconds > 0) {
                         MaterialTheme.colorScheme.tertiary
                     } else MaterialTheme.colorScheme.errorContainer,
+                    modifier = Modifier.size(256.dp)
                 )
 
                 Text(
@@ -115,26 +115,26 @@ fun SessionTimerPage(
         }
 
         Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 12.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .padding(top = 12.dp)
         ) {
             Button(
                 onClick = {
                     timerFinished = true
                     onEndEarlyClick()
                 },
+                shape = RoundedCornerShape(23.dp),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(70.dp)
-                    .padding(horizontal = 32.dp),
-                shape = RoundedCornerShape(23.dp)
+                    .padding(horizontal = 32.dp)
             ) {
                 Row(
-                    modifier = Modifier.fillMaxSize(),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxSize()
                 ) {
                     Text(
                         text = stringResource(R.string.timer_end_early_text),

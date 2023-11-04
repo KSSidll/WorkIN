@@ -38,29 +38,27 @@ fun EditSessionDataSubpageDays(
                 .weight(1F)
                 .align(Alignment.CenterHorizontally)
         ) {
-
             Spacer(modifier = Modifier.height(32.dp))
 
-            Column(
-                modifier = Modifier.wrapContentSize(Alignment.Center)
-            ) {
+            Column(modifier = Modifier.wrapContentSize(Alignment.Center)) {
                 Box(
-                    modifier = Modifier.pointerInput(Unit) {
-                        detectTapGestures { _ ->
-                            state.mondayChecked.value = !state.mondayChecked.value
+                    modifier = Modifier
+                        .pointerInput(Unit) {
+                            detectTapGestures { _ ->
+                                state.mondayChecked.value = !state.mondayChecked.value
+                            }
                         }
-                    }
                 ) {
                     Row(
-                        modifier = Modifier.padding(horizontal = 40.dp),
                         verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(horizontal = 40.dp)
                     ) {
                         Checkbox(
                             checked = state.mondayChecked.value,
                             onCheckedChange = {
                                 state.mondayChecked.value = it
                             },
-                            modifier = Modifier.scale(1.1F),
+                            modifier = Modifier.scale(1.1F)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
@@ -73,22 +71,23 @@ fun EditSessionDataSubpageDays(
                 Spacer(modifier = Modifier.height(6.dp))
 
                 Box(
-                    modifier = Modifier.pointerInput(Unit) {
-                        detectTapGestures { _ ->
-                            state.tuesdayChecked.value = !state.tuesdayChecked.value
+                    modifier = Modifier
+                        .pointerInput(Unit) {
+                            detectTapGestures { _ ->
+                                state.tuesdayChecked.value = !state.tuesdayChecked.value
+                            }
                         }
-                    }
                 ) {
                     Row(
-                        modifier = Modifier.padding(horizontal = 40.dp),
                         verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(horizontal = 40.dp)
                     ) {
                         Checkbox(
                             checked = state.tuesdayChecked.value,
                             onCheckedChange = {
                                 state.tuesdayChecked.value = it
                             },
-                            modifier = Modifier.scale(1.1F),
+                            modifier = Modifier.scale(1.1F)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
@@ -101,22 +100,23 @@ fun EditSessionDataSubpageDays(
                 Spacer(modifier = Modifier.height(6.dp))
 
                 Box(
-                    modifier = Modifier.pointerInput(Unit) {
-                        detectTapGestures { _ ->
-                            state.wednesdayChecked.value = !state.wednesdayChecked.value
+                    modifier = Modifier
+                        .pointerInput(Unit) {
+                            detectTapGestures { _ ->
+                                state.wednesdayChecked.value = !state.wednesdayChecked.value
+                            }
                         }
-                    }
                 ) {
                     Row(
-                        modifier = Modifier.padding(horizontal = 40.dp),
                         verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(horizontal = 40.dp)
                     ) {
                         Checkbox(
                             checked = state.wednesdayChecked.value,
                             onCheckedChange = {
                                 state.wednesdayChecked.value = it
                             },
-                            modifier = Modifier.scale(1.1F),
+                            modifier = Modifier.scale(1.1F)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
@@ -129,22 +129,23 @@ fun EditSessionDataSubpageDays(
                 Spacer(modifier = Modifier.height(6.dp))
 
                 Box(
-                    modifier = Modifier.pointerInput(Unit) {
-                        detectTapGestures { _ ->
-                            state.thursdayChecked.value = !state.thursdayChecked.value
+                    modifier = Modifier
+                        .pointerInput(Unit) {
+                            detectTapGestures { _ ->
+                                state.thursdayChecked.value = !state.thursdayChecked.value
+                            }
                         }
-                    }
                 ) {
                     Row(
-                        modifier = Modifier.padding(horizontal = 40.dp),
                         verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(horizontal = 40.dp)
                     ) {
                         Checkbox(
                             checked = state.thursdayChecked.value,
                             onCheckedChange = {
                                 state.thursdayChecked.value = it
                             },
-                            modifier = Modifier.scale(1.1F),
+                            modifier = Modifier.scale(1.1F)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
@@ -157,22 +158,23 @@ fun EditSessionDataSubpageDays(
                 Spacer(modifier = Modifier.height(6.dp))
 
                 Box(
-                    modifier = Modifier.pointerInput(Unit) {
-                        detectTapGestures { _ ->
-                            state.fridayChecked.value = !state.fridayChecked.value
+                    modifier = Modifier
+                        .pointerInput(Unit) {
+                            detectTapGestures { _ ->
+                                state.fridayChecked.value = !state.fridayChecked.value
+                            }
                         }
-                    }
                 ) {
                     Row(
-                        modifier = Modifier.padding(horizontal = 40.dp),
                         verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(horizontal = 40.dp)
                     ) {
                         Checkbox(
                             checked = state.fridayChecked.value,
                             onCheckedChange = {
                                 state.fridayChecked.value = it
                             },
-                            modifier = Modifier.scale(1.1F),
+                            modifier = Modifier.scale(1.1F)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
@@ -185,22 +187,23 @@ fun EditSessionDataSubpageDays(
                 Spacer(modifier = Modifier.height(6.dp))
 
                 Box(
-                    modifier = Modifier.pointerInput(Unit) {
-                        detectTapGestures { _ ->
-                            state.saturdayChecked.value = !state.saturdayChecked.value
+                    modifier = Modifier
+                        .pointerInput(Unit) {
+                            detectTapGestures { _ ->
+                                state.saturdayChecked.value = !state.saturdayChecked.value
+                            }
                         }
-                    }
                 ) {
                     Row(
-                        modifier = Modifier.padding(horizontal = 40.dp),
                         verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(horizontal = 40.dp)
                     ) {
                         Checkbox(
                             checked = state.saturdayChecked.value,
                             onCheckedChange = {
                                 state.saturdayChecked.value = it
                             },
-                            modifier = Modifier.scale(1.1F),
+                            modifier = Modifier.scale(1.1F)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
@@ -213,22 +216,23 @@ fun EditSessionDataSubpageDays(
                 Spacer(modifier = Modifier.height(6.dp))
 
                 Box(
-                    modifier = Modifier.pointerInput(Unit) {
-                        detectTapGestures { _ ->
-                            state.sundayChecked.value = !state.sundayChecked.value
+                    modifier = Modifier
+                        .pointerInput(Unit) {
+                            detectTapGestures { _ ->
+                                state.sundayChecked.value = !state.sundayChecked.value
+                            }
                         }
-                    }
                 ) {
                     Row(
-                        modifier = Modifier.padding(horizontal = 40.dp),
                         verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(horizontal = 40.dp)
                     ) {
                         Checkbox(
                             checked = state.sundayChecked.value,
                             onCheckedChange = {
                                 state.sundayChecked.value = it
                             },
-                            modifier = Modifier.scale(1.1F),
+                            modifier = Modifier.scale(1.1F)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
@@ -242,23 +246,27 @@ fun EditSessionDataSubpageDays(
         }
 
         Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 12.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .padding(top = 12.dp)
         ) {
             Button(
                 onClick = onNext,
+                shape = RoundedCornerShape(23.dp),
+                colors = ButtonDefaults.buttonColors(
+                    contentColor = MaterialTheme.colorScheme.primary,
+                    containerColor = MaterialTheme.colorScheme.onPrimary,
+                ),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(70.dp)
-                    .padding(horizontal = 32.dp),
-                shape = RoundedCornerShape(23.dp)
+                    .padding(horizontal = 32.dp)
             ) {
                 Row(
-                    modifier = Modifier.fillMaxSize(),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxSize()
                 ) {
 
                     Icon(
@@ -273,7 +281,7 @@ fun EditSessionDataSubpageDays(
 
                     Text(
                         text = stringResource(R.string.next),
-                        fontSize = 20.sp
+                        fontSize = 20.sp,
                     )
 
                     Icon(

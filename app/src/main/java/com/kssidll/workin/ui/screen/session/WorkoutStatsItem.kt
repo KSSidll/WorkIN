@@ -44,7 +44,7 @@ fun WorkoutStatsItem(
                 Text(
                     text = repetitionType.getTranslation(),
                     fontSize = 20.sp,
-                    modifier = Modifier.alpha(0.8F),
+                    modifier = Modifier.alpha(0.8F)
                 )
             }
 
@@ -52,7 +52,7 @@ fun WorkoutStatsItem(
                 Text(
                     text = weightType.getTranslation(),
                     fontSize = 20.sp,
-                    modifier = Modifier.alpha(0.8F),
+                    modifier = Modifier.alpha(0.8F)
                 )
             }
         }
@@ -96,13 +96,13 @@ fun WorkoutStatsItem(
                 Text(
                     text = repetitionType.getTranslation(),
                     fontSize = 20.sp,
-                    modifier = Modifier.alpha(0.8F),
+                    modifier = Modifier.alpha(0.8F)
                 )
 
                 Text(
                     text = weightType.getTranslation(),
                     fontSize = 20.sp,
-                    modifier = Modifier.alpha(0.8F),
+                    modifier = Modifier.alpha(0.8F)
                 )
             }
         }

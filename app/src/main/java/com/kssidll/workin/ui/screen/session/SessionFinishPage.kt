@@ -18,11 +18,11 @@ fun SessionFinishPage(
 ) {
     Column {
         Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Bottom,
             modifier = Modifier
                 .weight(1F)
-                .fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Bottom
+                .fillMaxWidth()
         ) {
             Text(
                 text = stringResource(id = R.string.session_finished),
@@ -47,16 +47,16 @@ fun SessionFinishPage(
         ) {
             Button(
                 onClick = onButtonClick,
+                shape = RoundedCornerShape(23.dp),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(70.dp)
-                    .padding(horizontal = 32.dp),
-                shape = RoundedCornerShape(23.dp)
+                    .padding(horizontal = 32.dp)
             ) {
                 Row(
-                    modifier = Modifier.fillMaxSize(),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxSize()
                 ) {
                     Text(
                         text = stringResource(id = R.string.session_finished_return),

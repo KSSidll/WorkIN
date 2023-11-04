@@ -43,9 +43,7 @@ fun AddSessionScreen(
         onBack = onBack,
         workouts = workouts,
         submitButtonContent = {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
                     imageVector = Icons.Default.Check,
                     contentDescription = stringResource(

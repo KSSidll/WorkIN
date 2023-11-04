@@ -7,13 +7,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.res.*
 import androidx.compose.ui.tooling.preview.*
-import androidx.compose.ui.unit.*
 import com.kssidll.workin.R
 import com.kssidll.workin.data.data.*
 import com.kssidll.workin.ui.component.*
-import com.kssidll.workin.ui.component.topbar.*
 import com.kssidll.workin.ui.theme.*
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SessionsPage(
     collectedSessions: List<SessionWithFullSessionWorkouts>,
@@ -21,19 +20,20 @@ fun SessionsPage(
     onSessionClick: (Long) -> Unit,
 ) {
     Column {
-        PrimaryTopHeader {
-            Text(
-                text = stringResource(id = R.string.sessions),
-                fontSize = 21.sp,
-            )
-        }
+        WorkINTopAppBar(
+            title = {
+                Text(
+                    text = stringResource(id = R.string.sessions),
+                    style = Typography.titleLarge,
+                )
+            }
+        )
 
         SelectSessionSubpage(
             collectedSessions = collectedSessions,
             onSelect = {
                 onSessionClick(it.session.id)
             },
-            showStartIcon = true,
             onStartIconClick = {
                 onSessionStart(it.session.id)
             }
@@ -58,14 +58,9 @@ fun SessionsPage(
 @Composable
 fun SessionsPagePreview() {
     WorkINTheme {
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.surface,
-        ) {
+        Surface(modifier = Modifier.fillMaxSize()) {
             SessionsPage(
-                collectedSessions = listOf(
-
-                ),
+                collectedSessions = listOf(),
                 onSessionStart = {},
                 onSessionClick = {},
             )

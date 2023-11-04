@@ -23,9 +23,8 @@ import com.kssidll.workin.ui.theme.*
 @Composable
 fun SessionCardItem(
     session: SessionWithFullSessionWorkouts,
-    onSelect: (SessionWithFullSessionWorkouts) -> Unit,
-    showStartIcon: Boolean = false,
-    onStartIconClick: (SessionWithFullSessionWorkouts) -> Unit = {},
+    onClick: (SessionWithFullSessionWorkouts) -> Unit,
+    onStartIconClick: ((SessionWithFullSessionWorkouts) -> Unit)? = null,
 ) {
     val sessionDays: SnapshotStateList<WeekDays> = remember { mutableStateListOf() }
 
@@ -34,14 +33,12 @@ fun SessionCardItem(
         sessionDays.addAll(WeekDays.decode(session.session.days))
     }
 
-    Row(
-        modifier = Modifier.fillMaxWidth()
-    ) {
+    Row(modifier = Modifier.fillMaxWidth()) {
         Box(
             modifier = Modifier
                 .padding(horizontal = 24.dp, vertical = 8.dp)
                 .clickable {
-                    onSelect(session)
+                    onClick(session)
                 }
                 .animateContentSize()
                 .background(
@@ -57,8 +54,8 @@ fun SessionCardItem(
                 Spacer(modifier = Modifier.height(12.dp))
 
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
                         text = session.session.name,
@@ -70,12 +67,12 @@ fun SessionCardItem(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 24.dp),
+                            .padding(horizontal = 24.dp)
                     ) {
                         Text(
                             text = session.session.description,
                             fontSize = 16.sp,
-                            modifier = Modifier.alpha(0.8F),
+                            modifier = Modifier.alpha(0.8F)
                         )
                     }
                     Spacer(modifier = Modifier.height(4.dp))
@@ -84,8 +81,8 @@ fun SessionCardItem(
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxWidth()
                 ) {
                     HorizontalWeekdayList(
                         highlightedDays = sessionDays,
@@ -99,14 +96,22 @@ fun SessionCardItem(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxWidth()
                 ) {
                     FilledTonalIconToggleButton(
                         checked = isExpanded,
                         onCheckedChange = {
                             isExpanded = it
-                        }
+                        },
+                        colors = IconButtonDefaults.filledIconToggleButtonColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+                            contentColor = MaterialTheme.colorScheme.onSurface,
+                            checkedContainerColor = MaterialTheme.colorScheme.primary,
+                            checkedContentColor = MaterialTheme.colorScheme.onPrimary,
+                        ),
+                        modifier = Modifier
+                            .minimumInteractiveComponentSize()
                     ) {
                         if (isExpanded) {
                             Icon(
@@ -129,8 +134,8 @@ fun SessionCardItem(
                             Spacer(modifier = Modifier.height(8.dp))
 
                             Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.Center
+                                horizontalArrangement = Arrangement.Center,
+                                modifier = Modifier.fillMaxWidth()
                             ) {
                                 Text(
                                     text = workout.workout.name,
@@ -159,14 +164,14 @@ fun SessionCardItem(
                                     ) {
                                         Text(
                                             text = workout.sessionWorkout.repetitionCount.toString(),
+                                            maxLines = 2,
+                                            color = MaterialTheme.colorScheme.onSurface,
                                             modifier = Modifier
                                                 .padding(
                                                     vertical = 6.dp,
                                                     horizontal = 12.dp
                                                 )
-                                                .align(Alignment.Center),
-                                            maxLines = 2,
-                                            color = MaterialTheme.colorScheme.onSurface,
+                                                .align(Alignment.Center)
                                         )
                                     }
 
@@ -183,13 +188,13 @@ fun SessionCardItem(
                                                 .align(Alignment.CenterEnd)
                                         ) {
                                             Row(
-                                                modifier = Modifier.fillMaxSize(),
                                                 verticalAlignment = Alignment.CenterVertically,
-                                                horizontalArrangement = Arrangement.Center
+                                                horizontalArrangement = Arrangement.Center,
+                                                modifier = Modifier.fillMaxSize()
                                             ) {
                                                 Icon(
                                                     imageVector = Icons.Rounded.Close,
-                                                    contentDescription = ""
+                                                    contentDescription = null,
                                                 )
                                             }
                                         }
@@ -210,14 +215,14 @@ fun SessionCardItem(
                                         Text(
                                             text = RepetitionTypes.getById(workout.sessionWorkout.repetitionType)!!
                                                 .getTranslation(),
+                                            maxLines = 2,
+                                            color = MaterialTheme.colorScheme.onSurface,
                                             modifier = Modifier
                                                 .padding(
                                                     vertical = 6.dp,
                                                     horizontal = 12.dp
                                                 )
-                                                .align(Alignment.Center),
-                                            maxLines = 2,
-                                            color = MaterialTheme.colorScheme.onSurface,
+                                                .align(Alignment.Center)
                                         )
                                     }
                                 }
@@ -242,14 +247,14 @@ fun SessionCardItem(
                                     ) {
                                         Text(
                                             text = weightType.getTranslation(),
+                                            maxLines = 2,
+                                            color = MaterialTheme.colorScheme.onSurface,
                                             modifier = Modifier
                                                 .padding(
                                                     vertical = 6.dp,
                                                     horizontal = 12.dp
                                                 )
-                                                .align(Alignment.Center),
-                                            maxLines = 2,
-                                            color = MaterialTheme.colorScheme.onSurface,
+                                                .align(Alignment.Center)
                                         )
                                     }
                                 } else {
@@ -271,14 +276,14 @@ fun SessionCardItem(
                                         ) {
                                             Text(
                                                 text = workout.sessionWorkout.weight.toString(),
+                                                maxLines = 2,
+                                                color = MaterialTheme.colorScheme.onSurface,
                                                 modifier = Modifier
                                                     .padding(
                                                         vertical = 6.dp,
                                                         horizontal = 12.dp
                                                     )
-                                                    .align(Alignment.Center),
-                                                maxLines = 2,
-                                                color = MaterialTheme.colorScheme.onSurface,
+                                                    .align(Alignment.Center)
                                             )
                                         }
 
@@ -301,7 +306,7 @@ fun SessionCardItem(
                                                 ) {
                                                     Icon(
                                                         imageVector = Icons.Rounded.Close,
-                                                        contentDescription = ""
+                                                        contentDescription = null,
                                                     )
                                                 }
                                             }
@@ -321,14 +326,14 @@ fun SessionCardItem(
                                         ) {
                                             Text(
                                                 text = weightType.getTranslation(),
+                                                maxLines = 2,
+                                                color = MaterialTheme.colorScheme.onSurface,
                                                 modifier = Modifier
                                                     .padding(
                                                         vertical = 6.dp,
                                                         horizontal = 12.dp
                                                     )
-                                                    .align(Alignment.Center),
-                                                maxLines = 2,
-                                                color = MaterialTheme.colorScheme.onSurface,
+                                                    .align(Alignment.Center)
                                             )
                                         }
                                     }
@@ -346,13 +351,10 @@ fun SessionCardItem(
                 }
 
                 Spacer(modifier = Modifier.height(15.dp))
-
             }
 
-            if (showStartIcon) {
-                Column(
-                    modifier = Modifier.align(Alignment.TopEnd)
-                ) {
+            if (onStartIconClick != null) {
+                Column(modifier = Modifier.align(Alignment.TopEnd)) {
                     FilledIconButton(
                         onClick = {
                             onStartIconClick(session)
@@ -442,8 +444,8 @@ fun SessionCardItemPrieview() {
                         ),
                     )
                 ),
-                onSelect = {},
-                showStartIcon = true,
+                onClick = {},
+                onStartIconClick = {},
             )
         }
     }

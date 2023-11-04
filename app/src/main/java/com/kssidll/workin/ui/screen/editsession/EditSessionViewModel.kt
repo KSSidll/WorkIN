@@ -11,19 +11,11 @@ import javax.inject.*
 
 @HiltViewModel
 class EditSessionViewModel @Inject constructor(
-    sessionRepository: ISessionRepository,
-    workoutRepository: IWorkoutRepository,
+    private val sessionRepository: ISessionRepository,
+    private val workoutRepository: IWorkoutRepository,
 ): ViewModel() {
-    private val sessionRepository: ISessionRepository
-    private val workoutRepository: IWorkoutRepository
-
     lateinit var session: SessionWithFullSessionWorkouts
     private lateinit var _originalSession: SessionWithFullSessionWorkouts
-
-    init {
-        this.sessionRepository = sessionRepository
-        this.workoutRepository = workoutRepository
-    }
 
     suspend fun fetchSession(sessionId: Long) {
         session = sessionRepository.getMergedSessionWithWorkoutsById(sessionId)

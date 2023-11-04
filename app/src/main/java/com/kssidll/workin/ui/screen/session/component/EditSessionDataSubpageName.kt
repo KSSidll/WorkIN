@@ -43,14 +43,13 @@ fun EditSessionDataSubpageName(
             val descriptionFocusRequester = remember { FocusRequester() }
 
             Box(
+                contentAlignment = Alignment.Center,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 32.dp),
-                contentAlignment = Alignment.Center
+                    .padding(horizontal = 32.dp)
             ) {
                 OutlinedTextField(
                     maxLines = 4,
-                    modifier = Modifier.focusRequester(focusRequester = nameFocusRequester),
                     keyboardOptions = KeyboardOptions(
                         imeAction = ImeAction.Next
                     ),
@@ -99,20 +98,20 @@ fun EditSessionDataSubpageName(
                         } else if (state.nameDuplicateError.value) {
                             Text(text = stringResource(id = R.string.session_name_duplicate))
                         }
-                    }
+                    },
+                    modifier = Modifier.focusRequester(focusRequester = nameFocusRequester)
                 )
             }
 
             Spacer(modifier = Modifier.height(20.dp))
 
             Box(
+                contentAlignment = Alignment.TopCenter,
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(horizontal = 32.dp),
-                contentAlignment = Alignment.TopCenter
+                    .padding(horizontal = 32.dp)
             ) {
                 OutlinedTextField(
-                    modifier = Modifier.focusRequester(descriptionFocusRequester),
                     minLines = 10,
                     value = state.description.value,
                     onValueChange = {
@@ -147,28 +146,33 @@ fun EditSessionDataSubpageName(
                         focusedBorderColor = MaterialTheme.colorScheme.outline,
                         focusedTextColor = MaterialTheme.colorScheme.onBackground,
                     ),
+                    modifier = Modifier.focusRequester(descriptionFocusRequester)
                 )
             }
         }
 
         Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 12.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .padding(top = 12.dp)
         ) {
             Button(
                 onClick = onNext,
+                shape = RoundedCornerShape(23.dp),
+                colors = ButtonDefaults.buttonColors(
+                    contentColor = MaterialTheme.colorScheme.primary,
+                    containerColor = MaterialTheme.colorScheme.onPrimary,
+                ),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(70.dp)
-                    .padding(horizontal = 32.dp),
-                shape = RoundedCornerShape(23.dp)
+                    .padding(horizontal = 32.dp)
             ) {
                 Row(
-                    modifier = Modifier.fillMaxSize(),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxSize()
                 ) {
 
                     Icon(

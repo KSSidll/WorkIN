@@ -15,7 +15,6 @@ import androidx.compose.ui.text.input.*
 import androidx.compose.ui.tooling.preview.*
 import androidx.compose.ui.unit.*
 import com.kssidll.workin.R
-import com.kssidll.workin.ui.component.topbar.*
 import com.kssidll.workin.ui.theme.*
 import kotlinx.coroutines.*
 
@@ -24,14 +23,15 @@ data class EditWorkoutDataSubpageState(
     var description: String = String(),
 )
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditWorkoutDataSubpage(
     onBack: () -> Unit,
     submitButtonContent: @Composable () -> Unit,
     onSubmit: suspend (EditWorkoutDataSubpageState) -> Unit,
+    title: String? = null,
+    actions: @Composable RowScope.() -> Unit = {},
     startState: EditWorkoutDataSubpageState = EditWorkoutDataSubpageState(),
-    headerText: @Composable () -> Unit = {},
-    headerAdditionalContent: @Composable BoxScope.() -> Unit = {},
 ) {
     val scope = rememberCoroutineScope()
 
@@ -50,12 +50,22 @@ fun EditWorkoutDataSubpage(
     }
 
     Column {
-        SecondaryTopHeader(
-            onIconClick = onBack,
-            additionalContent = headerAdditionalContent,
-        ) {
-            headerText()
-        }
+        WorkINTopAppBar(
+            title = {
+                if (title != null) {
+                    Text(
+                        text = title,
+                        style = Typography.titleLarge,
+                    )
+                }
+            },
+            navigationIcon = navigationIcon(
+                type = NavigationIcon.Types.Back,
+                onClick = onBack,
+                contentDescription = stringResource(id = R.string.navigate_back),
+            ),
+            actions = actions,
+        )
 
         Column(
             modifier = Modifier
@@ -76,7 +86,6 @@ fun EditWorkoutDataSubpage(
             ) {
                 OutlinedTextField(
                     maxLines = 4,
-                    modifier = Modifier.focusRequester(focusRequester = nameFocusRequester),
                     keyboardOptions = KeyboardOptions(
                         imeAction = ImeAction.Next
                     ),
@@ -125,20 +134,21 @@ fun EditWorkoutDataSubpage(
                         } else if (nameDuplicateError) {
                             Text(text = stringResource(id = R.string.workout_name_duplicate))
                         }
-                    }
+                    },
+                    modifier = Modifier
+                        .focusRequester(focusRequester = nameFocusRequester)
                 )
             }
 
             Spacer(modifier = Modifier.height(20.dp))
 
             Box(
+                contentAlignment = Alignment.TopCenter,
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(horizontal = 32.dp),
-                contentAlignment = Alignment.TopCenter
+                    .padding(horizontal = 32.dp)
             ) {
                 OutlinedTextField(
-                    modifier = Modifier.focusRequester(descriptionFocusRequester),
                     minLines = 5,
                     value = descriptionText,
                     onValueChange = {
@@ -173,16 +183,17 @@ fun EditWorkoutDataSubpage(
                         focusedBorderColor = MaterialTheme.colorScheme.outline,
                         focusedTextColor = MaterialTheme.colorScheme.onBackground,
                     ),
+                    modifier = Modifier.focusRequester(descriptionFocusRequester)
                 )
             }
         }
 
         Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .fillMaxHeight(0.45F)
                 .fillMaxWidth()
-                .padding(top = 12.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .padding(top = 12.dp)
         ) {
             Button(
                 onClick = {
@@ -203,16 +214,20 @@ fun EditWorkoutDataSubpage(
                         }
                     }
                 },
+                shape = RoundedCornerShape(23.dp),
+                colors = ButtonDefaults.buttonColors(
+                    contentColor = MaterialTheme.colorScheme.primary,
+                    containerColor = MaterialTheme.colorScheme.onPrimary,
+                ),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(70.dp)
-                    .padding(horizontal = 32.dp),
-                shape = RoundedCornerShape(23.dp)
+                    .padding(horizontal = 32.dp)
             ) {
                 Row(
-                    modifier = Modifier.fillMaxSize(),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxSize()
                 ) {
                     submitButtonContent()
                 }

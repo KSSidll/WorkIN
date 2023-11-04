@@ -79,9 +79,7 @@ private fun WorkoutsScreen(
                     state = pagerState,
                     pageSize = PageSize.Fill,
                 ) {
-                    Column(
-                        modifier = Modifier.fillMaxSize()
-                    ) {
+                    Column(modifier = Modifier.fillMaxSize()) {
                         when (it) {
                             0 -> {
                                 Box {
@@ -118,9 +116,6 @@ private fun WorkoutsScreen(
                         .align(Alignment.BottomEnd)
                 ) {
                     FilledIconButton(
-                        modifier = Modifier
-                            .size(64.dp)
-                            .shadow(6.dp, CircleShape),
                         onClick = {
                             when (pagerState.currentPage) {
                                 0 -> onAddSession()
@@ -132,7 +127,10 @@ private fun WorkoutsScreen(
                             disabledContentColor = Color.Transparent,
                             containerColor = MaterialTheme.colorScheme.primaryContainer,
                             contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                        )
+                        ),
+                        modifier = Modifier
+                            .size(64.dp)
+                            .shadow(6.dp, CircleShape)
                     ) {
                         Icon(
                             imageVector = Icons.Default.Add,
@@ -153,9 +151,6 @@ private fun WorkoutsScreen(
 
                 IconButton(
                     enabled = pagerState.currentPage != 0,
-                    modifier = Modifier
-                        .weight(1F, true)
-                        .fillMaxHeight(),
                     onClick = {
                         scope.launch {
                             pagerState.animateScrollToPage(0)
@@ -166,7 +161,10 @@ private fun WorkoutsScreen(
                         disabledContainerColor = MaterialTheme.colorScheme.background,
                         contentColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.4F),
                         disabledContentColor = MaterialTheme.colorScheme.onBackground
-                    )
+                    ),
+                    modifier = Modifier
+                        .weight(1F, true)
+                        .fillMaxHeight()
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.fitness_center),
@@ -184,9 +182,6 @@ private fun WorkoutsScreen(
 
                 IconButton(
                     enabled = pagerState.currentPage != 1,
-                    modifier = Modifier
-                        .weight(1F, true)
-                        .fillMaxHeight(),
                     onClick = {
                         scope.launch {
                             pagerState.animateScrollToPage(1)
@@ -197,7 +192,10 @@ private fun WorkoutsScreen(
                         disabledContainerColor = MaterialTheme.colorScheme.background,
                         contentColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.4F),
                         disabledContentColor = MaterialTheme.colorScheme.onBackground
-                    )
+                    ),
+                    modifier = Modifier
+                        .weight(1F, true)
+                        .fillMaxHeight()
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.event_list),

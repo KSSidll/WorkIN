@@ -11,18 +11,12 @@ import javax.inject.*
 
 @HiltViewModel
 class SessionViewModel @Inject constructor(
-    sessionRepository: ISessionRepository,
+    private val sessionRepository: ISessionRepository,
 ): ViewModel() {
-    private val sessionRepository: ISessionRepository
-
     lateinit var session: SessionWithFullSessionWorkouts
 
     private var lastUsedWorkoutId: Long = 0
     var workoutLogs: SnapshotStateList<SessionWorkoutLog> = mutableStateListOf()
-
-    init {
-        this.sessionRepository = sessionRepository
-    }
 
     suspend fun fetchSession(sessionId: Long) {
         session = sessionRepository.getMergedSessionWithWorkoutsById(sessionId)

@@ -66,9 +66,7 @@ fun EditSessionDataSubpageBuilder(
 ) {
     val scope = rememberCoroutineScope()
 
-    BackHandler(
-        enabled = state.isWorkoutSearch.value && onScreen
-    ) {
+    BackHandler(enabled = state.isWorkoutSearch.value && onScreen) {
         state.isWorkoutSearch.value = false
     }
 
@@ -192,7 +190,7 @@ fun EditSessionDataSubpageBuilder(
                             Icon(
                                 imageVector = Icons.Rounded.Add,
                                 contentDescription = stringResource(id = R.string.add_new_workout_to_session_builder),
-                                modifier = Modifier.size(37.dp),
+                                modifier = Modifier.size(37.dp)
                             )
                         }
                     }
@@ -201,20 +199,24 @@ fun EditSessionDataSubpageBuilder(
             }
 
             Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 12.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                    .padding(top = 12.dp)
             ) {
                 Button(
                     onClick = {
                         onSubmit()
                     },
+                    shape = RoundedCornerShape(23.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        contentColor = MaterialTheme.colorScheme.primary,
+                        containerColor = MaterialTheme.colorScheme.onPrimary,
+                    ),
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(70.dp)
-                        .padding(horizontal = 32.dp),
-                    shape = RoundedCornerShape(23.dp)
+                        .padding(horizontal = 32.dp)
                 ) {
                     submitButtonContent()
                 }

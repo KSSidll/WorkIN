@@ -15,14 +15,8 @@ data class AddWorkoutData(
 
 @HiltViewModel
 class AddWorkoutViewModel @Inject constructor(
-    workoutRepository: IWorkoutRepository,
+    private val workoutRepository: IWorkoutRepository,
 ): ViewModel() {
-    private val workoutRepository: IWorkoutRepository
-
-    init {
-        this.workoutRepository = workoutRepository
-    }
-
     /**
      * @return id of the newly inserted workout
      * @throws SQLiteConstraintException Attempted to insert a duplicate value,

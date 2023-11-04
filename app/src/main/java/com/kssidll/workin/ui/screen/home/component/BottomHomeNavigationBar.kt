@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
-import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.painter.*
 import androidx.compose.ui.graphics.vector.*
 import androidx.compose.ui.tooling.preview.*
@@ -13,28 +12,8 @@ import androidx.compose.ui.unit.*
 import com.kssidll.workin.ui.screen.home.*
 import com.kssidll.workin.ui.theme.*
 
-@Composable
-@ReadOnlyComposable
-fun navigationBarItemColors(
-    selectedIconColor: Color = MaterialTheme.colorScheme.onSecondaryContainer,
-    selectedTextColor: Color = MaterialTheme.colorScheme.onSurface,
-    selectedIndicatorColor: Color = MaterialTheme.colorScheme.secondaryContainer,
-    unselectedIconColor: Color = MaterialTheme.colorScheme.onSecondaryContainer.copy(0.7F),
-    unselectedTextColor: Color = MaterialTheme.colorScheme.onSecondaryContainer.copy(0.7F),
-    disabledIconColor: Color = MaterialTheme.colorScheme.onSecondaryContainer.copy(0.1F),
-    disabledTextColor: Color = MaterialTheme.colorScheme.onSecondaryContainer.copy(0.1F),
-) = NavigationBarItemColors(
-    selectedIconColor = selectedIconColor,
-    selectedTextColor = selectedTextColor,
-    selectedIndicatorColor = selectedIndicatorColor,
-    unselectedIconColor = unselectedIconColor,
-    unselectedTextColor = unselectedTextColor,
-    disabledIconColor = disabledIconColor,
-    disabledTextColor = disabledTextColor,
-)
-
-private val topPadding = 10.dp
-private val bottomPadding = 8.dp
+private val topPadding: Dp = 10.dp
+private val bottomPadding: Dp = 8.dp
 
 @Composable
 fun BottomHomeNavigationBar(
@@ -42,8 +21,8 @@ fun BottomHomeNavigationBar(
     onLocationChange: (HomeScreenLocations) -> Unit,
 ) {
     NavigationBar(
-        modifier = Modifier.height(65.dp),
         containerColor = MaterialTheme.colorScheme.surfaceContainer,
+        modifier = Modifier.height(65.dp)
     ) {
         HomeScreenLocations.entries.forEach {
             if (it.imageVector != null) {
@@ -72,6 +51,17 @@ fun BottomHomeNavigationBar(
 }
 
 @Composable
+private fun bottomHomeNavigationBarColors(): NavigationBarItemColors {
+    return NavigationBarItemDefaults.colors(
+        selectedIconColor = MaterialTheme.colorScheme.onTertiaryContainer,
+        selectedTextColor = MaterialTheme.colorScheme.onSurface,
+        indicatorColor = MaterialTheme.colorScheme.tertiaryContainer,
+        unselectedIconColor = MaterialTheme.colorScheme.onSurface,
+        unselectedTextColor = MaterialTheme.colorScheme.onSurface,
+    )
+}
+
+@Composable
 private fun RowScope.BottomHomeNavigationBarItem(
     modifier: Modifier = Modifier,
     selected: Boolean,
@@ -92,7 +82,7 @@ private fun RowScope.BottomHomeNavigationBarItem(
                     .padding(top = topPadding, bottom = bottomPadding)
             )
         },
-        colors = navigationBarItemColors(),
+        colors = bottomHomeNavigationBarColors(),
     )
 }
 
@@ -117,7 +107,7 @@ private fun RowScope.BottomHomeNavigationBarItem(
                     .padding(top = topPadding, bottom = bottomPadding)
             )
         },
-        colors = navigationBarItemColors(),
+        colors = bottomHomeNavigationBarColors(),
     )
 }
 
