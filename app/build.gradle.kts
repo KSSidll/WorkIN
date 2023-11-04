@@ -1,3 +1,5 @@
+import java.util.*
+
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.kotlinAndroid)
@@ -8,6 +10,18 @@ plugins {
 }
 
 android {
+    signingConfigs {
+        create("devel") {
+            val properties = Properties().apply {
+                load(File("signing.properties").reader())
+            }
+
+            storeFile = File(properties.getProperty("storeFilePath"))
+            storePassword = properties.getProperty("storePassword")
+            keyPassword = properties.getProperty("keyPassword")
+            keyAlias = properties.getProperty("keyAlias")
+        }
+    }
     namespace = "com.kssidll.workin"
     compileSdk = 34
 
@@ -40,8 +54,12 @@ android {
                 "proguard-rules.pro"
             )
 
-            // temporary
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.getByName("devel")
+        }
+
+        debug {
+            signingConfig = signingConfigs.getByName("devel")
+            isJniDebuggable = true
         }
     }
     compileOptions {

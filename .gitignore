@@ -4,6 +4,7 @@ build/
 
 # Local configuration file (sdk path, etc)
 local.properties
+signing.properties
 
 # Log/OS Files
 *.log
@@ -14,6 +15,7 @@ captures/
 .cxx/
 *.apk
 output.json
+/app/release
 
 # IntelliJ
 *.iml
@@ -22,12 +24,9 @@ misc.xml
 deploymentTargetDropDown.xml
 render.experimental.xml
 
-# Keystore files
-*.jks
-*.keystore
-
 # Google Services (e.g. APIs or Firebase)
 google-services.json
 
 # Android Profiling
 *.hprof
+
