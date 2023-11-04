@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">WorkIN</string>
+    <string name="app_name" translatable="false">WorkIN</string>
 
     <string name="navigate_to_dashboard_description">Navigate to the Dashboard</string>
     <string name="navigate_to_workouts_description">Navigate to Workouts Screen</string>
