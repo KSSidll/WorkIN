@@ -1,12 +1,11 @@
-package com.kssidll.workin.ui.screen.session.component
+package com.kssidll.workin.ui.screen.modify.edit.workout
 
 import android.content.res.*
+import android.database.sqlite.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.*
 import androidx.compose.foundation.text.*
 import androidx.compose.foundation.text.selection.*
-import androidx.compose.material.icons.*
-import androidx.compose.material.icons.automirrored.rounded.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
@@ -16,21 +15,59 @@ import androidx.compose.ui.text.input.*
 import androidx.compose.ui.tooling.preview.*
 import androidx.compose.ui.unit.*
 import com.kssidll.workin.R
+import com.kssidll.workin.ui.component.*
 import com.kssidll.workin.ui.theme.*
+import kotlinx.coroutines.*
 
-data class EditSessionDataSubpageNameState(
-    val name: MutableState<String> = mutableStateOf(String()),
-    val nameBlankError: MutableState<Boolean> = mutableStateOf(false),
-    val nameDuplicateError: MutableState<Boolean> = mutableStateOf(false),
-    val description: MutableState<String> = mutableStateOf(String())
+data class EditWorkoutDataSubpageState(
+    var name: String = String(),
+    var description: String = String(),
 )
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditSessionDataSubpageName(
-    onNext: () -> Unit,
-    state: EditSessionDataSubpageNameState,
+fun EditWorkoutDataSubpage(
+    onBack: () -> Unit,
+    submitButtonContent: @Composable () -> Unit,
+    onSubmit: suspend (EditWorkoutDataSubpageState) -> Unit,
+    title: String? = null,
+    actions: @Composable RowScope.() -> Unit = {},
+    startState: EditWorkoutDataSubpageState = EditWorkoutDataSubpageState(),
 ) {
+    val scope = rememberCoroutineScope()
+
+    var nameText: String by remember {
+        mutableStateOf(startState.name)
+    }
+    var nameBlankError: Boolean by remember {
+        mutableStateOf(false)
+    }
+    var nameDuplicateError: Boolean by remember {
+        mutableStateOf(false)
+    }
+
+    var descriptionText: String by remember {
+        mutableStateOf(startState.description)
+    }
+
     Column {
+        WorkINTopAppBar(
+            title = {
+                if (title != null) {
+                    Text(
+                        text = title,
+                        style = Typography.titleLarge,
+                    )
+                }
+            },
+            navigationIcon = navigationIcon(
+                type = NavigationIcon.Types.Back,
+                onClick = onBack,
+                contentDescription = stringResource(id = R.string.navigate_back),
+            ),
+            actions = actions,
+        )
+
         Column(
             modifier = Modifier
                 .weight(1F)
@@ -43,10 +80,10 @@ fun EditSessionDataSubpageName(
             val descriptionFocusRequester = remember { FocusRequester() }
 
             Box(
-                contentAlignment = Alignment.Center,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 32.dp)
+                    .padding(horizontal = 32.dp),
+                contentAlignment = Alignment.Center
             ) {
                 OutlinedTextField(
                     maxLines = 4,
@@ -59,15 +96,15 @@ fun EditSessionDataSubpageName(
                             descriptionFocusRequester.requestFocus()
                         }
                     ),
-                    value = state.name.value,
+                    value = nameText,
                     onValueChange = {
-                        state.name.value = it
-                        state.nameBlankError.value = false
-                        state.nameDuplicateError.value = false
+                        nameText = it
+                        nameBlankError = false
+                        nameDuplicateError = false
                     },
                     label = {
                         Text(
-                            text = stringResource(id = R.string.session_name),
+                            text = stringResource(id = R.string.workout_name),
                             fontSize = 16.sp,
                         )
                     },
@@ -91,15 +128,16 @@ fun EditSessionDataSubpageName(
                         focusedBorderColor = MaterialTheme.colorScheme.outline,
                         focusedTextColor = MaterialTheme.colorScheme.onBackground,
                     ),
-                    isError = state.nameBlankError.value || state.nameDuplicateError.value,
+                    isError = nameBlankError || nameDuplicateError,
                     supportingText = {
-                        if (state.nameBlankError.value) {
+                        if (nameBlankError) {
                             Text(text = stringResource(id = R.string.field_required))
-                        } else if (state.nameDuplicateError.value) {
-                            Text(text = stringResource(id = R.string.session_name_duplicate))
+                        } else if (nameDuplicateError) {
+                            Text(text = stringResource(id = R.string.workout_name_duplicate))
                         }
                     },
-                    modifier = Modifier.focusRequester(focusRequester = nameFocusRequester)
+                    modifier = Modifier
+                        .focusRequester(focusRequester = nameFocusRequester)
                 )
             }
 
@@ -112,10 +150,10 @@ fun EditSessionDataSubpageName(
                     .padding(horizontal = 32.dp)
             ) {
                 OutlinedTextField(
-                    minLines = 10,
-                    value = state.description.value,
+                    minLines = 5,
+                    value = descriptionText,
                     onValueChange = {
-                        state.description.value = it
+                        descriptionText = it
                     },
                     label = {
                         Text(
@@ -154,11 +192,29 @@ fun EditSessionDataSubpageName(
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
+                .fillMaxHeight(0.45F)
                 .fillMaxWidth()
                 .padding(top = 12.dp)
         ) {
             Button(
-                onClick = onNext,
+                onClick = {
+                    nameBlankError = nameText.isBlank()
+
+                    if (!nameBlankError) {
+                        scope.launch {
+                            try {
+                                onSubmit(
+                                    EditWorkoutDataSubpageState(
+                                        name = nameText,
+                                        description = descriptionText,
+                                    )
+                                )
+                            } catch (_: SQLiteConstraintException) {
+                                nameDuplicateError = true
+                            }
+                        }
+                    }
+                },
                 shape = RoundedCornerShape(23.dp),
                 colors = ButtonDefaults.buttonColors(
                     contentColor = MaterialTheme.colorScheme.primary,
@@ -174,59 +230,37 @@ fun EditSessionDataSubpageName(
                     horizontalArrangement = Arrangement.Center,
                     modifier = Modifier.fillMaxSize()
                 ) {
-
-                    Icon(
-                        painter = painterResource(id = R.drawable.swipe_left),
-                        contentDescription = stringResource(
-                            id = R.string.next
-                        ),
-                        modifier = Modifier.size(30.dp)
-                    )
-
-                    Spacer(modifier = Modifier.width(8.dp))
-
-                    Text(
-                        text = stringResource(R.string.next),
-                        fontSize = 20.sp
-                    )
-
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowRight,
-                        contentDescription = stringResource(
-                            R.string
-                                .next
-                        ),
-                        modifier = Modifier.size(30.dp)
-                    )
+                    submitButtonContent()
                 }
             }
         }
-
-        Spacer(modifier = Modifier.height(24.dp))
     }
 }
 
 @Preview(
-    group = "Name Page",
+    group = "Edit Workout Data Subpage",
     name = "Dark",
     showBackground = true,
     apiLevel = 29,
     uiMode = Configuration.UI_MODE_NIGHT_YES
 )
 @Preview(
-    group = "Name Page",
+    group = "Edit Workout Data Subpage",
     name = "Light",
     showBackground = true,
     apiLevel = 29,
     uiMode = Configuration.UI_MODE_NIGHT_NO
 )
 @Composable
-fun NamePagePreview() {
+fun EditWorkoutDataSubpagePreview() {
     WorkINTheme {
         Surface(modifier = Modifier.fillMaxSize()) {
-            EditSessionDataSubpageName(
-                onNext = {},
-                state = EditSessionDataSubpageNameState(),
+            EditWorkoutDataSubpage(
+                submitButtonContent = {
+                    Text(text = "Submit Button", fontSize = 20.sp)
+                },
+                onBack = {},
+                onSubmit = {},
             )
         }
     }

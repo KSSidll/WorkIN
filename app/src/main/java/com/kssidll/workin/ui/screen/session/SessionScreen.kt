@@ -13,6 +13,7 @@ import com.kssidll.workin.R
 import com.kssidll.workin.data.data.*
 import com.kssidll.workin.domain.*
 import com.kssidll.workin.ui.component.*
+import com.kssidll.workin.ui.screen.session.component.*
 import com.kssidll.workin.ui.theme.*
 import dev.olshevski.navigation.reimagined.hilt.*
 import kotlinx.coroutines.*

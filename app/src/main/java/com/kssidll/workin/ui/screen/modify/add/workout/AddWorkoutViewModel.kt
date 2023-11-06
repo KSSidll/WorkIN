@@ -1,4 +1,4 @@
-package com.kssidll.workin.ui.screen.addworkout
+package com.kssidll.workin.ui.screen.modify.add.workout
 
 import android.database.sqlite.*
 import androidx.lifecycle.*

@@ -19,10 +19,12 @@ private val bottomPadding: Dp = 8.dp
 fun BottomHomeNavigationBar(
     currentLocation: HomeScreenLocations,
     onLocationChange: (HomeScreenLocations) -> Unit,
+    height: Dp = 65.dp,
 ) {
     NavigationBar(
         containerColor = MaterialTheme.colorScheme.surfaceContainer,
-        modifier = Modifier.height(65.dp)
+        modifier = Modifier
+            .height(height)
     ) {
         HomeScreenLocations.entries.forEach {
             if (it.imageVector != null) {

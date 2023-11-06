@@ -1,10 +1,10 @@
-package com.kssidll.workin.ui.screen.addsession
+package com.kssidll.workin.ui.screen.modify.add.session
 
 import android.database.sqlite.*
 import androidx.lifecycle.*
 import com.kssidll.workin.data.data.*
 import com.kssidll.workin.domain.repository.*
-import com.kssidll.workin.ui.screen.session.component.*
+import com.kssidll.workin.ui.screen.modify.edit.session.*
 import dagger.hilt.android.lifecycle.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*

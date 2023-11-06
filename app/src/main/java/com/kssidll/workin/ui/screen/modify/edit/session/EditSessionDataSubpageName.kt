@@ -1,11 +1,12 @@
-package com.kssidll.workin.ui.component
+package com.kssidll.workin.ui.screen.modify.edit.session
 
 import android.content.res.*
-import android.database.sqlite.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.*
 import androidx.compose.foundation.text.*
 import androidx.compose.foundation.text.selection.*
+import androidx.compose.material.icons.*
+import androidx.compose.material.icons.automirrored.rounded.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
@@ -16,57 +17,20 @@ import androidx.compose.ui.tooling.preview.*
 import androidx.compose.ui.unit.*
 import com.kssidll.workin.R
 import com.kssidll.workin.ui.theme.*
-import kotlinx.coroutines.*
 
-data class EditWorkoutDataSubpageState(
-    var name: String = String(),
-    var description: String = String(),
+data class EditSessionDataSubpageNameState(
+    val name: MutableState<String> = mutableStateOf(String()),
+    val nameBlankError: MutableState<Boolean> = mutableStateOf(false),
+    val nameDuplicateError: MutableState<Boolean> = mutableStateOf(false),
+    val description: MutableState<String> = mutableStateOf(String())
 )
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditWorkoutDataSubpage(
-    onBack: () -> Unit,
-    submitButtonContent: @Composable () -> Unit,
-    onSubmit: suspend (EditWorkoutDataSubpageState) -> Unit,
-    title: String? = null,
-    actions: @Composable RowScope.() -> Unit = {},
-    startState: EditWorkoutDataSubpageState = EditWorkoutDataSubpageState(),
+fun EditSessionDataSubpageName(
+    onNext: () -> Unit,
+    state: EditSessionDataSubpageNameState,
 ) {
-    val scope = rememberCoroutineScope()
-
-    var nameText: String by remember {
-        mutableStateOf(startState.name)
-    }
-    var nameBlankError: Boolean by remember {
-        mutableStateOf(false)
-    }
-    var nameDuplicateError: Boolean by remember {
-        mutableStateOf(false)
-    }
-
-    var descriptionText: String by remember {
-        mutableStateOf(startState.description)
-    }
-
     Column {
-        WorkINTopAppBar(
-            title = {
-                if (title != null) {
-                    Text(
-                        text = title,
-                        style = Typography.titleLarge,
-                    )
-                }
-            },
-            navigationIcon = navigationIcon(
-                type = NavigationIcon.Types.Back,
-                onClick = onBack,
-                contentDescription = stringResource(id = R.string.navigate_back),
-            ),
-            actions = actions,
-        )
-
         Column(
             modifier = Modifier
                 .weight(1F)
@@ -79,10 +43,10 @@ fun EditWorkoutDataSubpage(
             val descriptionFocusRequester = remember { FocusRequester() }
 
             Box(
+                contentAlignment = Alignment.Center,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 32.dp),
-                contentAlignment = Alignment.Center
+                    .padding(horizontal = 32.dp)
             ) {
                 OutlinedTextField(
                     maxLines = 4,
@@ -95,15 +59,15 @@ fun EditWorkoutDataSubpage(
                             descriptionFocusRequester.requestFocus()
                         }
                     ),
-                    value = nameText,
+                    value = state.name.value,
                     onValueChange = {
-                        nameText = it
-                        nameBlankError = false
-                        nameDuplicateError = false
+                        state.name.value = it
+                        state.nameBlankError.value = false
+                        state.nameDuplicateError.value = false
                     },
                     label = {
                         Text(
-                            text = stringResource(id = R.string.workout_name),
+                            text = stringResource(id = R.string.session_name),
                             fontSize = 16.sp,
                         )
                     },
@@ -127,16 +91,15 @@ fun EditWorkoutDataSubpage(
                         focusedBorderColor = MaterialTheme.colorScheme.outline,
                         focusedTextColor = MaterialTheme.colorScheme.onBackground,
                     ),
-                    isError = nameBlankError || nameDuplicateError,
+                    isError = state.nameBlankError.value || state.nameDuplicateError.value,
                     supportingText = {
-                        if (nameBlankError) {
+                        if (state.nameBlankError.value) {
                             Text(text = stringResource(id = R.string.field_required))
-                        } else if (nameDuplicateError) {
-                            Text(text = stringResource(id = R.string.workout_name_duplicate))
+                        } else if (state.nameDuplicateError.value) {
+                            Text(text = stringResource(id = R.string.session_name_duplicate))
                         }
                     },
-                    modifier = Modifier
-                        .focusRequester(focusRequester = nameFocusRequester)
+                    modifier = Modifier.focusRequester(focusRequester = nameFocusRequester)
                 )
             }
 
@@ -149,10 +112,10 @@ fun EditWorkoutDataSubpage(
                     .padding(horizontal = 32.dp)
             ) {
                 OutlinedTextField(
-                    minLines = 5,
-                    value = descriptionText,
+                    minLines = 10,
+                    value = state.description.value,
                     onValueChange = {
-                        descriptionText = it
+                        state.description.value = it
                     },
                     label = {
                         Text(
@@ -191,29 +154,11 @@ fun EditWorkoutDataSubpage(
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
-                .fillMaxHeight(0.45F)
                 .fillMaxWidth()
                 .padding(top = 12.dp)
         ) {
             Button(
-                onClick = {
-                    nameBlankError = nameText.isBlank()
-
-                    if (!nameBlankError) {
-                        scope.launch {
-                            try {
-                                onSubmit(
-                                    EditWorkoutDataSubpageState(
-                                        name = nameText,
-                                        description = descriptionText,
-                                    )
-                                )
-                            } catch (_: SQLiteConstraintException) {
-                                nameDuplicateError = true
-                            }
-                        }
-                    }
-                },
+                onClick = onNext,
                 shape = RoundedCornerShape(23.dp),
                 colors = ButtonDefaults.buttonColors(
                     contentColor = MaterialTheme.colorScheme.primary,
@@ -229,37 +174,59 @@ fun EditWorkoutDataSubpage(
                     horizontalArrangement = Arrangement.Center,
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    submitButtonContent()
+
+                    Icon(
+                        painter = painterResource(id = R.drawable.swipe_left),
+                        contentDescription = stringResource(
+                            id = R.string.next
+                        ),
+                        modifier = Modifier.size(30.dp)
+                    )
+
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    Text(
+                        text = stringResource(R.string.next),
+                        fontSize = 20.sp
+                    )
+
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowRight,
+                        contentDescription = stringResource(
+                            R.string
+                                .next
+                        ),
+                        modifier = Modifier.size(30.dp)
+                    )
                 }
             }
         }
+
+        Spacer(modifier = Modifier.height(24.dp))
     }
 }
 
 @Preview(
-    group = "Edit Workout Data Subpage",
+    group = "Name Page",
     name = "Dark",
     showBackground = true,
     apiLevel = 29,
     uiMode = Configuration.UI_MODE_NIGHT_YES
 )
 @Preview(
-    group = "Edit Workout Data Subpage",
+    group = "Name Page",
     name = "Light",
     showBackground = true,
     apiLevel = 29,
     uiMode = Configuration.UI_MODE_NIGHT_NO
 )
 @Composable
-fun EditWorkoutDataSubpagePreview() {
+fun NamePagePreview() {
     WorkINTheme {
         Surface(modifier = Modifier.fillMaxSize()) {
-            EditWorkoutDataSubpage(
-                submitButtonContent = {
-                    Text(text = "Submit Button", fontSize = 20.sp)
-                },
-                onBack = {},
-                onSubmit = {},
+            EditSessionDataSubpageName(
+                onNext = {},
+                state = EditSessionDataSubpageNameState(),
             )
         }
     }

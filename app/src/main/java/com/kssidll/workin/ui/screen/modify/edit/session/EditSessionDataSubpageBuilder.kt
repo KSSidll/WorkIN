@@ -1,4 +1,4 @@
-package com.kssidll.workin.ui.screen.session.component
+package com.kssidll.workin.ui.screen.modify.edit.session
 
 import android.content.res.*
 import androidx.activity.compose.*

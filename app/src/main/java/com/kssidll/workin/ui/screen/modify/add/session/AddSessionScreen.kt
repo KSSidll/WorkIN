@@ -1,4 +1,4 @@
-package com.kssidll.workin.ui.screen.addsession
+package com.kssidll.workin.ui.screen.modify.add.session
 
 import android.content.res.*
 import androidx.compose.foundation.layout.*
@@ -12,7 +12,7 @@ import androidx.compose.ui.tooling.preview.*
 import androidx.compose.ui.unit.*
 import com.kssidll.workin.R
 import com.kssidll.workin.data.data.*
-import com.kssidll.workin.ui.screen.session.component.*
+import com.kssidll.workin.ui.screen.modify.edit.session.*
 import com.kssidll.workin.ui.theme.*
 import dev.olshevski.navigation.reimagined.hilt.*
 

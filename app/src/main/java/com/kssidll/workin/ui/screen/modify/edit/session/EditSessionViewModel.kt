@@ -1,4 +1,4 @@
-package com.kssidll.workin.ui.screen.editsession
+package com.kssidll.workin.ui.screen.modify.edit.session
 
 import android.database.sqlite.*
 import androidx.lifecycle.*

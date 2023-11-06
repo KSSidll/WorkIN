@@ -1,4 +1,4 @@
-package com.kssidll.workin.ui.screen.session.component
+package com.kssidll.workin.ui.screen.modify.edit.session
 
 import android.content.res.*
 import android.database.sqlite.*
@@ -97,10 +97,7 @@ fun EditSessionDataSubpage(
         topBar = {
             WorkINTopAppBar(
                 title = {
-                    Row(
-                        horizontalArrangement = Arrangement.Center,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
+                    Row {
                         repeat(pagerState.pageCount) { iteration ->
                             val color = if (pagerState.currentPage == iteration) MaterialTheme
                                 .colorScheme.tertiary else MaterialTheme.colorScheme.onSurface

@@ -1,4 +1,4 @@
-package com.kssidll.workin.ui.screen.addworkout
+package com.kssidll.workin.ui.screen.modify.add.workout
 
 import android.content.res.*
 import androidx.compose.foundation.layout.*
@@ -11,7 +11,7 @@ import androidx.compose.ui.res.*
 import androidx.compose.ui.tooling.preview.*
 import androidx.compose.ui.unit.*
 import com.kssidll.workin.R
-import com.kssidll.workin.ui.component.*
+import com.kssidll.workin.ui.screen.modify.edit.workout.*
 import com.kssidll.workin.ui.theme.*
 import dev.olshevski.navigation.reimagined.hilt.*
 

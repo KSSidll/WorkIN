@@ -50,6 +50,14 @@ enum class WeekDays(val encoding: Byte) {
         fun getByEncoding(encoding: Byte) = idMap[encoding]
 
         /**
+         * @return encoding for current day as [Int]
+         */
+        fun currentDayEncoding(): Int = (1).shl(
+            Calendar.getInstance()
+                .get(Calendar.DAY_OF_WEEK) - 1
+        )
+
+        /**
          * @return List of WeekDays encoded within encodedDays.
          * The list has decremental ordering (first day in the list is the last day / day with highest number).
          */

@@ -16,7 +16,6 @@ import com.kssidll.workin.domain.*
 import com.kssidll.workin.ui.component.*
 import com.kssidll.workin.ui.theme.*
 import dev.olshevski.navigation.reimagined.hilt.*
-import java.util.*
 
 @Composable
 fun DashboardRoute(
@@ -39,11 +38,7 @@ fun DashboardScreen(
     onSessionClick: (Long) -> Unit,
     sessions: List<SessionWithFullSessionWorkouts>,
 ) {
-    val currentDayEncoding = (1).shl(
-        Calendar.getInstance()
-            .get(Calendar.DAY_OF_WEEK) - 1
-    )
-
+    val currentDayEncoding = WeekDays.currentDayEncoding()
     val currentDay = WeekDays.getByEncoding(currentDayEncoding.toByte())
     val nextDay = WeekDays.getByEncoding(
         currentDayEncoding.shl(1)
