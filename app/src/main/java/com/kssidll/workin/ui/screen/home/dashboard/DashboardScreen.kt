@@ -22,12 +22,12 @@ fun DashboardRoute(
     onSessionStart: (Long) -> Unit,
     onSessionClick: (Long) -> Unit,
 ) {
-    val dashboardViewModel: DashboardViewModel = hiltViewModel()
+    val viewModel: DashboardViewModel = hiltViewModel()
 
     DashboardScreen(
         onSessionStart = onSessionStart,
         onSessionClick = onSessionClick,
-        sessions = dashboardViewModel.getAllSessionsDescFlow()
+        sessions = viewModel.getAllSessionsDescFlow()
             .collectAsState(emptyList()).value,
     )
 }

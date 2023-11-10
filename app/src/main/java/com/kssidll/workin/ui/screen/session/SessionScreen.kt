@@ -23,14 +23,14 @@ fun SessionRoute(
     sessionId: Long,
     onBack: () -> Unit,
 ) {
-    val sessionViewModel: SessionViewModel = hiltViewModel()
+    val viewModel: SessionViewModel = hiltViewModel()
 
     var isLoading: Boolean by remember {
         mutableStateOf(true)
     }
 
     LaunchedEffect(Unit) {
-        sessionViewModel.fetchSession(sessionId)
+        viewModel.fetchSession(sessionId)
         isLoading = false
     }
 
@@ -41,19 +41,19 @@ fun SessionRoute(
     LaunchedEffect(currentWorkoutId.longValue) {
         if (currentWorkoutId.longValue == 0L) return@LaunchedEffect
 
-        sessionViewModel.getLastWorkoutLogs(currentWorkoutId.longValue)
+        viewModel.getLastWorkoutLogs(currentWorkoutId.longValue)
     }
 
     if (!isLoading) {
         SessionScreen(
-            session = sessionViewModel.session,
+            session = viewModel.session,
             currentWorkoutId = currentWorkoutId,
-            lastWorkoutLogs = sessionViewModel.workoutLogs,
+            lastWorkoutLogs = viewModel.workoutLogs,
             updateSessionWorkout = {
-                sessionViewModel.updateWorkoutSettings(it)
+                viewModel.updateWorkoutSettings(it)
             },
             addLog = {
-                sessionViewModel.addLog(it)
+                viewModel.addLog(it)
             },
             onBack = onBack,
         )

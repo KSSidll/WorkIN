@@ -31,7 +31,7 @@ fun WorkoutsRoute(
     onWorkoutClick: (Long) -> Unit,
     onAddWorkout: () -> Unit,
 ) {
-    val workoutsViewModel: WorkoutsViewModel = hiltViewModel()
+    val viewModel: WorkoutsViewModel = hiltViewModel()
 
     WorkoutsScreen(
         onSessionStart = onSessionStart,
@@ -39,8 +39,8 @@ fun WorkoutsRoute(
         onAddSession = onAddSession,
         onWorkoutClick = onWorkoutClick,
         onAddWorkout = onAddWorkout,
-        workouts = workoutsViewModel.getAllWorkoutsDescFlow(),
-        sessions = workoutsViewModel.getAllSessionsDescFlow(),
+        workouts = viewModel.getAllWorkoutsDescFlow(),
+        sessions = viewModel.getAllSessionsDescFlow(),
     )
 }
 

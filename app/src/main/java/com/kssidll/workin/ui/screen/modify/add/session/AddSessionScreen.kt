@@ -20,15 +20,15 @@ import dev.olshevski.navigation.reimagined.hilt.*
 fun AddSessionRoute(
     onBack: () -> Unit
 ) {
-    val addSessionViewModel: AddSessionViewModel = hiltViewModel()
+    val viewModel: AddSessionViewModel = hiltViewModel()
 
     AddSessionScreen(
         onBack = onBack,
         onSessionAdd = {
-            addSessionViewModel.addSession(it)
+            viewModel.addSession(it)
             onBack()
         },
-        workouts = addSessionViewModel.getWorkouts()
+        workouts = viewModel.getWorkouts()
             .collectAsState(initial = emptyList()).value
     )
 }

@@ -27,25 +27,25 @@ fun EditSessionRoute(
         mutableStateOf(true)
     }
 
-    val editSessionViewModel: EditSessionViewModel = hiltViewModel()
+    val viewModel: EditSessionViewModel = hiltViewModel()
 
     LaunchedEffect(Unit) {
-        editSessionViewModel.fetchSession(sessionId)
+        viewModel.fetchSession(sessionId)
         isLoading = false
     }
 
     if (!isLoading) {
         EditSessionScreen(
-            session = editSessionViewModel.session,
-            userWorkouts = editSessionViewModel.getWorkouts()
+            session = viewModel.session,
+            userWorkouts = viewModel.getWorkouts()
                 .collectAsState(initial = emptyList()).value,
             onBack = onBack,
             onEdit = {
-                editSessionViewModel.updateSession(it)
+                viewModel.updateSession(it)
                 onBack()
             },
             onDelete = {
-                editSessionViewModel.deleteSession()
+                viewModel.deleteSession()
                 onBack()
             },
         )

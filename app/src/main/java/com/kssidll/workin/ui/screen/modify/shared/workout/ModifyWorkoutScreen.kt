@@ -23,6 +23,16 @@ import com.kssidll.workin.data.data.*
 import com.kssidll.workin.ui.component.*
 import com.kssidll.workin.ui.theme.*
 
+/**
+ * @param state state of the component, should be held in a ViewModel
+ * @param onBack function to call when requesting a navigate back action
+ * @param onDelete optional function to call when requesting deletion, should handle warning state through [state] if provided
+ * @param onSubmit function to call when requesting data submission
+ * @param submitButtonText text displayed in the [onSubmit] button
+ * @param submitButtonIcon icon displayed to the left of [submitButtonText] in the [onSubmit] button
+ * @param nameFocusRequester optional [FocusRequester] for name text field
+ * @param descriptionFocusRequester optional [FocusRequester] for description text field
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ModifyWorkoutScreen(
