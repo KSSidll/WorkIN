@@ -10,7 +10,7 @@ class WorkoutRepository(private val workoutDao: WorkoutDao): IWorkoutRepository 
         return workoutDao.getAllDescFlow()
     }
 
-    override suspend fun getById(workoutId: Long): Workout {
+    override suspend fun getById(workoutId: Long): Workout? {
         return workoutDao.getById(workoutId)
     }
 

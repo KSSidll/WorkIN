@@ -10,7 +10,7 @@ interface WorkoutDao {
     fun getAllDescFlow(): Flow<List<Workout>>
 
     @Query("SELECT * FROM workout WHERE id = :workoutId")
-    suspend fun getById(workoutId: Long): Workout
+    suspend fun getById(workoutId: Long): Workout?
 
     @Insert
     suspend fun insert(workout: Workout): Long

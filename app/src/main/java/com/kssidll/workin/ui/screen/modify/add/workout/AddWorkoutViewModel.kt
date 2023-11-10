@@ -2,39 +2,32 @@ package com.kssidll.workin.ui.screen.modify.add.workout
 
 import android.database.sqlite.*
 import androidx.lifecycle.*
-import com.kssidll.workin.data.data.*
 import com.kssidll.workin.domain.repository.*
+import com.kssidll.workin.ui.screen.modify.shared.workout.*
 import dagger.hilt.android.lifecycle.*
 import kotlinx.coroutines.*
 import javax.inject.*
-
-data class AddWorkoutData(
-    val name: String,
-    val description: String,
-)
 
 @HiltViewModel
 class AddWorkoutViewModel @Inject constructor(
     private val workoutRepository: IWorkoutRepository,
 ): ViewModel() {
+    val screenState: ModifyWorkoutScreenState = ModifyWorkoutScreenState()
+
     /**
-     * @return id of the newly inserted workout
-     * @throws SQLiteConstraintException Attempted to insert a duplicate value,
-     * workout name has to be unique
+     * Tries to add item to the repository
+     * @return Id of the newly inserted row, null if operation failed
      */
-    suspend fun addWorkout(workoutData: AddWorkoutData): Long {
+    suspend fun addWorkout() = viewModelScope.async {
+        screenState.attemptedToSubmit.value = true
+        val workout = screenState.validateAndExtractWorkoutOrNull() ?: return@async null
+
         try {
-            return viewModelScope.async {
-                workoutRepository.insert(
-                    workout = Workout(
-                        name = workoutData.name.trim(),
-                        description = workoutData.description.trim()
-                    )
-                )
-            }
-                .await()
+            return@async workoutRepository.insert(workout)
         } catch (e: SQLiteConstraintException) {
-            throw e
+            screenState.nameDuplicateError.value = true
+            return@async null
         }
     }
+        .await()
 }
