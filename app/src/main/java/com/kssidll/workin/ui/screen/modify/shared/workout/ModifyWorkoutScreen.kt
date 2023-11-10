@@ -35,42 +35,53 @@ fun ModifyWorkoutScreen(
     nameFocusRequester: FocusRequester = remember { FocusRequester() },
     descriptionFocusRequester: FocusRequester = remember { FocusRequester() },
 ) {
-    Scaffold(
-        topBar = {
-            WorkINTopAppBar(
-                navigationIcon = navigationIcon(
-                    type = NavigationIcon.Types.Back,
-                    contentDescription = stringResource(id = R.string.navigate_back),
-                    onClick = onBack,
-                ),
-                actions = {
-                    if (onDelete != null) {
-                        IconButton(
-                            onClick = {
-                                onDelete()
-                            }
-                        ) {
-                            Icon(
-                                imageVector = Icons.Rounded.DeleteForever,
-                                contentDescription = stringResource(R.string.delete_workout),
-                                tint = MaterialTheme.colorScheme.error,
-                                modifier = Modifier.size(27.dp),
-                            )
-                        }
-                    }
-                }
+    Box {
+        if (onDelete != null) {
+            DeleteAlertDialog(
+                enabled = state.showDeleteWarning,
+                onDelete = onDelete,
+                warningMessage = stringResource(id = R.string.workout_delete_warning_text),
+                warningConfirmed = state.deleteWarningConfirmed,
             )
         }
-    ) {
-        ModifyWorkoutScreenContent(
-            state = state,
-            onSubmit = onSubmit,
-            submitButtonText = submitButtonText,
-            submitButtonIcon = submitButtonIcon,
-            modifier = Modifier.padding(it),
-            nameFocusRequester = nameFocusRequester,
-            descriptionFocusRequester = descriptionFocusRequester,
-        )
+
+        Scaffold(
+            topBar = {
+                WorkINTopAppBar(
+                    navigationIcon = navigationIcon(
+                        type = NavigationIcon.Types.Back,
+                        contentDescription = stringResource(id = R.string.navigate_back),
+                        onClick = onBack,
+                    ),
+                    actions = {
+                        if (onDelete != null) {
+                            IconButton(
+                                onClick = {
+                                    onDelete()
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Rounded.DeleteForever,
+                                    contentDescription = stringResource(R.string.delete_workout),
+                                    tint = MaterialTheme.colorScheme.error,
+                                    modifier = Modifier.size(27.dp),
+                                )
+                            }
+                        }
+                    }
+                )
+            }
+        ) {
+            ModifyWorkoutScreenContent(
+                state = state,
+                onSubmit = onSubmit,
+                submitButtonText = submitButtonText,
+                submitButtonIcon = submitButtonIcon,
+                modifier = Modifier.padding(it),
+                nameFocusRequester = nameFocusRequester,
+                descriptionFocusRequester = descriptionFocusRequester,
+            )
+        }
     }
 }
 
@@ -166,7 +177,7 @@ private fun ModifyWorkoutScreenContent(
                         .focusRequester(focusRequester = nameFocusRequester)
                 )
 
-                Spacer(modifier = Modifier.height(6.dp))
+                Spacer(modifier = Modifier.height(18.dp))
 
                 OutlinedTextField(
                     enabled = !state.loadingDescription.value,
@@ -251,6 +262,9 @@ data class ModifyWorkoutScreenState(
 
     val loadingName: MutableState<Boolean> = mutableStateOf(false),
     val loadingDescription: MutableState<Boolean> = mutableStateOf(false),
+
+    val showDeleteWarning: MutableState<Boolean> = mutableStateOf(false),
+    val deleteWarningConfirmed: MutableState<Boolean> = mutableStateOf(false),
 )
 
 /**

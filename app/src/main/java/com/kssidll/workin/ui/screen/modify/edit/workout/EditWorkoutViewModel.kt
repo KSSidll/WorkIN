@@ -11,6 +11,7 @@ import javax.inject.*
 @HiltViewModel
 class EditWorkoutViewModel @Inject constructor(
     private val workoutRepository: IWorkoutRepository,
+    private val sessionRepository: ISessionRepository,
 ): ViewModel() {
     val screenState: ModifyWorkoutScreenState = ModifyWorkoutScreenState()
 
@@ -34,14 +35,24 @@ class EditWorkoutViewModel @Inject constructor(
         .await()
 
     /**
-     * Tries to delete workout with provided [workoutId]
+     * Tries to delete workout with provided [workoutId], sets showDeleteWarning flag in state if operation would require deleting foreign constrained data,
+     * state deleteWarningConfirmed flag needs to be set to start foreign constrained data deletion
      * @return `true` when workout gets deleted
      */
     suspend fun deleteWorkout(workoutId: Long) = viewModelScope.async {
+        // return true if no such workout exists
         val workout = workoutRepository.getById(workoutId) ?: return@async true
 
-        workoutRepository.delete(workout)
-        return@async true
+        val sessions = sessionRepository.getByWorkoutId(workoutId)
+
+        if (sessions.isNotEmpty() && !screenState.deleteWarningConfirmed.value) {
+            screenState.showDeleteWarning.value = true
+            return@async false
+        } else {
+            sessionRepository.delete(sessions)
+            workoutRepository.delete(workout)
+            return@async true
+        }
     }
         .await()
 

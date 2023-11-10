@@ -15,6 +15,9 @@ interface SessionDao {
     @Query("SELECT * FROM session WHERE id = :sessionId")
     suspend fun getById(sessionId: Long): SessionWithSessionWorkouts
 
+    @Query("SELECT session.* FROM session INNER JOIN sessionworkout ON session.id = sessionId WHERE workoutId = :workoutId")
+    suspend fun getByWorkoutId(workoutId: Long): List<Session>
+
     @Transaction
     @Query("SELECT * FROM sessionworkout WHERE sessionId = :sessionId")
     suspend fun getFullSessionWorkouts(sessionId: Long): List<FullSessionWorkout>
@@ -42,6 +45,9 @@ interface SessionDao {
 
     @Delete
     suspend fun delete(session: Session)
+
+    @Delete
+    suspend fun delete(sessions: List<Session>)
 
     @Delete
     suspend fun deleteWorkouts(workouts: List<SessionWorkout>)

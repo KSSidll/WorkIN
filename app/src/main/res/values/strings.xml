@@ -68,4 +68,8 @@
     <string name="session_change_workout_reps_on_log_submit">Change the repetition values for this workout</string>
     <string name="navigate_back">Navigate to previous screen</string>
     <string name="stop_session">Stop the session</string>
+    <string name="destructive_action_confirm">Confirm</string>
+    <string name="destructive_action_cancel">Cancel</string>
+    <string name="destructive_action_confirmation_text">I know what I am doing</string>
+    <string name="workout_delete_warning_text">This action will delete all sessions that use this workout</string>
 </resources>

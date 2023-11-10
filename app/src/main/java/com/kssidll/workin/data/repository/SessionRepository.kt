@@ -6,6 +6,10 @@ import com.kssidll.workin.domain.repository.*
 import kotlinx.coroutines.flow.*
 
 class SessionRepository(private val sessionDao: SessionDao): ISessionRepository {
+    override suspend fun getByWorkoutId(workoutId: Long): List<Session> {
+        return sessionDao.getByWorkoutId(workoutId)
+    }
+
     override fun getAllMergedSessionsWithWorkouts(): Flow<List<SessionWithFullSessionWorkouts>> {
         return sessionDao.getAllDescFlow()
             .map { list ->
@@ -55,6 +59,10 @@ class SessionRepository(private val sessionDao: SessionDao): ISessionRepository 
 
     override suspend fun delete(session: Session) {
         sessionDao.delete(session)
+    }
+
+    override suspend fun delete(sessions: List<Session>) {
+        sessionDao.delete(sessions)
     }
 }
 

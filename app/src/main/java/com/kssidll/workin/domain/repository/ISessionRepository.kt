@@ -4,6 +4,7 @@ import com.kssidll.workin.data.data.*
 import kotlinx.coroutines.flow.*
 
 interface ISessionRepository {
+    suspend fun getByWorkoutId(workoutId: Long): List<Session>
     fun getAllMergedSessionsWithWorkouts(): Flow<List<SessionWithFullSessionWorkouts>>
     suspend fun getMergedSessionWithWorkoutsById(sessionId: Long): SessionWithFullSessionWorkouts
     suspend fun insert(session: Session): Long
@@ -18,4 +19,5 @@ interface ISessionRepository {
     suspend fun updateSessionWorkout(sessionWorkout: SessionWorkout)
     suspend fun deleteWorkouts(workouts: List<SessionWorkout>)
     suspend fun delete(session: Session)
+    suspend fun delete(sessions: List<Session>)
 }
