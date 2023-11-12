@@ -6,19 +6,18 @@ import kotlinx.coroutines.flow.*
 
 @Dao
 interface SessionDao {
-
-    @Transaction
     @Query("SELECT * FROM session ORDER BY id DESC")
     fun getAllDescFlow(): Flow<List<SessionWithSessionWorkouts>>
 
-    @Transaction
     @Query("SELECT * FROM session WHERE id = :sessionId")
-    suspend fun getById(sessionId: Long): SessionWithSessionWorkouts
+    suspend fun getById(sessionId: Long): Session?
+
+    @Query("SELECT * FROM session WHERE id = :sessionId")
+    suspend fun getWithSessionWorkoutsById(sessionId: Long): SessionWithSessionWorkouts?
 
     @Query("SELECT session.* FROM session INNER JOIN sessionworkout ON session.id = sessionId WHERE workoutId = :workoutId")
     suspend fun getByWorkoutId(workoutId: Long): List<Session>
 
-    @Transaction
     @Query("SELECT * FROM sessionworkout WHERE sessionId = :sessionId")
     suspend fun getFullSessionWorkouts(sessionId: Long): List<FullSessionWorkout>
 
@@ -27,6 +26,9 @@ interface SessionDao {
         workoutId: Long,
         amount: Int
     ): List<SessionWorkoutLog>
+
+    @Query("SELECT * FROM sessionworkout WHERE sessionId = :sessionId")
+    suspend fun getSessionWorkoutsBySessionId(sessionId: Long): List<SessionWorkout>
 
     @Insert
     suspend fun insert(session: Session): Long

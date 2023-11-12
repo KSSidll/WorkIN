@@ -1,9 +1,11 @@
 package com.kssidll.workin.ui.screen.modify.edit.session
 
 import android.database.sqlite.*
+import androidx.compose.runtime.*
 import androidx.lifecycle.*
 import com.kssidll.workin.data.data.*
 import com.kssidll.workin.domain.repository.*
+import com.kssidll.workin.ui.screen.modify.shared.session.*
 import dagger.hilt.android.lifecycle.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
@@ -14,51 +16,97 @@ class EditSessionViewModel @Inject constructor(
     private val sessionRepository: ISessionRepository,
     private val workoutRepository: IWorkoutRepository,
 ): ViewModel() {
-    lateinit var session: SessionWithFullSessionWorkouts
-    private lateinit var _originalSession: SessionWithFullSessionWorkouts
-
-    suspend fun fetchSession(sessionId: Long) {
-        session = sessionRepository.getMergedSessionWithWorkoutsById(sessionId)
-        _originalSession = session.copy()
-    }
+    val screenState: ModifySessionScreenState = ModifySessionScreenState()
 
     /**
-     * @throws SQLiteConstraintException Attempted to insert a duplicate value,
-     * session name has to be unique
+     * Tries to update session with provided [sessionId] with current screen state data
+     * @return `true` if no repository constraint is violated, `false` otherwise
      */
-    suspend fun updateSession(session: SessionWithFullSessionWorkouts) {
+    suspend fun updateSession(sessionId: Long) = viewModelScope.async {
+        screenState.attemptedToSubmit.value = true
+        val session = screenState.validateAndExtractSessionOrNull(sessionId) ?: return@async true
+
         try {
-            viewModelScope.async {
-                sessionRepository.update(session.session)
+            sessionRepository.deleteWorkouts(
+                sessionRepository.getSessionWorkoutsBySessionId(
+                    sessionId
+                )
+            )
 
-                sessionRepository.deleteWorkouts(_originalSession.workouts.map {
-                    it.sessionWorkout
-                })
+            sessionRepository.update(session.session)
 
-                sessionRepository.insertWorkouts(session.workouts.mapIndexed { index, it ->
-                    SessionWorkout(
-                        sessionId = it.sessionWorkout.sessionId,
-                        workoutId = it.workout.id,
-                        repetitionCount = it.sessionWorkout.repetitionCount,
-                        repetitionType = it.sessionWorkout.repetitionType,
-                        weight = it.sessionWorkout.weight,
-                        weightType = it.sessionWorkout.weightType,
-                        order = index,
-                        restTime = it.sessionWorkout.restTime,
-                    )
-                })
-            }
-                .await()
+            sessionRepository.insertWorkouts(session.workouts.map {
+                it.sessionWorkout
+            })
+
         } catch (e: SQLiteConstraintException) {
-            throw e
+            screenState.nameDuplicateError.value = true
+            return@async false
         }
-    }
 
-    fun deleteSession() = viewModelScope.launch {
-        sessionRepository.delete(session.session)
+        return@async true
     }
+        .await()
 
-    fun getWorkouts(): Flow<List<Workout>> {
+    /**
+     * Tries to delete session with provided [sessionId]
+     * @return `true` when session gets deleted
+     */
+    suspend fun deleteSession(sessionId: Long) = viewModelScope.async {
+        // return true if no such session exists
+        val session = sessionRepository.getById(sessionId) ?: return@async true
+
+        sessionRepository.deleteWorkouts(sessionRepository.getSessionWorkoutsBySessionId(sessionId))
+        sessionRepository.delete(session)
+        return@async true
+    }
+        .await()
+
+    /**
+     * Updates data in the screen state
+     * @return true if provided [sessionId] wos valid, false otherwise
+     */
+    suspend fun updateState(sessionId: Long) = viewModelScope.async {
+        screenState.loadingName.value = true
+        screenState.loadingDescription.value = true
+        screenState.loadingDays.value = true
+        screenState.loadingWorkouts.value = true
+
+        val dispose = {
+            screenState.loadingName.value = false
+            screenState.loadingDescription.value = false
+            screenState.loadingDays.value = false
+            screenState.loadingWorkouts.value = false
+        }
+
+        val session = sessionRepository.getWithSessionWorkoutsById(sessionId)
+        if (session == null) {
+            dispose()
+            return@async false
+        }
+
+        screenState.name.value = session.session.name
+        screenState.description.value = session.session.description
+        screenState.encodedDays.value = session.session.days
+        screenState.workouts.clear()
+        screenState.workouts.addAll(session.workouts.mapIndexed { index, it ->
+            SessionBuilderWorkout(
+                id = index.toLong(),
+                workout = mutableStateOf(workoutRepository.getById(it.workoutId)),
+                repetitionCount = mutableIntStateOf(it.repetitionCount),
+                repetitionType = mutableStateOf(RepetitionTypes.getById(it.repetitionType)!!),
+                weight = mutableFloatStateOf(it.weight),
+                weightType = mutableStateOf(WeightTypes.getById(it.weightType)!!),
+                postRestTime = mutableIntStateOf(it.restTime),
+            )
+        })
+
+        dispose()
+        return@async true
+    }
+        .await()
+
+    fun allWorkouts(): Flow<List<Workout>> {
         return workoutRepository.getAllDescFlow()
     }
 }

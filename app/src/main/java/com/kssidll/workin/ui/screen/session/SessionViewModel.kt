@@ -19,7 +19,7 @@ class SessionViewModel @Inject constructor(
     var workoutLogs: SnapshotStateList<SessionWorkoutLog> = mutableStateListOf()
 
     suspend fun fetchSession(sessionId: Long) {
-        session = sessionRepository.getMergedSessionWithWorkoutsById(sessionId)
+        session = sessionRepository.getMergedSessionWithWorkoutsById(sessionId)!!
     }
 
     fun updateWorkoutSettings(sessionWorkout: SessionWorkout) = viewModelScope.launch {

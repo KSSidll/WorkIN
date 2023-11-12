@@ -5,64 +5,80 @@ import com.kssidll.workin.data.data.*
 import com.kssidll.workin.domain.repository.*
 import kotlinx.coroutines.flow.*
 
-class SessionRepository(private val sessionDao: SessionDao): ISessionRepository {
+class SessionRepository(private val dao: SessionDao): ISessionRepository {
+    override fun getAllDescFlow(): Flow<List<SessionWithSessionWorkouts>> {
+        return dao.getAllDescFlow()
+    }
+
+    override suspend fun getById(sessionId: Long): Session? {
+        return dao.getById(sessionId)
+    }
+
+    override suspend fun getWithSessionWorkoutsById(sessionId: Long): SessionWithSessionWorkouts? {
+        return dao.getWithSessionWorkoutsById(sessionId)
+    }
+
     override suspend fun getByWorkoutId(workoutId: Long): List<Session> {
-        return sessionDao.getByWorkoutId(workoutId)
+        return dao.getByWorkoutId(workoutId)
     }
 
     override fun getAllMergedSessionsWithWorkouts(): Flow<List<SessionWithFullSessionWorkouts>> {
-        return sessionDao.getAllDescFlow()
+        return dao.getAllDescFlow()
             .map { list ->
                 list.map {
-                    it.merge(sessionDao.getFullSessionWorkouts(it.session.id))
+                    it.merge(dao.getFullSessionWorkouts(it.session.id))
                 }
             }
     }
 
-    override suspend fun getMergedSessionWithWorkoutsById(sessionId: Long): SessionWithFullSessionWorkouts {
-        return sessionDao.getById(sessionId)
-            .merge(
-                sessionDao.getFullSessionWorkouts(sessionId)
-            )
+    override suspend fun getMergedSessionWithWorkoutsById(sessionId: Long): SessionWithFullSessionWorkouts? {
+        val session = dao.getWithSessionWorkoutsById(sessionId) ?: return null
+        return session.merge(
+            dao.getFullSessionWorkouts(sessionId)
+        )
     }
 
     override suspend fun insert(session: Session): Long {
-        return sessionDao.insert(session)
+        return dao.insert(session)
     }
 
     override suspend fun insertWorkouts(workouts: List<SessionWorkout>): List<Long> {
-        return sessionDao.insertWorkouts(workouts)
+        return dao.insertWorkouts(workouts)
     }
 
     override suspend fun insertSessionLog(log: SessionWorkoutLog): Long {
-        return sessionDao.insertSessionWorkoutLog(log)
+        return dao.insertSessionWorkoutLog(log)
     }
 
     override suspend fun getLastWorkoutLogs(
         workoutId: Long,
         amount: Int
     ): List<SessionWorkoutLog> {
-        return sessionDao.getLastWorkoutLogs(workoutId, amount)
+        return dao.getLastWorkoutLogs(workoutId, amount)
+    }
+
+    override suspend fun getSessionWorkoutsBySessionId(sessionId: Long): List<SessionWorkout> {
+        return dao.getSessionWorkoutsBySessionId(sessionId)
     }
 
     override suspend fun update(session: Session) {
-        sessionDao.update(session)
+        dao.update(session)
     }
 
     override suspend fun updateSessionWorkout(sessionWorkout: SessionWorkout) {
-        sessionDao.updateSessionWorkout(sessionWorkout)
+        dao.updateSessionWorkout(sessionWorkout)
     }
 
     override suspend fun deleteWorkouts(workouts: List<SessionWorkout>) {
-        sessionDao.deleteWorkouts(workouts)
+        dao.deleteWorkouts(workouts)
     }
 
     override suspend fun delete(session: Session) {
-        sessionDao.delete(session)
+        dao.delete(session)
     }
 
     override suspend fun delete(sessions: List<Session>) {
-        sessionDao.delete(sessions)
+        dao.delete(sessions)
     }
 }
 

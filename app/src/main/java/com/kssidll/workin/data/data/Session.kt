@@ -47,7 +47,7 @@ data class Session(
 )
 data class SessionWorkout(
     @PrimaryKey(autoGenerate = true) val id: Long,
-    @ColumnInfo(index = true) val sessionId: Long,
+    @ColumnInfo(index = true) var sessionId: Long,
     @ColumnInfo(index = true) var workoutId: Long,
     var repetitionCount: Int,
     var repetitionType: Int,
@@ -60,9 +60,9 @@ data class SessionWorkout(
         sessionId: Long,
         workoutId: Long,
         repetitionCount: Int,
-        repetitionType: Int,
+        repetitionType: RepetitionTypes,
         weight: Float,
-        weightType: Int,
+        weightType: WeightTypes,
         order: Int,
         restTime: Int,
     ): this(
@@ -70,9 +70,9 @@ data class SessionWorkout(
         sessionId = sessionId,
         workoutId = workoutId,
         repetitionCount = repetitionCount,
-        repetitionType = repetitionType,
+        repetitionType = repetitionType.id,
         weight = weight,
-        weightType = weightType,
+        weightType = weightType.id,
         order = order,
         restTime = restTime,
     )
@@ -101,20 +101,19 @@ data class SessionWorkoutLog(
     constructor(
         workoutId: Long,
         repetitionCount: Int,
-        repetitionType: Int,
+        repetitionType: RepetitionTypes,
         weight: Float,
-        weightType: Int
+        weightType: WeightTypes
     ): this(
         id = 0,
         workoutId = workoutId,
         repetitionCount = repetitionCount,
-        repetitionType = repetitionType,
+        repetitionType = repetitionType.id,
         weight = weight,
-        weightType = weightType,
+        weightType = weightType.id,
         datetime = Calendar.getInstance().timeInMillis,
     )
 }
-
 
 /**
  * SessionWorkout with the workout itself instead of just the id

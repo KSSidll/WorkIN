@@ -6,6 +6,9 @@ import kotlinx.coroutines.flow.*
 
 @Dao
 interface WorkoutDao {
+    @Query("SELECT * FROM workout")
+    fun getAll(): List<Workout>
+
     @Query("SELECT * FROM workout ORDER BY id DESC")
     fun getAllDescFlow(): Flow<List<Workout>>
 

@@ -105,9 +105,9 @@ fun SessionScreen(
                             SessionWorkoutLog(
                                 workoutId = session.workouts[page.div(2)].workout.id,
                                 repetitionCount = it.repetitionCount,
-                                repetitionType = it.repetitionType.value.id,
+                                repetitionType = it.repetitionType.value,
                                 weight = it.weight,
-                                weightType = it.weightType.value.id,
+                                weightType = it.weightType.value,
                             )
                         )
 
@@ -208,9 +208,9 @@ fun SessionScreenPreview() {
                                 sessionId = 0,
                                 workoutId = 0,
                                 repetitionCount = 0,
-                                repetitionType = RepetitionTypes.Repetitions.id,
+                                repetitionType = RepetitionTypes.Repetitions,
                                 weight = 0F,
-                                weightType = WeightTypes.KGBodyMass.id,
+                                weightType = WeightTypes.KGBodyMass,
                                 order = 0,
                                 restTime = 0,
                             ),
@@ -224,9 +224,9 @@ fun SessionScreenPreview() {
                                 sessionId = 0,
                                 workoutId = 0,
                                 repetitionCount = 0,
-                                repetitionType = RepetitionTypes.RiR.id,
+                                repetitionType = RepetitionTypes.RiR,
                                 weight = 0F,
-                                weightType = WeightTypes.BodyMass.id,
+                                weightType = WeightTypes.BodyMass,
                                 order = 0,
                                 restTime = 0,
                             ),

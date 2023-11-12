@@ -4,7 +4,7 @@ import android.database.sqlite.*
 import androidx.lifecycle.*
 import com.kssidll.workin.data.data.*
 import com.kssidll.workin.domain.repository.*
-import com.kssidll.workin.ui.screen.modify.edit.session.*
+import com.kssidll.workin.ui.screen.modify.shared.session.*
 import dagger.hilt.android.lifecycle.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
@@ -15,43 +15,35 @@ class AddSessionViewModel @Inject constructor(
     private val sessionRepository: ISessionRepository,
     private val workoutRepository: IWorkoutRepository
 ): ViewModel() {
+    val screenState: ModifySessionScreenState = ModifySessionScreenState()
+
     /**
-     * @throws SQLiteConstraintException Attempted to insert a duplicate value,
-     * session name has to be unique
+     * Tries to add session with current screen state data
+     * @return `true` if no repository constraint is violated, `false` otherwise
      */
-    suspend fun addSession(sessionData: EditSessionDataSubpageState) {
+    suspend fun addSession() = viewModelScope.async {
+        screenState.attemptedToSubmit.value = true
+        val session = screenState.validateAndExtractSessionOrNull() ?: return@async true
+
         try {
-            viewModelScope.async {
-                val sessionId = sessionRepository.insert(
-                    session = Session(
-                        name = sessionData.name.trim(),
-                        description = sessionData.description.trim(),
-                        days = sessionData.days,
-                    )
-                )
+            val newId = sessionRepository.insert(session.session)
 
-                sessionRepository.insertWorkouts(
-                    sessionData.workouts.mapIndexed { index, it ->
-                        SessionWorkout(
-                            sessionId = sessionId,
-                            workoutId = it.workoutId,
-                            repetitionCount = it.repetitionCount.value,
-                            repetitionType = it.repetitionType.value.id,
-                            weight = it.weight.value,
-                            weightType = it.weightType.value.id,
-                            order = index,
-                            restTime = it.postRestTime.value,
-                        )
-                    }
-                )
-            }
-                .await()
+            sessionRepository.insertWorkouts(session.workouts.map {
+                it.sessionWorkout.apply {
+                    sessionId = newId
+                }
+            })
+
         } catch (e: SQLiteConstraintException) {
-            throw e
+            screenState.nameDuplicateError.value = true
+            return@async false
         }
-    }
 
-    fun getWorkouts(): Flow<List<Workout>> {
+        return@async true
+    }
+        .await()
+
+    fun allWorkouts(): Flow<List<Workout>> {
         return workoutRepository.getAllDescFlow()
     }
 }

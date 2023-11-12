@@ -5,24 +5,28 @@ import com.kssidll.workin.data.data.*
 import com.kssidll.workin.domain.repository.*
 import kotlinx.coroutines.flow.*
 
-class WorkoutRepository(private val workoutDao: WorkoutDao): IWorkoutRepository {
+class WorkoutRepository(private val dao: WorkoutDao): IWorkoutRepository {
+    override fun getAll(): List<Workout> {
+        return dao.getAll()
+    }
+
     override fun getAllDescFlow(): Flow<List<Workout>> {
-        return workoutDao.getAllDescFlow()
+        return dao.getAllDescFlow()
     }
 
     override suspend fun getById(workoutId: Long): Workout? {
-        return workoutDao.getById(workoutId)
+        return dao.getById(workoutId)
     }
 
     override suspend fun insert(workout: Workout): Long {
-        return workoutDao.insert(workout)
+        return dao.insert(workout)
     }
 
     override suspend fun update(workout: Workout) {
-        workoutDao.update(workout)
+        dao.update(workout)
     }
 
     override suspend fun delete(workout: Workout) {
-        workoutDao.delete(workout)
+        dao.delete(workout)
     }
 }

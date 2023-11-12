@@ -7,11 +7,13 @@ import java.util.*
 
 /**
  * @param encoding: id used to encode this in the datobase, has to be unique,
- * every value has to be bit shifted compared to previous highest value, and can never be changed,
- * we could use the ordinal, but i think having that set explicitly is less dangerous
- * because it won't be accidentally sorted
  */
 enum class WeekDays(val encoding: Byte) {
+    /**
+     * every [encoding] value has to be bit shifted compared to previous highest value, and can never be changed,
+     * we could use the ordinal, but i think having that set explicitly is less dangerous
+     * because it won't be accidentally sorted
+     */
     Sunday(
         1.shl(0)
             .toByte()
