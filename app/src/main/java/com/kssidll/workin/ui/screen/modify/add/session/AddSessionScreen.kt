@@ -28,7 +28,7 @@ fun AddSessionRoute(
         },
         submitButtonText = stringResource(id = R.string.confirm_add_session_text),
         submitButtonIcon = Icons.Default.Check,
-        userWorkouts = viewModel.allWorkouts()
+        allWorkouts = viewModel.allWorkouts()
             .collectAsState(initial = emptyList()).value,
     )
 }

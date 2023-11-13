@@ -51,10 +51,10 @@ fun SessionWorkoutPage(
     val scope = rememberCoroutineScope()
     val state = remember {
         SessionWorkoutPageState(
-            repetitionCount = workout.sessionWorkout.repetitionCount,
-            repetitionType = mutableStateOf(RepetitionTypes.getById(workout.sessionWorkout.repetitionType)!!),
-            weight = workout.sessionWorkout.weight,
-            weightType = mutableStateOf(WeightTypes.getById(workout.sessionWorkout.weightType)!!),
+            repetitionCount = workout.repetitionCount,
+            repetitionType = mutableStateOf(RepetitionTypes.getById(workout.repetitionType)!!),
+            weight = workout.weight,
+            weightType = mutableStateOf(WeightTypes.getById(workout.weightType)!!),
         )
     }
 
@@ -123,10 +123,10 @@ fun SessionWorkoutPage(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 WorkoutStatsItem(
-                    repetitionCount = workout.sessionWorkout.repetitionCount.toString(),
-                    repetitionType = RepetitionTypes.getById(workout.sessionWorkout.repetitionType)!!,
-                    weight = workout.sessionWorkout.weight.toString(),
-                    weightType = WeightTypes.getById(workout.sessionWorkout.weightType)!!,
+                    repetitionCount = workout.repetitionCount.toString(),
+                    repetitionType = RepetitionTypes.getById(workout.repetitionType)!!,
+                    weight = workout.weight.toString(),
+                    weightType = WeightTypes.getById(workout.weightType)!!,
                 )
             }
         }
@@ -647,20 +647,17 @@ fun SessionWorkoutPagePreview() {
         Surface(modifier = Modifier.fillMaxSize()) {
             SessionWorkoutPage(
                 workout = FullSessionWorkout(
-                    sessionWorkout = SessionWorkout(
-                        sessionId = 0,
-                        workoutId = 0,
-                        repetitionCount = 0,
-                        repetitionType = RepetitionTypes.RiR,
-                        weight = 0F,
-                        weightType = WeightTypes.KGBodyMass,
-                        order = 0,
-                        restTime = 0,
-                    ),
+                    sessionId = 0,
                     workout = Workout(
                         name = "test workout name 2",
                         description = "test workout description 2"
-                    )
+                    ),
+                    repetitionCount = 0,
+                    repetitionType = RepetitionTypes.RiR,
+                    weight = 0F,
+                    weightType = WeightTypes.KGBodyMass,
+                    order = 0,
+                    restTime = 0,
                 ),
                 lastWorkoutLogs = listOf(
                     SessionWorkoutLog(

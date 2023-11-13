@@ -16,9 +16,9 @@ import java.util.*
 )
 data class Session(
     @PrimaryKey(autoGenerate = true) val id: Long,
-    var name: String,
-    var description: String,
-    var days: Byte,
+    val name: String,
+    val description: String,
+    val days: Byte,
 ) {
     constructor(
         name: String,
@@ -47,15 +47,36 @@ data class Session(
 )
 data class SessionWorkout(
     @PrimaryKey(autoGenerate = true) val id: Long,
-    @ColumnInfo(index = true) var sessionId: Long,
-    @ColumnInfo(index = true) var workoutId: Long,
-    var repetitionCount: Int,
-    var repetitionType: Int,
-    var weight: Float,
-    var weightType: Int,
-    var order: Int,
-    var restTime: Int,
+    @ColumnInfo(index = true) val sessionId: Long,
+    @ColumnInfo(index = true) val workoutId: Long,
+    val repetitionCount: Int,
+    val repetitionType: Int,
+    val weight: Float,
+    val weightType: Int,
+    val order: Int,
+    val restTime: Int,
 ) {
+    constructor(
+        sessionId: Long,
+        workoutId: Long,
+        repetitionCount: Int,
+        repetitionType: Int,
+        weight: Float,
+        weightType: Int,
+        order: Int,
+        restTime: Int,
+    ): this(
+        id = 0,
+        sessionId = sessionId,
+        workoutId = workoutId,
+        repetitionCount = repetitionCount,
+        repetitionType = repetitionType,
+        weight = weight,
+        weightType = weightType,
+        order = order,
+        restTime = restTime,
+    )
+
     constructor(
         sessionId: Long,
         workoutId: Long,
@@ -66,7 +87,6 @@ data class SessionWorkout(
         order: Int,
         restTime: Int,
     ): this(
-        id = 0,
         sessionId = sessionId,
         workoutId = workoutId,
         repetitionCount = repetitionCount,
@@ -92,11 +112,11 @@ data class SessionWorkout(
 data class SessionWorkoutLog(
     @PrimaryKey(autoGenerate = true) val id: Long,
     @ColumnInfo(index = true) val workoutId: Long,
-    var repetitionCount: Int,
-    var repetitionType: Int,
-    var weight: Float,
-    var weightType: Int,
-    var datetime: Long,
+    val repetitionCount: Int,
+    val repetitionType: Int,
+    val weight: Float,
+    val weightType: Int,
+    val datetime: Long,
 ) {
     constructor(
         workoutId: Long,
@@ -119,44 +139,42 @@ data class SessionWorkoutLog(
  * SessionWorkout with the workout itself instead of just the id
  */
 data class FullSessionWorkout(
-    @Embedded val sessionWorkout: SessionWorkout,
-    @Relation(
-        parentColumn = "workoutId",
-        entityColumn = "id",
-    ) val workout: Workout
-)
-
-data class SessionWithSessionWorkouts(
-    @Embedded val session: Session,
-    @Relation(
-        parentColumn = "id",
-        entityColumn = "sessionId",
-    ) val workouts: List<SessionWorkout>
-)
-
-data class SessionWithFullSessionWorkouts(
-    val session: Session,
-    var workouts: List<FullSessionWorkout>
-)
-
-/**
- * Assumes that the FullSessionWorkout list contains the same sessionWorkouts as the SessionWithSessionWorkouts
- */
-// This is very not great, but no idea how to do that normally, and for some reason Room doesn't support complex nested structures AFAIK
-fun SessionWithSessionWorkouts.merge(fullSessionWorkouts: List<FullSessionWorkout>): SessionWithFullSessionWorkouts {
-    return SessionWithFullSessionWorkouts(
-        session = this.session,
-        workouts = this.workouts.map { sessionWorkout ->
-            FullSessionWorkout(
-                sessionWorkout = sessionWorkout,
-                workout = fullSessionWorkouts.find {
-                    sessionWorkout == it.sessionWorkout
-                }!!.workout
-            )
-        }
-            .sortedBy { it.sessionWorkout.order }
+    val id: Long,
+    val sessionId: Long,
+    val workout: Workout,
+    var repetitionCount: Int,
+    var repetitionType: Int,
+    var weight: Float,
+    var weightType: Int,
+    val order: Int,
+    var restTime: Int,
+) {
+    constructor(
+        sessionId: Long,
+        workout: Workout,
+        repetitionCount: Int,
+        repetitionType: RepetitionTypes,
+        weight: Float,
+        weightType: WeightTypes,
+        order: Int,
+        restTime: Int,
+    ): this(
+        id = 0,
+        sessionId = sessionId,
+        workout = workout,
+        repetitionCount = repetitionCount,
+        repetitionType = repetitionType.id,
+        weight = weight,
+        weightType = weightType.id,
+        order = order,
+        restTime = restTime,
     )
 }
+
+data class SessionWithWorkouts(
+    val session: Session,
+    val workouts: List<FullSessionWorkout>
+)
 
 /**
  * @param id: id used to encode this in the datobase, has to be unique, and can never be changed,

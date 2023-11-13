@@ -27,7 +27,7 @@ fun DashboardRoute(
     DashboardScreen(
         onSessionStart = onSessionStart,
         onSessionClick = onSessionClick,
-        sessions = viewModel.getAllSessionsDescFlow()
+        sessions = viewModel.allSessionsWithWorkoutsFlow()
             .collectAsState(emptyList()).value,
     )
 }
@@ -36,7 +36,7 @@ fun DashboardRoute(
 fun DashboardScreen(
     onSessionStart: (Long) -> Unit,
     onSessionClick: (Long) -> Unit,
-    sessions: List<SessionWithFullSessionWorkouts>,
+    sessions: List<SessionWithWorkouts>,
 ) {
     val currentDayEncoding = WeekDays.currentDayEncoding()
     val currentDay = WeekDays.getByEncoding(currentDayEncoding.toByte())
@@ -45,8 +45,8 @@ fun DashboardScreen(
             .toByte()
     )
 
-    val sessionsToday = mutableListOf<SessionWithFullSessionWorkouts>()
-    val sessionsTomorrow = mutableListOf<SessionWithFullSessionWorkouts>()
+    val sessionsToday = mutableListOf<SessionWithWorkouts>()
+    val sessionsTomorrow = mutableListOf<SessionWithWorkouts>()
 
     sessions.forEach {
         // requires incremental order of days to avoid duplicates

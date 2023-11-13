@@ -11,7 +11,7 @@ import javax.inject.*
 class DashboardViewModel @Inject constructor(
     private val sessionRepository: ISessionRepository,
 ): ViewModel() {
-    fun getAllSessionsDescFlow(): Flow<List<SessionWithFullSessionWorkouts>> {
-        return sessionRepository.getAllMergedSessionsWithWorkouts()
+    fun allSessionsWithWorkoutsFlow(): Flow<List<SessionWithWorkouts>> {
+        return sessionRepository.allSessionsWithWorkoutsFlow()
     }
 }

@@ -40,7 +40,7 @@ fun EditSessionRoute(
         },
         submitButtonText = stringResource(id = R.string.confirm_edit_session_text),
         submitButtonIcon = Icons.Default.Edit,
-        userWorkouts = viewModel.allWorkouts()
+        allWorkouts = viewModel.allWorkoutsFlow()
             .collectAsState(initial = emptyList()).value,
     )
 }

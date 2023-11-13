@@ -6,27 +6,35 @@ import com.kssidll.workin.domain.repository.*
 import kotlinx.coroutines.flow.*
 
 class WorkoutRepository(private val dao: WorkoutDao): IWorkoutRepository {
-    override fun getAll(): List<Workout> {
-        return dao.getAll()
+    override suspend fun workoutById(workoutId: Long): Workout? {
+        return dao.workoutById(workoutId)
     }
 
-    override fun getAllDescFlow(): Flow<List<Workout>> {
-        return dao.getAllDescFlow()
+    override suspend fun allWorkouts(): List<Workout> {
+        return dao.allWorkouts()
     }
 
-    override suspend fun getById(workoutId: Long): Workout? {
-        return dao.getById(workoutId)
+    override fun allWorkoutsFlow(): Flow<List<Workout>> {
+        return dao.allWorkoutsFlow()
     }
 
-    override suspend fun insert(workout: Workout): Long {
+    override suspend fun allWorkoutsByNewestFirst(): List<Workout> {
+        return dao.allWorkoutsByNewestFirst()
+    }
+
+    override fun allWorkoutsByNewestFirstFlow(): Flow<List<Workout>> {
+        return dao.allWorkoutsByNewestFirstFlow()
+    }
+
+    override suspend fun insertWorkout(workout: Workout): Long {
         return dao.insert(workout)
     }
 
-    override suspend fun update(workout: Workout) {
-        dao.update(workout)
+    override suspend fun updateWorkout(workout: Workout) {
+        return dao.update(workout)
     }
 
-    override suspend fun delete(workout: Workout) {
-        dao.delete(workout)
+    override suspend fun deleteWorkout(workout: Workout) {
+        return dao.delete(workout)
     }
 }

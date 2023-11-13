@@ -12,8 +12,8 @@ import androidx.room.*
 )
 data class Workout(
     @PrimaryKey(autoGenerate = true) val id: Long,
-    var name: String,
-    var description: String,
+    val name: String,
+    val description: String,
 ) {
     constructor(
         name: String,

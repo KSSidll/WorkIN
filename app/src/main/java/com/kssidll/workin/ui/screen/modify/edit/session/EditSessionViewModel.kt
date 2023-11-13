@@ -27,16 +27,25 @@ class EditSessionViewModel @Inject constructor(
         val session = screenState.validateAndExtractSessionOrNull(sessionId) ?: return@async true
 
         try {
-            sessionRepository.deleteWorkouts(
-                sessionRepository.getSessionWorkoutsBySessionId(
+            sessionRepository.deleteSessionWorkout(
+                sessionRepository.allSessionWorkoutsBySessionId(
                     sessionId
                 )
             )
 
-            sessionRepository.update(session.session)
+            sessionRepository.updateSession(session.session)
 
-            sessionRepository.insertWorkouts(session.workouts.map {
-                it.sessionWorkout
+            sessionRepository.insertSessionWorkout(session.workouts.map {
+                SessionWorkout(
+                    sessionId = sessionId,
+                    workoutId = it.workout.id,
+                    repetitionCount = it.repetitionCount,
+                    repetitionType = it.repetitionType,
+                    weight = it.weight,
+                    weightType = it.weightType,
+                    order = it.order,
+                    restTime = it.restTime,
+                )
             })
 
         } catch (e: SQLiteConstraintException) {
@@ -54,10 +63,14 @@ class EditSessionViewModel @Inject constructor(
      */
     suspend fun deleteSession(sessionId: Long) = viewModelScope.async {
         // return true if no such session exists
-        val session = sessionRepository.getById(sessionId) ?: return@async true
+        val session = sessionRepository.sessionById(sessionId) ?: return@async true
 
-        sessionRepository.deleteWorkouts(sessionRepository.getSessionWorkoutsBySessionId(sessionId))
-        sessionRepository.delete(session)
+        sessionRepository.deleteSessionWorkout(
+            sessionRepository.allSessionWorkoutsBySessionId(
+                sessionId
+            )
+        )
+        sessionRepository.deleteSession(session)
         return@async true
     }
         .await()
@@ -79,7 +92,7 @@ class EditSessionViewModel @Inject constructor(
             screenState.loadingWorkouts.value = false
         }
 
-        val session = sessionRepository.getWithSessionWorkoutsById(sessionId)
+        val session = sessionRepository.sessionWithWorkoutsById(sessionId)
         if (session == null) {
             dispose()
             return@async false
@@ -92,7 +105,7 @@ class EditSessionViewModel @Inject constructor(
         screenState.workouts.addAll(session.workouts.mapIndexed { index, it ->
             SessionBuilderWorkout(
                 id = index.toLong(),
-                workout = mutableStateOf(workoutRepository.getById(it.workoutId)),
+                workout = mutableStateOf(it.workout),
                 repetitionCount = mutableIntStateOf(it.repetitionCount),
                 repetitionType = mutableStateOf(RepetitionTypes.getById(it.repetitionType)!!),
                 weight = mutableFloatStateOf(it.weight),
@@ -106,7 +119,7 @@ class EditSessionViewModel @Inject constructor(
     }
         .await()
 
-    fun allWorkouts(): Flow<List<Workout>> {
-        return workoutRepository.getAllDescFlow()
+    fun allWorkoutsFlow(): Flow<List<Workout>> {
+        return workoutRepository.allWorkoutsFlow()
     }
 }

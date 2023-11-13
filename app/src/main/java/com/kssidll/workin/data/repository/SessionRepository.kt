@@ -6,79 +6,100 @@ import com.kssidll.workin.domain.repository.*
 import kotlinx.coroutines.flow.*
 
 class SessionRepository(private val dao: SessionDao): ISessionRepository {
-    override fun getAllDescFlow(): Flow<List<SessionWithSessionWorkouts>> {
-        return dao.getAllDescFlow()
+    override suspend fun sessionById(sessionId: Long): Session? {
+        return dao.sessionById(sessionId)
     }
 
-    override suspend fun getById(sessionId: Long): Session? {
-        return dao.getById(sessionId)
+    override suspend fun allSessionsByWorkoutId(workoutId: Long): List<Session> {
+        return dao.allSessionsByWorkoutId(workoutId)
     }
 
-    override suspend fun getWithSessionWorkoutsById(sessionId: Long): SessionWithSessionWorkouts? {
-        return dao.getWithSessionWorkoutsById(sessionId)
+    override suspend fun allSessions(): List<Session> {
+        return dao.allSessions()
     }
 
-    override suspend fun getByWorkoutId(workoutId: Long): List<Session> {
-        return dao.getByWorkoutId(workoutId)
+    override fun allSessionsFlow(): Flow<List<Session>> {
+        return dao.allSessionsFlow()
     }
 
-    override fun getAllMergedSessionsWithWorkouts(): Flow<List<SessionWithFullSessionWorkouts>> {
-        return dao.getAllDescFlow()
-            .map { list ->
-                list.map {
-                    it.merge(dao.getFullSessionWorkouts(it.session.id))
-                }
-            }
+    override suspend fun allSessionsByNewestFirst(): List<Session> {
+        return dao.allSessionsByNewestFirst()
     }
 
-    override suspend fun getMergedSessionWithWorkoutsById(sessionId: Long): SessionWithFullSessionWorkouts? {
-        val session = dao.getWithSessionWorkoutsById(sessionId) ?: return null
-        return session.merge(
-            dao.getFullSessionWorkouts(sessionId)
-        )
+    override fun allSessionsByNewestFirstFlow(): Flow<List<Session>> {
+        return dao.allSessionsByNewestFirstFlow()
     }
 
-    override suspend fun insert(session: Session): Long {
-        return dao.insert(session)
+    override suspend fun allSessionsWithWorkoutsNewestFirst(): List<SessionWithWorkouts> {
+        return dao.allSessionsWithWorkoutsNewestFirst()
     }
 
-    override suspend fun insertWorkouts(workouts: List<SessionWorkout>): List<Long> {
-        return dao.insertWorkouts(workouts)
+    override fun allSessionsWithWorkoutsNewestFirstFlow(): Flow<List<SessionWithWorkouts>> {
+        return dao.allSessionsWithWorkoutsNewestFirstFlow()
     }
 
-    override suspend fun insertSessionLog(log: SessionWorkoutLog): Long {
+    override suspend fun insertSession(session: Session): Long {
+        return dao.insertSession(session)
+    }
+
+    override suspend fun insertSessionWorkoutLog(log: SessionWorkoutLog): Long {
         return dao.insertSessionWorkoutLog(log)
     }
 
-    override suspend fun getLastWorkoutLogs(
-        workoutId: Long,
-        amount: Int
-    ): List<SessionWorkoutLog> {
-        return dao.getLastWorkoutLogs(workoutId, amount)
+    override suspend fun insertSessionWorkout(sessionWorkout: SessionWorkout): Long {
+        return dao.insertSessionWorkout(sessionWorkout)
     }
 
-    override suspend fun getSessionWorkoutsBySessionId(sessionId: Long): List<SessionWorkout> {
-        return dao.getSessionWorkoutsBySessionId(sessionId)
+    override suspend fun insertSessionWorkout(sessionWorkouts: List<SessionWorkout>): List<Long> {
+        return dao.insertSessionWorkout(sessionWorkouts)
     }
 
-    override suspend fun update(session: Session) {
-        dao.update(session)
+    override suspend fun updateSession(session: Session) {
+        return dao.updateSession(session)
     }
 
     override suspend fun updateSessionWorkout(sessionWorkout: SessionWorkout) {
-        dao.updateSessionWorkout(sessionWorkout)
+        return dao.updateSessionWorkout(sessionWorkout)
     }
 
-    override suspend fun deleteWorkouts(workouts: List<SessionWorkout>) {
-        dao.deleteWorkouts(workouts)
+    override suspend fun deleteSession(session: Session) {
+        return dao.deleteSession(session)
     }
 
-    override suspend fun delete(session: Session) {
-        dao.delete(session)
+    override suspend fun deleteSession(sessions: List<Session>) {
+        return dao.deleteSession(sessions)
     }
 
-    override suspend fun delete(sessions: List<Session>) {
-        dao.delete(sessions)
+    override suspend fun deleteSessionWorkout(sessionWorkout: SessionWorkout) {
+        return dao.deleteSessionWorkout(sessionWorkout)
     }
+
+    override suspend fun deleteSessionWorkout(sessionWorkouts: List<SessionWorkout>) {
+        return dao.deleteSessionWorkout(sessionWorkouts)
+    }
+
+    override suspend fun sessionWithWorkoutsById(sessionId: Long): SessionWithWorkouts? {
+        return dao.sessionWithWorkoutsById(sessionId)
+    }
+
+    override suspend fun allSessionsWithWorkouts(): List<SessionWithWorkouts> {
+        return dao.allSessionsWithWorkouts()
+    }
+
+    override fun allSessionsWithWorkoutsFlow(): Flow<List<SessionWithWorkouts>> {
+        return dao.allSessionsWithWorkoutsFlow()
+    }
+
+    override suspend fun newestLogsByWorkoutId(
+        workoutId: Long,
+        amount: Int
+    ): List<SessionWorkoutLog> {
+        return dao.newestLogsByWorkoutId(workoutId, amount)
+    }
+
+    override suspend fun allSessionWorkoutsBySessionId(sessionId: Long): List<SessionWorkout> {
+        return dao.allSessionWorkoutsBySessionId(sessionId)
+    }
+
 }
 

@@ -60,7 +60,7 @@ fun ModifySessionScreen(
     onDelete: (() -> Unit)? = null,
     submitButtonText: String,
     submitButtonIcon: ImageVector,
-    userWorkouts: List<Workout>,
+    allWorkouts: List<Workout>,
 ) {
     val scope = rememberCoroutineScope()
 
@@ -345,7 +345,7 @@ fun ModifySessionScreen(
                             onSessionWorkoutRemove = {
                                 state.workouts.remove(it)
                             },
-                            workouts = userWorkouts,
+                            workouts = allWorkouts,
                         )
                     }
                 }
@@ -411,13 +411,13 @@ fun ModifySessionScreenState.validate(): Boolean {
  * Performs data validation and tries to extract embedded data
  * @return `null` if validation sets error flags, extracted data otherwise
  */
-fun ModifySessionScreenState.validateAndExtractSessionOrNull(sessionId: Long = 0): SessionWithFullSessionWorkouts? {
+fun ModifySessionScreenState.validateAndExtractSessionOrNull(sessionId: Long = 0): SessionWithWorkouts? {
     name.value = name.value.trim()
     description.value = description.value.trim()
 
     if (!validate()) return null
 
-    return SessionWithFullSessionWorkouts(
+    return SessionWithWorkouts(
         session = Session(
             id = sessionId,
             name = name.value,
@@ -426,17 +426,14 @@ fun ModifySessionScreenState.validateAndExtractSessionOrNull(sessionId: Long = 0
         ),
         workouts = workouts.mapIndexed { index, it ->
             FullSessionWorkout(
-                sessionWorkout = SessionWorkout(
-                    sessionId = sessionId,
-                    workoutId = it.workout.value!!.id,
-                    repetitionCount = it.repetitionCount.value,
-                    repetitionType = it.repetitionType.value,
-                    weight = it.weight.value,
-                    weightType = it.weightType.value,
-                    order = index,
-                    restTime = it.postRestTime.value,
-                ),
-                workout = it.workout.value!!
+                sessionId = sessionId,
+                workout = it.workout.value!!,
+                repetitionCount = it.repetitionCount.value,
+                repetitionType = it.repetitionType.value,
+                weight = it.weight.value,
+                weightType = it.weightType.value,
+                order = index,
+                restTime = it.postRestTime.value,
             )
         }
     )
@@ -465,7 +462,7 @@ private fun ModifySessionScreenPreview() {
                 onDelete = {},
                 submitButtonText = "Submit",
                 submitButtonIcon = Icons.Default.Edit,
-                userWorkouts = listOf(),
+                allWorkouts = listOf(),
             )
         }
     }
@@ -493,7 +490,7 @@ private fun ModifySessionScreenNoDeletePreview() {
                 onSubmit = {},
                 submitButtonText = "Submit",
                 submitButtonIcon = Icons.Default.Edit,
-                userWorkouts = listOf(),
+                allWorkouts = listOf(),
             )
         }
     }

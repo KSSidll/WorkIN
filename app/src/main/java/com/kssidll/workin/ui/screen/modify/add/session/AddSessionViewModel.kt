@@ -26,12 +26,19 @@ class AddSessionViewModel @Inject constructor(
         val session = screenState.validateAndExtractSessionOrNull() ?: return@async true
 
         try {
-            val newId = sessionRepository.insert(session.session)
+            val newSessionId = sessionRepository.insertSession(session.session)
 
-            sessionRepository.insertWorkouts(session.workouts.map {
-                it.sessionWorkout.apply {
-                    sessionId = newId
-                }
+            sessionRepository.insertSessionWorkout(session.workouts.map {
+                SessionWorkout(
+                    sessionId = newSessionId,
+                    workoutId = it.workout.id,
+                    repetitionCount = it.repetitionCount,
+                    repetitionType = it.repetitionType,
+                    weight = it.weight,
+                    weightType = it.weightType,
+                    order = it.order,
+                    restTime = it.restTime,
+                )
             })
 
         } catch (e: SQLiteConstraintException) {
@@ -44,6 +51,6 @@ class AddSessionViewModel @Inject constructor(
         .await()
 
     fun allWorkouts(): Flow<List<Workout>> {
-        return workoutRepository.getAllDescFlow()
+        return workoutRepository.allWorkoutsFlow()
     }
 }

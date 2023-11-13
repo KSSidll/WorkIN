@@ -63,10 +63,10 @@ fun SessionRoute(
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun SessionScreen(
-    session: SessionWithFullSessionWorkouts,
+    session: SessionWithWorkouts,
     currentWorkoutId: MutableState<Long>,
     lastWorkoutLogs: List<SessionWorkoutLog>,
-    updateSessionWorkout: (SessionWorkout) -> Unit,
+    updateSessionWorkout: (FullSessionWorkout) -> Unit,
     addLog: (SessionWorkoutLog) -> Unit,
     onBack: () -> Unit,
 ) {
@@ -112,21 +112,21 @@ fun SessionScreen(
                         )
 
                         if (it.changeSessionWorkoutRepsSettings.value) {
-                            session.workouts[page.div(2)].sessionWorkout.apply {
+                            session.workouts[page.div(2)].apply {
                                 this.repetitionCount = it.repetitionCount
                                 this.repetitionType = it.repetitionType.value.id
                             }
                         }
 
                         if (it.changeSessionWorkoutWeightSettings.value) {
-                            session.workouts[page.div(2)].sessionWorkout.apply {
+                            session.workouts[page.div(2)].apply {
                                 this.weight = it.weight
                                 this.weightType = it.weightType.value.id
                             }
                         }
 
                         if (it.changeSessionWorkoutRepsSettings.value || it.changeSessionWorkoutWeightSettings.value) {
-                            updateSessionWorkout(session.workouts[page.div(2)].sessionWorkout)
+                            updateSessionWorkout(session.workouts[page.div(2)])
                         }
 
                         scope.launch {
@@ -137,7 +137,7 @@ fun SessionScreen(
             } else {
                 // last workout page isn't a timer, but a session finish screen
                 if (page != pagerState.pageCount - 1) {
-                    val timerTime = session.workouts[page.div(2)].sessionWorkout.restTime
+                    val timerTime = session.workouts[page.div(2)].restTime
                     if (pagerState.currentPage == page && timerTime != 0) blockPagerScroll = true
 
                     SessionTimerPage(
@@ -148,7 +148,7 @@ fun SessionScreen(
                                 if (timerTime != 0) {
                                     delay(400)
                                     pagerState.animateScrollToPage(page + 1)
-                                    session.workouts[page.div(2)].sessionWorkout.restTime = 0
+                                    session.workouts[page.div(2)].restTime = 0
                                     blockPagerScroll = false
                                 }
                             }
@@ -158,7 +158,7 @@ fun SessionScreen(
                                 if (timerTime != 0) {
                                     delay(150)
                                     pagerState.animateScrollToPage(page + 1)
-                                    session.workouts[page.div(2)].sessionWorkout.restTime = 0
+                                    session.workouts[page.div(2)].restTime = 0
                                     blockPagerScroll = false
                                 }
                             }
@@ -194,7 +194,7 @@ fun SessionScreenPreview() {
     WorkINTheme {
         Surface(modifier = Modifier.fillMaxSize()) {
             SessionScreen(
-                session = SessionWithFullSessionWorkouts(
+                session = SessionWithWorkouts(
                     session = Session(
                         name = "test session name 1",
                         description = "test session description 1",
@@ -204,36 +204,30 @@ fun SessionScreenPreview() {
                     ),
                     workouts = listOf(
                         FullSessionWorkout(
-                            sessionWorkout = SessionWorkout(
-                                sessionId = 0,
-                                workoutId = 0,
-                                repetitionCount = 0,
-                                repetitionType = RepetitionTypes.Repetitions,
-                                weight = 0F,
-                                weightType = WeightTypes.KGBodyMass,
-                                order = 0,
-                                restTime = 0,
-                            ),
+                            sessionId = 0,
                             workout = Workout(
                                 name = "test workout name 1",
                                 description = "test workout description 1"
-                            )
+                            ),
+                            repetitionCount = 0,
+                            repetitionType = RepetitionTypes.Repetitions,
+                            weight = 0F,
+                            weightType = WeightTypes.KGBodyMass,
+                            order = 0,
+                            restTime = 0,
                         ),
                         FullSessionWorkout(
-                            sessionWorkout = SessionWorkout(
-                                sessionId = 0,
-                                workoutId = 0,
-                                repetitionCount = 0,
-                                repetitionType = RepetitionTypes.RiR,
-                                weight = 0F,
-                                weightType = WeightTypes.BodyMass,
-                                order = 0,
-                                restTime = 0,
-                            ),
+                            sessionId = 0,
                             workout = Workout(
                                 name = "test workout name 2",
                                 description = "test workout description 2"
-                            )
+                            ),
+                            repetitionCount = 0,
+                            repetitionType = RepetitionTypes.RiR,
+                            weight = 0F,
+                            weightType = WeightTypes.BodyMass,
+                            order = 0,
+                            restTime = 0,
                         )
                     )
                 ),

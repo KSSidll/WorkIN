@@ -14,9 +14,9 @@ import com.kssidll.workin.ui.theme.*
 
 @Composable
 fun SelectSessionSubpage(
-    collectedSessions: List<SessionWithFullSessionWorkouts>,
-    onSelect: (SessionWithFullSessionWorkouts) -> Unit,
-    onStartIconClick: ((SessionWithFullSessionWorkouts) -> Unit)? = null,
+    collectedSessions: List<SessionWithWorkouts>,
+    onSelect: (SessionWithWorkouts) -> Unit,
+    onStartIconClick: ((SessionWithWorkouts) -> Unit)? = null,
 ) {
     Column {
         Spacer(modifier = Modifier.height(12.dp))
@@ -58,7 +58,7 @@ fun SelectSessionSubpagePreview() {
         Surface(modifier = Modifier.fillMaxSize()) {
             SelectSessionSubpage(
                 collectedSessions = listOf(
-                    SessionWithFullSessionWorkouts(
+                    SessionWithWorkouts(
                         session = Session(
                             name = "test session name 1",
                             description = "test session description 1",
@@ -68,36 +68,30 @@ fun SelectSessionSubpagePreview() {
                         ),
                         workouts = listOf(
                             FullSessionWorkout(
-                                sessionWorkout = SessionWorkout(
-                                    sessionId = 0,
-                                    workoutId = 0,
-                                    repetitionCount = 0,
-                                    repetitionType = RepetitionTypes.Repetitions,
-                                    weight = 0F,
-                                    weightType = WeightTypes.KGBodyMass,
-                                    order = 0,
-                                    restTime = 0,
-                                ),
+                                sessionId = 0,
                                 workout = Workout(
                                     name = "test workout name 1",
                                     description = "test workout description 1"
-                                )
+                                ),
+                                repetitionCount = 0,
+                                repetitionType = RepetitionTypes.Repetitions,
+                                weight = 0F,
+                                weightType = WeightTypes.KGBodyMass,
+                                order = 0,
+                                restTime = 0,
                             ),
                             FullSessionWorkout(
-                                sessionWorkout = SessionWorkout(
-                                    sessionId = 0,
-                                    workoutId = 0,
-                                    repetitionCount = 0,
-                                    repetitionType = RepetitionTypes.RiR,
-                                    weight = 0F,
-                                    weightType = WeightTypes.BodyMass,
-                                    order = 0,
-                                    restTime = 0,
-                                ),
+                                sessionId = 0,
                                 workout = Workout(
                                     name = "test workout name 2",
                                     description = "test workout description 2"
-                                )
+                                ),
+                                repetitionCount = 0,
+                                repetitionType = RepetitionTypes.RiR,
+                                weight = 0F,
+                                weightType = WeightTypes.BodyMass,
+                                order = 0,
+                                restTime = 0,
                             ),
                         )
                     ),

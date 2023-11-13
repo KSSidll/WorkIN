@@ -39,8 +39,8 @@ fun WorkoutsRoute(
         onAddSession = onAddSession,
         onWorkoutClick = onWorkoutClick,
         onAddWorkout = onAddWorkout,
-        workouts = viewModel.getAllWorkoutsDescFlow(),
-        sessions = viewModel.getAllSessionsDescFlow(),
+        workouts = viewModel.allWorkoutsByNewestFirstFlow(),
+        sessions = viewModel.allSessionsByNewestFirstFlow(),
     )
 }
 
@@ -53,7 +53,7 @@ private fun WorkoutsScreen(
     onWorkoutClick: (Long) -> Unit,
     onAddWorkout: () -> Unit,
     workouts: Flow<List<Workout>>,
-    sessions: Flow<List<SessionWithFullSessionWorkouts>>,
+    sessions: Flow<List<SessionWithWorkouts>>,
 ) {
     val scope = rememberCoroutineScope()
 

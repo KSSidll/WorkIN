@@ -22,9 +22,9 @@ import com.kssidll.workin.ui.theme.*
 
 @Composable
 fun SessionCardItem(
-    session: SessionWithFullSessionWorkouts,
-    onClick: (SessionWithFullSessionWorkouts) -> Unit,
-    onStartIconClick: ((SessionWithFullSessionWorkouts) -> Unit)? = null,
+    session: SessionWithWorkouts,
+    onClick: (SessionWithWorkouts) -> Unit,
+    onStartIconClick: ((SessionWithWorkouts) -> Unit)? = null,
 ) {
     val sessionDays: SnapshotStateList<WeekDays> = remember { mutableStateListOf() }
 
@@ -163,7 +163,7 @@ fun SessionCardItem(
                                             .align(Alignment.CenterStart)
                                     ) {
                                         Text(
-                                            text = workout.sessionWorkout.repetitionCount.toString(),
+                                            text = workout.repetitionCount.toString(),
                                             maxLines = 2,
                                             color = MaterialTheme.colorScheme.onSurface,
                                             modifier = Modifier
@@ -213,7 +213,7 @@ fun SessionCardItem(
                                             .align(Alignment.CenterEnd)
                                     ) {
                                         Text(
-                                            text = RepetitionTypes.getById(workout.sessionWorkout.repetitionType)!!
+                                            text = RepetitionTypes.getById(workout.repetitionType)!!
                                                 .getTranslation(),
                                             maxLines = 2,
                                             color = MaterialTheme.colorScheme.onSurface,
@@ -232,7 +232,7 @@ fun SessionCardItem(
 
                             Box(modifier = Modifier.fillMaxWidth()) {
                                 val weightType =
-                                    WeightTypes.getById(workout.sessionWorkout.weightType)!!
+                                    WeightTypes.getById(workout.weightType)!!
                                 if (weightType.hideWeight) {
                                     Box(
                                         modifier = Modifier
@@ -275,7 +275,7 @@ fun SessionCardItem(
                                                 .align(Alignment.CenterStart)
                                         ) {
                                             Text(
-                                                text = workout.sessionWorkout.weight.toString(),
+                                                text = workout.weight.toString(),
                                                 maxLines = 2,
                                                 color = MaterialTheme.colorScheme.onSurface,
                                                 modifier = Modifier
@@ -401,7 +401,7 @@ fun SessionCardItemPrieview() {
     WorkINTheme {
         Surface {
             SessionCardItem(
-                session = SessionWithFullSessionWorkouts(
+                session = SessionWithWorkouts(
                     session = Session(
                         name = "test session name 1",
                         description = "test session description 1",
@@ -411,36 +411,30 @@ fun SessionCardItemPrieview() {
                     ),
                     workouts = listOf(
                         FullSessionWorkout(
-                            sessionWorkout = SessionWorkout(
-                                sessionId = 0,
-                                workoutId = 0,
-                                repetitionCount = 0,
-                                repetitionType = RepetitionTypes.Repetitions,
-                                weight = 0F,
-                                weightType = WeightTypes.KGBodyMass,
-                                order = 0,
-                                restTime = 0,
-                            ),
+                            sessionId = 0,
                             workout = Workout(
                                 name = "test workout name 1",
                                 description = "test workout description 1"
-                            )
+                            ),
+                            repetitionCount = 0,
+                            repetitionType = RepetitionTypes.Repetitions,
+                            weight = 0F,
+                            weightType = WeightTypes.KGBodyMass,
+                            order = 0,
+                            restTime = 0,
                         ),
                         FullSessionWorkout(
-                            sessionWorkout = SessionWorkout(
-                                sessionId = 0,
-                                workoutId = 0,
-                                repetitionCount = 0,
-                                repetitionType = RepetitionTypes.RiR,
-                                weight = 0F,
-                                weightType = WeightTypes.BodyMass,
-                                order = 0,
-                                restTime = 0,
-                            ),
+                            sessionId = 0,
                             workout = Workout(
                                 name = "test workout name 2",
                                 description = "test workout description 2"
-                            )
+                            ),
+                            repetitionCount = 0,
+                            repetitionType = RepetitionTypes.RiR,
+                            weight = 0F,
+                            weightType = WeightTypes.BodyMass,
+                            order = 0,
+                            restTime = 0,
                         ),
                     )
                 ),

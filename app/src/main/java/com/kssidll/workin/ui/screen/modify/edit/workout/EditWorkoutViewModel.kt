@@ -24,7 +24,7 @@ class EditWorkoutViewModel @Inject constructor(
         val workout = screenState.validateAndExtractWorkoutOrNull(workoutId) ?: return@async true
 
         try {
-            workoutRepository.update(workout)
+            workoutRepository.updateWorkout(workout)
         } catch (e: SQLiteConstraintException) {
             screenState.nameDuplicateError.value = true
             return@async false
@@ -41,16 +41,16 @@ class EditWorkoutViewModel @Inject constructor(
      */
     suspend fun deleteWorkout(workoutId: Long) = viewModelScope.async {
         // return true if no such workout exists
-        val workout = workoutRepository.getById(workoutId) ?: return@async true
+        val workout = workoutRepository.workoutById(workoutId) ?: return@async true
 
-        val sessions = sessionRepository.getByWorkoutId(workoutId)
+        val sessions = sessionRepository.allSessionsByWorkoutId(workoutId)
 
         if (sessions.isNotEmpty() && !screenState.deleteWarningConfirmed.value) {
             screenState.showDeleteWarning.value = true
             return@async false
         } else {
-            sessionRepository.delete(sessions)
-            workoutRepository.delete(workout)
+            sessionRepository.deleteSession(sessions)
+            workoutRepository.deleteWorkout(workout)
             return@async true
         }
     }
@@ -69,7 +69,7 @@ class EditWorkoutViewModel @Inject constructor(
             screenState.loadingDescription.value = false
         }
 
-        val workout = workoutRepository.getById(workoutId)
+        val workout = workoutRepository.workoutById(workoutId)
         if (workout == null) {
             dispose()
             return@async false

@@ -12,11 +12,11 @@ class WorkoutsViewModel @Inject constructor(
     private val workoutRepository: IWorkoutRepository,
     private val sessionRepository: ISessionRepository,
 ): ViewModel() {
-    fun getAllWorkoutsDescFlow(): Flow<List<Workout>> {
-        return workoutRepository.getAllDescFlow()
+    fun allWorkoutsByNewestFirstFlow(): Flow<List<Workout>> {
+        return workoutRepository.allWorkoutsByNewestFirstFlow()
     }
 
-    fun getAllSessionsDescFlow(): Flow<List<SessionWithFullSessionWorkouts>> {
-        return sessionRepository.getAllMergedSessionsWithWorkouts()
+    fun allSessionsByNewestFirstFlow(): Flow<List<SessionWithWorkouts>> {
+        return sessionRepository.allSessionsWithWorkoutsNewestFirstFlow()
     }
 }

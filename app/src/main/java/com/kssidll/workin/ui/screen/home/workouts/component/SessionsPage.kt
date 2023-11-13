@@ -15,7 +15,7 @@ import com.kssidll.workin.ui.theme.*
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SessionsPage(
-    collectedSessions: List<SessionWithFullSessionWorkouts>,
+    collectedSessions: List<SessionWithWorkouts>,
     onSessionStart: (Long) -> Unit,
     onSessionClick: (Long) -> Unit,
 ) {

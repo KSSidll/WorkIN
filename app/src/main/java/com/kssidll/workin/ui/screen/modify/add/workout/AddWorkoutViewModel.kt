@@ -23,7 +23,7 @@ class AddWorkoutViewModel @Inject constructor(
         val workout = screenState.validateAndExtractWorkoutOrNull() ?: return@async null
 
         try {
-            return@async workoutRepository.insert(workout)
+            return@async workoutRepository.insertWorkout(workout)
         } catch (e: SQLiteConstraintException) {
             screenState.nameDuplicateError.value = true
             return@async null
