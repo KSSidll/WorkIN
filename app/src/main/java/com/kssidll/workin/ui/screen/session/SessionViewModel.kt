@@ -1,12 +1,11 @@
 package com.kssidll.workin.ui.screen.session
 
-import androidx.compose.runtime.*
-import androidx.compose.runtime.snapshots.*
 import androidx.lifecycle.*
 import com.kssidll.workin.data.data.*
 import com.kssidll.workin.domain.repository.*
 import dagger.hilt.android.lifecycle.*
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
 import javax.inject.*
 
 @HiltViewModel
@@ -14,9 +13,6 @@ class SessionViewModel @Inject constructor(
     private val sessionRepository: ISessionRepository,
 ): ViewModel() {
     lateinit var session: SessionWithWorkouts
-
-    private var lastUsedWorkoutId: Long = 0
-    var workoutLogs: SnapshotStateList<SessionWorkoutLog> = mutableStateListOf()
 
     suspend fun fetchSession(sessionId: Long) {
         session = sessionRepository.sessionWithWorkoutsById(sessionId)!!
@@ -39,12 +35,9 @@ class SessionViewModel @Inject constructor(
 
     fun addLog(log: SessionWorkoutLog) = viewModelScope.launch {
         sessionRepository.insertSessionWorkoutLog(log)
-        if (log.workoutId == lastUsedWorkoutId) getLastWorkoutLogs(lastUsedWorkoutId)
     }
 
-    suspend fun getLastWorkoutLogs(workoutId: Long) {
-        lastUsedWorkoutId = workoutId
-        workoutLogs.clear()
-        workoutLogs.addAll(sessionRepository.newestLogsByWorkoutId(workoutId, 3))
+    fun newestLogsByWorkoutIdFlow(workoutId: Long): Flow<List<SessionWorkoutLog>> {
+        return sessionRepository.newestLogsByWorkoutIdFlow(workoutId, 3)
     }
 }

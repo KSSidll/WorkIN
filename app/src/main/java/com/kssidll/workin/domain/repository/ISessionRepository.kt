@@ -94,6 +94,16 @@ interface ISessionRepository {
     ): List<SessionWorkoutLog>
 
     /**
+     * @param workoutId workoutId to match
+     * @param amount how many items to return
+     * @return list of logs, of [amount] length, matching by [workoutId], sorted by newest first, as flow
+     */
+    fun newestLogsByWorkoutIdFlow(
+        workoutId: Long,
+        amount: Int
+    ): Flow<List<SessionWorkoutLog>>
+
+    /**
      * @param log log to insert
      * @return id of the newly inserted log
      */

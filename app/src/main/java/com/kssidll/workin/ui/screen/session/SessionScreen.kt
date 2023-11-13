@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.snapshots.*
 import androidx.compose.ui.*
 import androidx.compose.ui.res.*
 import androidx.compose.ui.tooling.preview.*
@@ -17,6 +18,7 @@ import com.kssidll.workin.ui.screen.session.component.*
 import com.kssidll.workin.ui.theme.*
 import dev.olshevski.navigation.reimagined.hilt.*
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
 
 @Composable
 fun SessionRoute(
@@ -34,28 +36,19 @@ fun SessionRoute(
         isLoading = false
     }
 
-    val currentWorkoutId = remember {
-        mutableLongStateOf(0L)
-    }
-
-    LaunchedEffect(currentWorkoutId.longValue) {
-        if (currentWorkoutId.longValue == 0L) return@LaunchedEffect
-
-        viewModel.getLastWorkoutLogs(currentWorkoutId.longValue)
-    }
-
     if (!isLoading) {
         SessionScreen(
+            onBack = onBack,
             session = viewModel.session,
-            currentWorkoutId = currentWorkoutId,
-            lastWorkoutLogs = viewModel.workoutLogs,
+            requestSessionWorkoutLogById = {
+                viewModel.newestLogsByWorkoutIdFlow(it)
+            },
             updateSessionWorkout = {
                 viewModel.updateWorkoutSettings(it)
             },
             addLog = {
                 viewModel.addLog(it)
             },
-            onBack = onBack,
         )
     }
 }
@@ -63,14 +56,15 @@ fun SessionRoute(
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun SessionScreen(
+    onBack: () -> Unit,
     session: SessionWithWorkouts,
-    currentWorkoutId: MutableState<Long>,
-    lastWorkoutLogs: List<SessionWorkoutLog>,
+    requestSessionWorkoutLogById: (workoutId: Long) -> Flow<List<SessionWorkoutLog>>,
     updateSessionWorkout: (FullSessionWorkout) -> Unit,
     addLog: (SessionWorkoutLog) -> Unit,
-    onBack: () -> Unit,
 ) {
     val scope = rememberCoroutineScope()
+    val pages: SnapshotStateList<@Composable (onScreen: Boolean) -> Unit> =
+        remember { mutableStateListOf() }
 
     val pagerState = rememberPagerState {
         // each workout has a page with the workout and the rest timer
@@ -78,7 +72,98 @@ fun SessionScreen(
         session.workouts.size.times(2)
     }
 
-    currentWorkoutId.value = session.workouts[pagerState.currentPage.div(2)].workout.id
+    var blockPagerScroll: Boolean by remember { mutableStateOf(false) }
+
+    LaunchedEffect(session) {
+        pages.clear()
+        pagerState.scrollToPage(
+            pagerState.initialPage,
+            pagerState.initialPageOffsetFraction
+        ) // reset pager in case it wasn't on default values
+
+        session.workouts.forEachIndexed { index, sessionWorkout ->
+            pages.add { _ ->
+                SessionWorkoutPage(
+                    workout = sessionWorkout,
+                    lastWorkoutLogs = requestSessionWorkoutLogById(sessionWorkout.workout.id).collectAsState(
+                        initial = emptyList()
+                    ).value,
+                    onLogSubmit = {
+                        addLog(
+                            SessionWorkoutLog(
+                                workoutId = sessionWorkout.workout.id,
+                                repetitionCount = it.repetitionCount,
+                                repetitionType = it.repetitionType.value,
+                                weight = it.weight,
+                                weightType = it.weightType.value,
+                            )
+                        )
+
+                        if (it.changeSessionWorkoutRepsSettings.value) {
+                            sessionWorkout.apply {
+                                this.repetitionCount = it.repetitionCount
+                                this.repetitionType = it.repetitionType.value.id
+                            }
+                        }
+
+                        if (it.changeSessionWorkoutWeightSettings.value) {
+                            sessionWorkout.apply {
+                                this.weight = it.weight
+                                this.weightType = it.weightType.value.id
+                            }
+                        }
+
+                        if (it.changeSessionWorkoutRepsSettings.value || it.changeSessionWorkoutWeightSettings.value) {
+                            updateSessionWorkout(sessionWorkout)
+                        }
+
+                        scope.launch {
+                            pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                        }
+                    },
+                )
+            }
+
+            if (index == session.workouts.lastIndex) {
+                pages.add { _ ->
+                    SessionFinishPage(
+                        onButtonClick = onBack,
+                    )
+                }
+
+                return@forEachIndexed // all items were computed, early return so we don't add more by accident
+            }
+
+            pages.add { onScreen ->
+                if (onScreen && sessionWorkout.restTime != 0) blockPagerScroll = true
+
+                SessionTimerPage(
+                    time = sessionWorkout.restTime,
+                    activateTimer = onScreen,
+                    onTimerEnd = {
+                        scope.launch {
+                            if (sessionWorkout.restTime != 0) {
+                                delay(400)
+                                pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                                sessionWorkout.restTime = 0
+                                blockPagerScroll = false
+                            }
+                        }
+                    },
+                    onEndEarlyClick = {
+                        scope.launch {
+                            if (sessionWorkout.restTime != 0) {
+                                delay(150)
+                                pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                                sessionWorkout.restTime = 0
+                                blockPagerScroll = false
+                            }
+                        }
+                    }
+                )
+            }
+        }
+    }
 
     Column {
         WorkINTopAppBar(
@@ -89,86 +174,13 @@ fun SessionScreen(
             ),
         )
 
-        var blockPagerScroll: Boolean by remember { mutableStateOf(false) }
-
         HorizontalPager(
             state = pagerState,
             beyondBoundsPageCount = 1,
             userScrollEnabled = !blockPagerScroll
         ) { page ->
-            if (page.mod(2) == 0) {
-                SessionWorkoutPage(
-                    workout = session.workouts[page.div(2)],
-                    lastWorkoutLogs = lastWorkoutLogs,
-                    onLogSubmit = {
-                        addLog(
-                            SessionWorkoutLog(
-                                workoutId = session.workouts[page.div(2)].workout.id,
-                                repetitionCount = it.repetitionCount,
-                                repetitionType = it.repetitionType.value,
-                                weight = it.weight,
-                                weightType = it.weightType.value,
-                            )
-                        )
-
-                        if (it.changeSessionWorkoutRepsSettings.value) {
-                            session.workouts[page.div(2)].apply {
-                                this.repetitionCount = it.repetitionCount
-                                this.repetitionType = it.repetitionType.value.id
-                            }
-                        }
-
-                        if (it.changeSessionWorkoutWeightSettings.value) {
-                            session.workouts[page.div(2)].apply {
-                                this.weight = it.weight
-                                this.weightType = it.weightType.value.id
-                            }
-                        }
-
-                        if (it.changeSessionWorkoutRepsSettings.value || it.changeSessionWorkoutWeightSettings.value) {
-                            updateSessionWorkout(session.workouts[page.div(2)])
-                        }
-
-                        scope.launch {
-                            pagerState.animateScrollToPage(page + 1)
-                        }
-                    },
-                )
-            } else {
-                // last workout page isn't a timer, but a session finish screen
-                if (page != pagerState.pageCount - 1) {
-                    val timerTime = session.workouts[page.div(2)].restTime
-                    if (pagerState.currentPage == page && timerTime != 0) blockPagerScroll = true
-
-                    SessionTimerPage(
-                        time = timerTime,
-                        activateTimer = pagerState.currentPage == page,
-                        onTimerEnd = {
-                            scope.launch {
-                                if (timerTime != 0) {
-                                    delay(400)
-                                    pagerState.animateScrollToPage(page + 1)
-                                    session.workouts[page.div(2)].restTime = 0
-                                    blockPagerScroll = false
-                                }
-                            }
-                        },
-                        onEndEarlyClick = {
-                            scope.launch {
-                                if (timerTime != 0) {
-                                    delay(150)
-                                    pagerState.animateScrollToPage(page + 1)
-                                    session.workouts[page.div(2)].restTime = 0
-                                    blockPagerScroll = false
-                                }
-                            }
-                        }
-                    )
-                } else {
-                    SessionFinishPage(
-                        onButtonClick = onBack,
-                    )
-                }
+            if (pages.isNotEmpty()) {
+                pages[page](pagerState.currentPage == page)
             }
         }
 
@@ -194,6 +206,7 @@ fun SessionScreenPreview() {
     WorkINTheme {
         Surface(modifier = Modifier.fillMaxSize()) {
             SessionScreen(
+                onBack = {},
                 session = SessionWithWorkouts(
                     session = Session(
                         name = "test session name 1",
@@ -231,13 +244,9 @@ fun SessionScreenPreview() {
                         )
                     )
                 ),
-                currentWorkoutId = remember {
-                    mutableLongStateOf(0L)
-                },
-                lastWorkoutLogs = listOf(),
+                requestSessionWorkoutLogById = { flowOf() },
                 updateSessionWorkout = {},
                 addLog = {},
-                onBack = {},
             )
         }
     }

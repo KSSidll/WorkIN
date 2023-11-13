@@ -97,6 +97,13 @@ class SessionRepository(private val dao: SessionDao): ISessionRepository {
         return dao.newestLogsByWorkoutId(workoutId, amount)
     }
 
+    override fun newestLogsByWorkoutIdFlow(
+        workoutId: Long,
+        amount: Int
+    ): Flow<List<SessionWorkoutLog>> {
+        return dao.newestLogsByWorkoutIdFlow(workoutId, amount)
+    }
+
     override suspend fun allSessionWorkoutsBySessionId(sessionId: Long): List<SessionWorkout> {
         return dao.allSessionWorkoutsBySessionId(sessionId)
     }
