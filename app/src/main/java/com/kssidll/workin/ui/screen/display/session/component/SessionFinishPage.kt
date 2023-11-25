@@ -1,4 +1,4 @@
-package com.kssidll.workin.ui.screen.session.component
+package com.kssidll.workin.ui.screen.display.session.component
 
 import android.content.res.*
 import androidx.compose.foundation.layout.*

@@ -1,4 +1,4 @@
-package com.kssidll.workin.ui.screen.session
+package com.kssidll.workin.ui.screen.display.session
 
 import androidx.lifecycle.*
 import com.kssidll.workin.data.data.*

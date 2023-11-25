@@ -1,4 +1,4 @@
-package com.kssidll.workin.ui.screen.session
+package com.kssidll.workin.ui.screen.display.session
 
 import android.content.res.*
 import androidx.compose.foundation.*
@@ -14,7 +14,7 @@ import com.kssidll.workin.R
 import com.kssidll.workin.data.data.*
 import com.kssidll.workin.domain.*
 import com.kssidll.workin.ui.component.*
-import com.kssidll.workin.ui.screen.session.component.*
+import com.kssidll.workin.ui.screen.display.session.component.*
 import com.kssidll.workin.ui.theme.*
 import dev.olshevski.navigation.reimagined.hilt.*
 import kotlinx.coroutines.*
@@ -135,23 +135,25 @@ fun SessionScreen(
 
                 SessionTimerPage(
                     time = sessionWorkout.restTime,
-                    activateTimer = onScreen,
+                    timerEnabled = onScreen,
                     onTimerEnd = {
                         scope.launch {
                             if (sessionWorkout.restTime != 0) {
-                                delay(400)
+                                delay(750)
                                 pagerState.animateScrollToPage(pagerState.currentPage + 1)
-                                sessionWorkout.restTime = 0
+                                sessionWorkout.restTime =
+                                    0 // set the rest time to 0 so that when user scrolls back to the timer, it won't reset
                                 blockPagerScroll = false
                             }
                         }
                     },
-                    onEndEarlyClick = {
+                    onTimerEndEarly = {
                         scope.launch {
                             if (sessionWorkout.restTime != 0) {
-                                delay(150)
+                                delay(600)
                                 pagerState.animateScrollToPage(pagerState.currentPage + 1)
-                                sessionWorkout.restTime = 0
+                                sessionWorkout.restTime =
+                                    0 // set the rest time to 0 so that when user scrolls back to the timer, it won't reset
                                 blockPagerScroll = false
                             }
                         }
