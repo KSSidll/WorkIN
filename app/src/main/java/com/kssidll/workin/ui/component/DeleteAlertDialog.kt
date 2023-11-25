@@ -15,7 +15,7 @@ import com.kssidll.workin.R
 import com.kssidll.workin.ui.theme.*
 
 /**
- * @param enabled whether to show the dialog or not, component handles disposing of itself
+ * @param displayed whether to show the dialog or not, component handles disposing of itself
  * @param onDelete function to call when dialog warning confirmation button is clicked
  * @param warningMessage message to show in the dialog
  * @param warningConfirmed confirmation flag, camponent handles it by itself
@@ -23,13 +23,13 @@ import com.kssidll.workin.ui.theme.*
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DeleteAlertDialog(
-    enabled: MutableState<Boolean>,
+    displayed: MutableState<Boolean>,
     onDelete: () -> Unit,
     warningMessage: String,
     warningConfirmed: MutableState<Boolean>,
 ) {
-    if (enabled.value) {
-        AlertDialog(
+    if (displayed.value) {
+        BasicAlertDialog(
             onDismissRequest = {},
             modifier = Modifier
                 .width(360.dp)
@@ -86,7 +86,7 @@ fun DeleteAlertDialog(
                     Row {
                         Button(
                             onClick = {
-                                enabled.value = false
+                                displayed.value = false
                                 warningConfirmed.value = false
                             },
                             modifier = Modifier
@@ -149,7 +149,7 @@ private fun DeleteAlertDialogPreview() {
     WorkINTheme {
         Surface {
             DeleteAlertDialog(
-                enabled = remember { mutableStateOf(true) },
+                displayed = remember { mutableStateOf(true) },
                 onDelete = {},
                 warningMessage = "test message",
                 warningConfirmed = remember { mutableStateOf(false) },

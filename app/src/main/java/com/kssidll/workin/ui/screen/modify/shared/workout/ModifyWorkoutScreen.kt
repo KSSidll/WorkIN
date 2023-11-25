@@ -48,7 +48,7 @@ fun ModifyWorkoutScreen(
     Box {
         if (onDelete != null) {
             DeleteAlertDialog(
-                enabled = state.showDeleteWarning,
+                displayed = state.showDeleteWarning,
                 onDelete = onDelete,
                 warningMessage = stringResource(id = R.string.workout_delete_warning_text),
                 warningConfirmed = state.deleteWarningConfirmed,

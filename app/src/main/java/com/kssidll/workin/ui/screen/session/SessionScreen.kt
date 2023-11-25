@@ -76,10 +76,6 @@ fun SessionScreen(
 
     LaunchedEffect(session) {
         pages.clear()
-        pagerState.scrollToPage(
-            pagerState.initialPage,
-            pagerState.initialPageOffsetFraction
-        ) // reset pager in case it wasn't on default values
 
         session.workouts.forEachIndexed { index, sessionWorkout ->
             pages.add { _ ->

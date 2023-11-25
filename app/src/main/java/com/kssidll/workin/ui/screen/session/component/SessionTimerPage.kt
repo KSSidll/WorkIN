@@ -85,22 +85,26 @@ fun SessionTimerPage(
         ) {
             Box {
 
-                val progress: Float = if (remainingMiliseconds > 0) {
+                val targetProgress: Float = if (remainingMiliseconds > 0) {
                     remainingMiliseconds / time.times(1000)
                         .toFloat()
                 } else 1F
 
+                val progress = animateFloatAsState(
+                    targetValue = targetProgress,
+                    animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec,
+                    label = "timer change value animation"
+                )
+
                 CircularProgressIndicator(
-                    progress = animateFloatAsState(
-                        targetValue = progress,
-                        animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec,
-                        label = "timer change value animation"
-                    ).value,
-                    strokeWidth = 14.dp,
+                    progress = {
+                        progress.value
+                    },
+                    modifier = Modifier.size(256.dp),
                     color = if (remainingMiliseconds > 0) {
                         MaterialTheme.colorScheme.tertiary
                     } else MaterialTheme.colorScheme.errorContainer,
-                    modifier = Modifier.size(256.dp)
+                    strokeWidth = 14.dp,
                 )
 
                 Text(

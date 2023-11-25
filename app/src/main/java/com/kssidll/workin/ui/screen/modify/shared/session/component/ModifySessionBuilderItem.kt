@@ -517,9 +517,9 @@ fun LazyItemScope.ModifySessionBuilderItem(
 
                         Box(contentAlignment = Alignment.Center) {
                             CircularProgressIndicator(
-                                progress = 1F,
-                                color = MaterialTheme.colorScheme.outline,
+                                progress = { 1F },
                                 modifier = Modifier.size(85.dp),
+                                color = MaterialTheme.colorScheme.outline,
                             )
                             Text(
                                 text = formatTime(item.postRestTime.value),
