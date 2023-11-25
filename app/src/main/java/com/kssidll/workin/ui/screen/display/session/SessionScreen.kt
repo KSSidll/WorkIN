@@ -141,8 +141,8 @@ fun SessionScreen(
                             if (sessionWorkout.restTime != 0) {
                                 delay(750)
                                 pagerState.animateScrollToPage(pagerState.currentPage + 1)
-                                sessionWorkout.restTime =
-                                    0 // set the rest time to 0 so that when user scrolls back to the timer, it won't reset
+                                // set the rest time to 0 so that when user scrolls back to the timer, it won't reset
+                                sessionWorkout.restTime = 0
                                 blockPagerScroll = false
                             }
                         }
@@ -152,8 +152,8 @@ fun SessionScreen(
                             if (sessionWorkout.restTime != 0) {
                                 delay(600)
                                 pagerState.animateScrollToPage(pagerState.currentPage + 1)
-                                sessionWorkout.restTime =
-                                    0 // set the rest time to 0 so that when user scrolls back to the timer, it won't reset
+                                // set the rest time to 0 so that when user scrolls back to the timer, it won't reset
+                                sessionWorkout.restTime = 0
                                 blockPagerScroll = false
                             }
                         }
